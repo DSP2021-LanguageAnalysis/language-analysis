@@ -1,0 +1,11 @@
+# Python cache
+__pycache__/
+
+# Editor specific files
+.vscode
+
+# The data
+TCEECE/
+
+# Virtual environment
+venv/
