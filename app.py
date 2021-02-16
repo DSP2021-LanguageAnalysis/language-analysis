@@ -27,14 +27,15 @@ def create_dataframes():
     df = data_parser.letters_to_df()
 
     # Word count DataFrame
-    word_counts = df.groupby(['ID', 'Year']).size().to_frame(name = 'word_count').reset_index()
+    word_counts = df.groupby(['ID', 'Year']).size().to_frame(name = 'WordCount').reset_index()
 
     # POS counts for each letter
-    pos_counts = df.groupby(['ID', 'Tags', 'Year']).size().to_frame(name = 'pos_count').reset_index()
+    pos_counts = df.groupby(['ID', 'Tags', 'Year', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
+    pos_counts['PosCountNorm'] = pos_counts['PosCount']/pos_counts['WordCount']
 
     # NN1 tag count per year
     nn1_counts = pos_counts[pos_counts['Tags'] == 'NN1']
-    nn1_counts = nn1_counts.groupby(['Year']).size().to_frame(name = 'nn1_count').reset_index()
+    nn1_counts = nn1_counts.groupby(['Year']).mean().reset_index()
 
     return word_counts, pos_counts, nn1_counts
 
@@ -47,8 +48,8 @@ auth = dash_auth.BasicAuth(
 )
 word_counts, pos_counts, nn1_counts = create_dataframes()
 
-wc_fig = px.scatter(word_counts, x="Year", y="word_count")
-pc_fig = px.line(nn1_counts, x="Year", y="nn1_count")
+wc_fig = px.scatter(word_counts, x="Year", y="WordCount")
+pc_fig = px.line(nn1_counts, x="Year", y="PosCountNorm")
 
 app.layout = html.Div(children=[
     html.H1(children='Data Science Project: Language variation'),
