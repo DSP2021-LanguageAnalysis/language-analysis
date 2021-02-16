@@ -5,9 +5,9 @@ import glob
 class DataParser():
 
     def __init__(self):
-        self.db_person = pd.read_csv('TCEECE/metadata/database-person.txt', sep='\t')
+        self.db_person = pd.read_csv('TCEECE/metadata/database-person.txt', sep='\t', encoding='iso-8859-1')
         self.db_person = self.db_person.set_index('PersonCode')
-        self.db_letter = pd.read_csv('TCEECE/metadata//database-letter.txt', sep='\t')
+        self.db_letter = pd.read_csv('TCEECE/metadata//database-letter.txt', sep='\t', encoding='iso-8859-1')
         self.db_letter = self.db_letter.set_index('LetterID')
         return 
         
@@ -43,12 +43,18 @@ class DataParser():
 
         # Extracts the id of the letter from the TEI-tag
         id = soup.tei.attrs['xml:id']
+        sender = self.db_letter.loc[id, 'Sender']
         
         # Combines the lists into a dict. The id is repeated for each word 
         data = {'ID': [id] * len(pos),
                 'Words':words, 
                 'Tags':pos,
-                'Year': [self.db_letter.loc[id, 'Year']] * len(pos)}
+                'Year': [self.db_letter.loc[id, 'Year']] * len(pos),
+                'SenderRank': [self.db_letter.loc[id, 'SenderRank']] * len(pos),
+                'SenderSex': [self.db_person.loc[sender, 'Sex']] *len(pos),
+                'RelCode': [self.db_letter.loc[id, 'RelCode']] * len(pos),
+                'WordCount': [len(words)] * len(words)
+                }
         
         # Creates a Pandas Dataframe from the dict
         df = pd.DataFrame(data) 
