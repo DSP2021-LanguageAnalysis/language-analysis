@@ -49,6 +49,15 @@ def create_dataframes():
     pos_counts = df.groupby(['ID', 'Tags', 'Year', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
     pos_counts['PosCountNorm'] = pos_counts['PosCount']/pos_counts['WordCount']*100
 
+    # Male/female noun ratio per year group
+    nn1_MF = df.groupby(['ID', 'Tags', 'Year', 'WordCount', 'SenderSex']).size().to_frame(name = 'SenderSexCount').reset_index()
+    nn1_MF['PosCountNorm'] = pos_counts['PosCount']/pos_counts['WordCount']
+    nn1_MF = nn1_MF[nn1_MF['Tags'] == 'NN1']
+    nn1_MF = nn1_MF.groupby(['Year', 'SenderSex']).mean().reset_index()
+    nn1_MF = nn1_MF.drop(['WordCount','SenderSexCount'], axis=1)
+    #app.logger.info(nn1_MF)
+    #print(nn1_MF)
+
     # NN1 tag count per year
     nn1_counts = pos_counts[pos_counts['Tags'] == 'NN1']
     nn1_counts = nn1_counts.groupby(['Year']).mean().reset_index()
@@ -56,12 +65,13 @@ def create_dataframes():
     pos_set = set(df['Tags'])
     pos_list = [{'label':tag, 'value':tag} for tag in pos_set]
 
-    return word_counts, pos_counts, nn1_counts, pos_list
+    return word_counts, pos_counts, nn1_counts, pos_list, nn1_MF
 
 
-word_counts, pos_counts, nn1_counts, pos_list = create_dataframes()
+word_counts, pos_counts, nn1_counts, pos_list, nn1_MF = create_dataframes()
 
 wc_fig = px.scatter(word_counts, x="Year", y="WordCount", title='Word count for each letter in corpus')
+fm_fig = px.bar(nn1_MF, x="Year", y="PosCountNorm", color='SenderSex', barmode='group')
 #pc_fig = px.line(nn1_counts, x="Year", y="PosCountNorm")
 
 app.layout = html.Div(children=[
@@ -85,6 +95,14 @@ app.layout = html.Div(children=[
                 figure=wc_fig
             )])
 
+    # POS NN1 F/M
+    , html.Div(
+        children=[
+            dcc.Graph(
+                id='M/F gaph',
+                figure=fm_fig
+            )])
+
     # POS amount per year
     , html.Div(
         children=[
@@ -95,6 +113,7 @@ app.layout = html.Div(children=[
                 value=['NN1'],
                 multi=True
             )])
+
 
     # POS group comparison
     , html.Div(
