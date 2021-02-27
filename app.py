@@ -103,6 +103,20 @@ app.layout = html.Div(children=[
                 figure=fm_fig
             )])
 
+    # POS NN1 F/M with year grouping
+    , html.Div(
+        children=[
+            dcc.Graph(
+                id='m-f-graph-year-grouping')
+            , html.P('Number of year groups:', style={'display': 'inline-block', 'width': '10%'})
+            , dcc.Input(
+                id="year-group-number", 
+                type="number", 
+                placeholder="input number of groups",
+                value=10,
+                style={'display': 'inline-block'}
+            )])
+
     # POS amount per year
     , html.Div(
         children=[
@@ -178,6 +192,24 @@ def display_grouped_pos_graphs(values1, values2):
             name='Group 2')
         fig.update_layout(yaxis_range=[0,50], title='Build POS groups and compare')
         return fig
+
+
+@app.callback(
+    Output('m-f-graph-year-grouping', 'figure'), 
+    [Input('year-group-number', 'value')])
+
+def display_grouped_pos_graphs(value):
+    if value is None:
+        raise PreventUpdate
+    else:
+        bins = pd.interval_range(start=1700, end=1800, periods=value, closed='right')
+        labels = list(bins.astype(str))
+        df = nn1_MF.copy()
+        df['Year'] = df['Year'].astype('int')
+        df['YearGroup'] = pd.cut(df['Year'], bins=bins,include_lowest=True, labels=labels, precision=0)
+        df['YearGroup'] = df['YearGroup'].astype("str")
+        df = df.groupby(['YearGroup', 'SenderSex']).mean().reset_index()
+        return px.bar(df, x="YearGroup", y="PosCountNorm", color='SenderSex', barmode='group', title='Dynamically group years')  
 
 
 if __name__ == '__main__':
