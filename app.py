@@ -9,13 +9,14 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_auth
 from dash.exceptions import PreventUpdate
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 import pandas as pd
 from data_parser import DataParser
+from topic_model import prepare_data, filter_by_tag, train_lda
 
 # Keep this out of source code repository - save in a file or a database
 # Here just to demonstrate this authentication possibility
@@ -36,11 +37,11 @@ auth = dash_auth.BasicAuth(
     VALID_USERNAME_PASSWORD_PAIRS
 )
 
+# Parse letters to a Pandas DataFrame
+data_parser = DataParser()
+df = data_parser.letters_to_df()
 
 def create_dataframes():
-    # Parse letters to a Pandas DataFrame
-    data_parser = DataParser()
-    df = data_parser.letters_to_df()
 
     # Word count DataFrame
     word_counts = df.groupby(['ID', 'Year']).size().to_frame(name = 'WordCount').reset_index()
@@ -78,85 +79,174 @@ wc_fig = px.scatter(word_counts, x="Year", y="WordCount", title='Word count for 
 fm_fig = px.bar(nn1_MF, x="Year", y="PosCountNorm", color='SenderSex', barmode='group')
 #pc_fig = px.line(nn1_counts, x="Year", y="PosCountNorm")
 
-app.layout = html.Div(children=[
-    # We could possible divide the app into multiple tabs, then user could 
-    # change the visible layout by clicking nav bar items. However, data should
-    # most likely be stored outside the layout as otherwise changin tab will
-    # result in data loss.
-    html.Nav(
-        className ='navbar navbar-expand-lg navbar-dark bg-primary', 
-        children=[
-            html.H1(className='navbar-brand', children='Data Science Project: Language variation')
-            # , html.A('Tab1', className="nav-item nav-link", href='/apps/Tab1')
-            # , html.A('Tab2', className="nav-item nav-link", href='/apps/Tab2')
-        ]) 
+app.layout = html.Div(
+    dcc.Tabs([
+        dcc.Tab(label='POS tag visualisation', children=[
+        # We could possible divide the app into multiple tabs, then user could 
+        # change the visible layout by clicking nav bar items. However, data should
+        # most likely be stored outside the layout as otherwise changin tab will
+        # result in data loss.
+            html.Nav(
+                className ='navbar navbar-expand-lg navbar-dark bg-primary', 
+                children=[
+                    html.H1(className='navbar-brand', children='Data Science Project: Language variation')
+                    # , html.A('Tab1', className="nav-item nav-link", href='/apps/Tab1')
+                    # , html.A('Tab2', className="nav-item nav-link", href='/apps/Tab2')
+            ]) 
 
-    # Simple word count graph    
-    , html.Div(
-        children=[
-            dcc.Graph(
-                id='word-count-graph',
-                figure=wc_fig
-            )])
+            # Simple word count graph    
+            , html.Div(
+                children=[
+                    dcc.Graph(
+                        id='word-count-graph',
+                        figure=wc_fig
+                    )])
 
-    # POS NN1 F/M
-    , html.Div(
-        children=[
-            dcc.Graph(id='M/F_barChart',)
-            , dcc.Dropdown(
-                id='F/M_dropdown_1',
-                options=pos_list,
-                value=['NN1'],
-                multi=True
-            )])
+            # POS NN1 F/M
+            , html.Div(
+                children=[
+                    dcc.Graph(id='M/F_barChart',)
+                    , dcc.Dropdown(
+                        id='F/M_dropdown_1',
+                        options=pos_list,
+                        value=['NN1'],
+                        multi=True
+                    )])
 
-    # POS NN1 F/M with year grouping
-    , html.Div(
-        children=[
-            dcc.Graph(
-                id='m-f-graph-year-grouping')
-            , html.P('Number of year groups:', style={'display': 'inline-block', 'width': '10%'})
-            , dcc.Input(
-                id="year-group-number", 
-                type="number", 
-                placeholder="input number of groups",
-                value=10,
-                style={'display': 'inline-block'}
-            )])
+            # POS NN1 F/M with year grouping
+            , html.Div(
+                children=[
+                    dcc.Graph(
+                        id='m-f-graph-year-grouping')
+                    , html.P('Number of year groups:', style={'display': 'inline-block', 'width': '10%'})
+                    , dcc.Input(
+                        id="year-group-number", 
+                        type="number", 
+                        placeholder="input number of groups",
+                        value=10,
+                        style={'display': 'inline-block'}
+                    )])
 
-    
+        
 
-    # POS amount per year
-    , html.Div(
-        children=[
-            dcc.Graph(id='pos_graph')
-            , dcc.Dropdown(
-                id='pos_dropdown',
-                options=pos_list,
-                value=['NN1'],
-                multi=True
-            )])
+            # POS amount per year
+            , html.Div(
+                children=[
+                    dcc.Graph(id='pos_graph')
+                    , dcc.Dropdown(
+                        id='pos_dropdown',
+                        options=pos_list,
+                        value=['NN1'],
+                        multi=True
+                    )])
 
 
-    # POS group comparison
-    , html.Div(
-        children=[
-            dcc.Graph(id='pos_groups_graph')
-            , html.P(children='Group 1')
-            , dcc.Dropdown(
-                id='pos_groups_dropdown_1',
-                options=pos_list,
-                value=['NN', 'NN1'],
-                multi=True
-            )  
-            , html.P(children='Group 2')
-            , dcc.Dropdown(
-                id='pos_groups_dropdown_2',
-                options=pos_list,
-                value=['VBR', 'VB'],
-                multi=True
-            )])])
+            # POS group comparison
+            , html.Div(
+                children=[
+                    dcc.Graph(id='pos_groups_graph')
+                    , html.P(children='Group 1')
+                    , dcc.Dropdown(
+                        id='pos_groups_dropdown_1',
+                        options=pos_list,
+                        value=['NN', 'NN1'],
+                        multi=True
+                    )  
+                    , html.P(children='Group 2')
+                    , dcc.Dropdown(
+                        id='pos_groups_dropdown_2',
+                        options=pos_list,
+                        value=['VBR', 'VB'],
+                        multi=True
+                    )
+                ]
+            )
+        ]),
+        # Tab for the topic model selection and visualisation
+        dcc.Tab(label='Topic modeling', children=[
+            html.Nav(
+                className ='navbar navbar-expand-lg navbar-dark bg-primary', 
+                children=[
+                    html.H1(className='navbar-brand', children='Data Science Project: Language variation')
+            ]) 
+            , html.Div(
+                children=[
+                    html.Br()
+                    , html.H4(children='Create a topic model with LDA')
+                    , html.Br()
+                    , html.Div(children=[
+                        'Select the number of topics: '
+                        , dcc.Input( 
+                            id='num-topics',
+                            type='number',
+                            value=5
+                        )
+                    ])
+                    , html.Div(children=[
+                        html.Br()
+                        , 'Select the POS tags to be used in the model: '
+                        , dcc.Dropdown(
+                            id='filter-tags',
+                            options=pos_list,
+                            value=['NN1'],
+                            multi=True
+                        )
+                    ])
+                ]
+            )
+            , html.Br()
+            # Button that initiates model training with the given variables
+            , html.Button('Train model', id='button', n_clicks = 0)
+            , html.Br()
+            # Div-element that shows the top topics from the trained model
+            , html.Div(id='top-topics')
+        ])
+    ])
+)
 
+# Function that generates Dash table from Pandas dataframe
+def generate_table(dataframe):
+    return html.Table([
+        html.Thead(
+            html.Tr([html.Th(col) for col in dataframe.columns])
+        ),
+        html.Tbody([
+            html.Tr([
+                html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
+            ]) for i in range(len(dataframe))
+        ])
+    ])
+
+# Callback function for the topic model tab
+@app.callback(
+    Output('top-topics', 'children'),
+    Input('button', 'n_clicks'), # Only pressing the button initiates the function
+    State('num-topics', 'value'), # Parameters given by the user are saved in State
+    State('filter-tags', 'value'))
+def model_params(clicks, num_topics, filter_tags):
+    if clicks > 0:
+        # Uses the functions imported from topic_model.py
+        data = filter_by_tag(df, filter_tags)
+        corpus, dictionary, docs = prepare_data(data)
+        model, top_topics = train_lda(corpus, dictionary, num_topics)
+
+        # Loop that creates a dataframe from the LDA top topics list
+        i=1
+        topic_dict = {}
+        for topic in top_topics:
+            words = []
+            scores = []
+            for t in topic[0]:
+                words.append(t[1])
+                scores.append(t[0])
+            topic_dict['Topic {}: words'.format(i)] =  words 
+            topic_dict['Topic {}: scores'.format(i)] =  scores
+            i += 1
+
+        dataframe = pd.DataFrame(topic_dict)
+        table = generate_table(dataframe)
+
+        return table
 
 @app.callback(Output('pos_graph', 'figure'), [Input('pos_dropdown', 'value')])
 
