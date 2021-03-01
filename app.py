@@ -79,23 +79,15 @@ wc_fig = px.scatter(word_counts, x="Year", y="WordCount", title='Word count for 
 fm_fig = px.bar(nn1_MF, x="Year", y="PosCountNorm", color='SenderSex', barmode='group')
 #pc_fig = px.line(nn1_counts, x="Year", y="PosCountNorm")
 
-app.layout = html.Div(
-    dcc.Tabs([
+app.layout = html.Div([
+    html.Nav(
+        className ='navbar navbar-expand-lg navbar-dark bg-primary', 
+        children=[
+            html.H1(className='navbar-brand', children='Data Science Project: Language variation')]) 
+    , dcc.Tabs([
         dcc.Tab(label='POS tag visualisation', children=[
-        # We could possible divide the app into multiple tabs, then user could 
-        # change the visible layout by clicking nav bar items. However, data should
-        # most likely be stored outside the layout as otherwise changin tab will
-        # result in data loss.
-            html.Nav(
-                className ='navbar navbar-expand-lg navbar-dark bg-primary', 
-                children=[
-                    html.H1(className='navbar-brand', children='Data Science Project: Language variation')
-                    # , html.A('Tab1', className="nav-item nav-link", href='/apps/Tab1')
-                    # , html.A('Tab2', className="nav-item nav-link", href='/apps/Tab2')
-            ]) 
-
             # Simple word count graph    
-            , html.Div(
+            html.Div(
                 children=[
                     dcc.Graph(
                         id='word-count-graph',
@@ -127,8 +119,6 @@ app.layout = html.Div(
                         style={'display': 'inline-block'}
                     )])
 
-        
-
             # POS amount per year
             , html.Div(
                 children=[
@@ -139,7 +129,6 @@ app.layout = html.Div(
                         value=['NN1'],
                         multi=True
                     )])
-
 
             # POS group comparison
             , html.Div(
@@ -164,12 +153,7 @@ app.layout = html.Div(
         ]),
         # Tab for the topic model selection and visualisation
         dcc.Tab(label='Topic modeling', children=[
-            html.Nav(
-                className ='navbar navbar-expand-lg navbar-dark bg-primary', 
-                children=[
-                    html.H1(className='navbar-brand', children='Data Science Project: Language variation')
-            ]) 
-            , html.Div(
+            html.Div(
                 children=[
                     html.Br()
                     , html.H4(children='Create a topic model with LDA')
@@ -202,7 +186,7 @@ app.layout = html.Div(
             , html.Div(id='top-topics')
         ])
     ])
-)
+])
 
 # Function that generates Dash table from Pandas dataframe
 def generate_table(dataframe):
