@@ -61,7 +61,6 @@ def create_dataframes():
     # Male/female noun ratio per tag
     tag_MF = df.groupby(['ID', 'Tags', 'Year', 'WordCount', 'SenderSex']).size().to_frame(name = 'SenderSexCount').reset_index()
     tag_MF['PosCountNorm'] = pos_counts['PosCount']/pos_counts['WordCount']*100
-    
 
     # NN1 tag count per year
     nn1_counts = pos_counts[pos_counts['Tags'] == 'NN1']
@@ -119,6 +118,29 @@ app.layout = html.Div([
                         placeholder="input number of groups",
                         value=10,
                         style={'display': 'inline-block'}
+                    )])
+
+            # Dynamic attribute selection
+            , html.Div(
+                children=[
+                    dcc.Graph(id='dynamic-attribute-bar',)
+
+                    , "Select an attribute"
+                    , dcc.Dropdown(
+                        id='dynamic-attribute-selection',
+                        options=[
+                            {'label': 'SenderSex', 'value': 'SenderSex'},
+                            {'label': 'SenderRank', 'value': 'SenderRank'}
+                        ],
+                        value='SenderSex',
+                        multi=False
+                    )
+                    , html.Br()
+                    , "Select attribute values to show"
+                    , dcc.Dropdown(
+                        id='dynamic-subattribute-selection',
+                        value=['M', 'F'],
+                        multi=True
                     )])
 
             # POS amount per year
@@ -369,6 +391,42 @@ def display_multiple_tags_barchart(values):
             barmode='group',
             title='Compare male and female tags')
         return fig
+
+@app.callback(
+    Output('dynamic-attribute-bar', 'figure'), 
+    Output('dynamic-subattribute-selection', 'options'),
+    Output('dynamic-subattribute-selection', 'value'),
+    Input('dynamic-attribute-selection', 'value'),
+    State('dynamic-subattribute-selection', 'value'))
+
+def dynamic_attributes(input1, input2):
+    if input1 is None or input2 is None:
+        raise PreventUpdate
+    else:
+        value = list(df[input1].unique())
+        options = [{'label':tag, 'value':tag} for tag in value]
+
+        new_df = df.groupby(['ID', 'Tags', 'Year', 'WordCount', input1]).size().to_frame(name = 'AttributeCount').reset_index()
+        new_df['PosCountNorm'] = pos_counts['PosCount']/pos_counts['WordCount']*100
+        attr_mask = new_df[input1].isin(input2)
+        pos_mask = new_df['Tags'].isin(['NN1'])
+        mask = pd.concat((attr_mask, pos_mask), axis=1)
+        new_df = new_df[pos_mask]
+        new_df = new_df[attr_mask]
+        fig= px.bar(
+            # can choose only one tag at a time
+            data_frame=new_df.groupby(['Year', input1]).mean().reset_index(),
+            x='Year', 
+            y='PosCountNorm',
+            range_y=[0,30],
+            labels={
+                'Year': 'Year', 
+                'PosCountNorm':'Percentage of Tag'},
+            color=input1,
+            barmode='group',
+            title='Compare tags of selected attribute')
+        return fig, options, value
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
