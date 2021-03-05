@@ -40,20 +40,25 @@ def prepare_data(data):
     
     return corpus, dictionary, docs
 
+# Filter the data based on the POS tags 
 def filter_by_tag(data, tags):
-    
-    # Select only words with the given tags 
     tag_data = data.loc[data['Tags'].isin(tags)]
     
     return tag_data
 
+# Filter the data based on the gender of the author
 def filter_by_sex(data, sex):
-
-    # Filterthe data based on the sex of the author
-    filtered = data.loc[data['SenderSex'] == sex]
+    gender_data = data.loc[data['SenderSex'] == sex]
     
-    return filtered
+    return gender_data
 
+# Filter the data based on the rank of the author
+def filter_by_rank(data, rank):
+    rank_data = data.loc[data['SenderRank'].isin(rank)]
+    
+    return rank_data
+
+# Train the LDA topic model
 def train_lda(data, dictionary, n_topics):
     
     # Set training parameters.

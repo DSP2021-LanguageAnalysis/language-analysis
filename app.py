@@ -16,7 +16,7 @@ import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 import pandas as pd
 from data_parser import DataParser
-from topic_model import prepare_data, filter_by_tag, train_lda, filter_by_sex
+from topic_model import prepare_data, filter_by_tag, train_lda, filter_by_sex, filter_by_rank
 
 # Keep this out of source code repository - save in a file or a database
 # Here just to demonstrate this authentication possibility
@@ -70,10 +70,12 @@ def create_dataframes():
     pos_set = set(df['Tags'])
     pos_list = [{'label':tag, 'value':tag} for tag in pos_set]
 
-    return word_counts, pos_counts, nn1_counts, pos_list, nn1_MF, tag_MF
+    rank_set = set(df['SenderRank'])
+    rank_list = [{'label':rank, 'value':rank} for rank in rank_set]
 
+    return word_counts, pos_counts, nn1_counts, pos_list, rank_set, rank_list, nn1_MF, tag_MF
 
-word_counts, pos_counts, nn1_counts, pos_list, nn1_MF, tag_MF = create_dataframes()
+word_counts, pos_counts, nn1_counts, pos_list, rank_set, rank_list, nn1_MF, tag_MF = create_dataframes()
 
 wc_fig = px.scatter(word_counts, x="Year", y="WordCount", title='Word count for each letter in corpus')
 fm_fig = px.bar(nn1_MF, x="Year", y="PosCountNorm", color='SenderSex', barmode='group')
@@ -158,34 +160,57 @@ app.layout = html.Div([
                     html.Br()
                     , html.H4(children='Create a topic model with LDA')
                     , html.Br()
+                    , html.H5(children='Set model parameters')
+                    , html.Br()
                     , html.Div(children=[
                         'Select the number of topics: '
+                        # Dash Input component for setting the number of topics
                         , dcc.Input( 
                             id='num-topics',
                             type='number',
                             value=5
                         )
                     ])
+                    , html.Br()
+                    , html.H5(children='Filter data by POS tags')
+                    , html.Br()
                     , html.Div(children=[
-                        html.Br()
-                        , 'Select the POS tags to be used in the model: '
-                        , dcc.Dropdown(
-                            id='filter-tags',
+                        # Dash Dropdown component for selecting the tags for filtering the data
+                        dcc.Dropdown(
+                            id='tags-filter',
                             options=pos_list,
                             value=['NN1'],
                             multi=True
                         )
                     ])
                     , html.Br()
-                    , dcc.RadioItems(
-                        id='gender-filter',
-                        options=[
-                            {'label': 'All', 'value': 'A'},
-                            {'label': 'Women', 'value': 'F'},
-                            {'label': 'Men', 'value': 'M'}
-                        ],
-                        value='A'
-                    )  
+                    , html.H5(children='Filter by metadata')
+                    , html.Br()
+                    , html.Div(children=[
+                        'Select letters based on the sex of the sender: '
+                        # Dash RadioItems component for selecting the sex of the sender 
+                        # for filtering the data
+                        , dcc.RadioItems(
+                            id='gender-filter',
+                            options=[
+                                {'label': 'All', 'value': 'A'},
+                                {'label': 'Women', 'value': 'F'},
+                                {'label': 'Men', 'value': 'M'}
+                            ],
+                            value='A'
+                        )
+                    ])
+                    , html.Br()
+                    , html.Div(children=[ 
+                        'Select letters based on the rank of the sender: ' 
+                        # Dash Dropdown component for selecting the rank of the sender
+                        , dcc.Dropdown(
+                            id='rank-filter',
+                            options=rank_list,
+                            value=list(rank_set),
+                            multi=True
+                        )
+                    ])
                 ]
             )
             , html.Br()
@@ -216,16 +241,21 @@ def generate_table(dataframe):
     Output('top-topics', 'children'),
     Input('button', 'n_clicks'), # Only pressing the button initiates the function
     State('num-topics', 'value'), # Parameters given by the user are saved in State
-    State('filter-tags', 'value'),
-    State('gender-filter', 'value'))
-def model_params(clicks, num_topics, filter_tags, gender):
+    State('tags-filter', 'value'),
+    State('gender-filter', 'value'),
+    State('rank-filter', 'value'))
+def model_params(clicks, topics, tags, gender, rank):
     if clicks > 0:
         # Uses the functions imported from topic_model.py
-        data = filter_by_tag(df, filter_tags)
+        data = filter_by_tag(df, tags)
         if gender != 'A':
             data = filter_by_sex(data, gender)
+        if len(rank) != len(rank_set):
+            data = filter_by_rank(data, rank)
+        # Data preprocessing for the LDA model 
         corpus, dictionary, docs = prepare_data(data)
-        model, top_topics = train_lda(corpus, dictionary, num_topics)
+        # Creates the LDA topic model
+        model, top_topics = train_lda(corpus, dictionary, topics)
 
         # Loop that creates a dataframe from the LDA top topics list
         i=1
