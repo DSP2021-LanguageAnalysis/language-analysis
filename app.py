@@ -172,6 +172,16 @@ app.layout = html.Div([
                         )
                     ])
                     , html.Br()
+                    , html.Div(children=[
+                        'Select the number of iterations: '
+                        # Dash Input component for setting the number of iterations used in the LDA model training
+                        , dcc.Input( 
+                            id='num-iter',
+                            type='number',
+                            value=50
+                        )
+                    ])
+                    , html.Br()
                     , html.H5(children='Filter data by POS tags')
                     , html.Br()
                     , html.Div(children=[
@@ -241,10 +251,11 @@ def generate_table(dataframe):
     Output('top-topics', 'children'),
     Input('button', 'n_clicks'), # Only pressing the button initiates the function
     State('num-topics', 'value'), # Parameters given by the user are saved in State
+    State('num-iter', 'value'),
     State('tags-filter', 'value'),
     State('gender-filter', 'value'),
     State('rank-filter', 'value'))
-def model_params(clicks, topics, tags, gender, rank):
+def model_params(clicks, topics, iterations, tags, gender, rank):
     if clicks > 0:
         # Uses the functions imported from topic_model.py
         data = filter_by_tag(df, tags)
@@ -255,7 +266,7 @@ def model_params(clicks, topics, tags, gender, rank):
         # Data preprocessing for the LDA model 
         corpus, dictionary, docs = prepare_data(data)
         # Creates the LDA topic model
-        model, top_topics = train_lda(corpus, dictionary, topics)
+        model, top_topics = train_lda(corpus, dictionary, topics, iterations)
 
         # Loop that creates a dataframe from the LDA top topics list
         i=1

@@ -59,13 +59,13 @@ def filter_by_rank(data, rank):
     return rank_data
 
 # Train the LDA topic model
-def train_lda(data, dictionary, n_topics):
+def train_lda(data, dictionary, n_topics, n_iter):
     
     # Set training parameters.
     num_topics = n_topics
     chunksize = 1000
     passes = 1
-    iterations = 100
+    iterations = n_iter
     eval_every = None  
 
 
