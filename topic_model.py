@@ -47,6 +47,13 @@ def filter_by_tag(data, tags):
     
     return tag_data
 
+def filter_by_sex(data, sex):
+
+    # Filterthe data based on the sex of the author
+    filtered = data.loc[data['SenderSex'] == sex]
+    
+    return filtered
+
 def train_lda(data, dictionary, n_topics):
     
     # Set training parameters.

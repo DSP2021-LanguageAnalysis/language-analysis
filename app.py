@@ -16,7 +16,7 @@ import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 import pandas as pd
 from data_parser import DataParser
-from topic_model import prepare_data, filter_by_tag, train_lda
+from topic_model import prepare_data, filter_by_tag, train_lda, filter_by_sex
 
 # Keep this out of source code repository - save in a file or a database
 # Here just to demonstrate this authentication possibility
@@ -176,6 +176,16 @@ app.layout = html.Div([
                             multi=True
                         )
                     ])
+                    , html.Br()
+                    , dcc.RadioItems(
+                        id='gender-filter',
+                        options=[
+                            {'label': 'All', 'value': 'A'},
+                            {'label': 'Women', 'value': 'F'},
+                            {'label': 'Men', 'value': 'M'}
+                        ],
+                        value='A'
+                    )  
                 ]
             )
             , html.Br()
@@ -206,11 +216,14 @@ def generate_table(dataframe):
     Output('top-topics', 'children'),
     Input('button', 'n_clicks'), # Only pressing the button initiates the function
     State('num-topics', 'value'), # Parameters given by the user are saved in State
-    State('filter-tags', 'value'))
-def model_params(clicks, num_topics, filter_tags):
+    State('filter-tags', 'value'),
+    State('gender-filter', 'value'))
+def model_params(clicks, num_topics, filter_tags, gender):
     if clicks > 0:
         # Uses the functions imported from topic_model.py
         data = filter_by_tag(df, filter_tags)
+        if gender != 'A':
+            data = filter_by_sex(data, gender)
         corpus, dictionary, docs = prepare_data(data)
         model, top_topics = train_lda(corpus, dictionary, num_topics)
 
