@@ -8,8 +8,10 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_auth
+import dash_table
 from dash.exceptions import PreventUpdate
 from dash.dependencies import Input, Output, State
+from dash import no_update
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objs as go
@@ -17,6 +19,8 @@ from plotly.subplots import make_subplots
 import pandas as pd
 from data_parser import DataParser
 from topic_model import prepare_data, filter_by_tag, train_lda, filter_by_sex, filter_by_rank
+import pyLDAvis
+import pyLDAvis.gensim
 
 # Keep this out of source code repository - save in a file or a database
 # Here just to demonstrate this authentication possibility
@@ -247,13 +251,19 @@ app.layout = html.Div([
             # Button that initiates model training with the given variables
             , html.Button('Train model', id='button', n_clicks = 0)
             , html.Br()
-            # Div-element that shows the top topics from the trained model
+            # Loading-element wraps the LDA model visualisations
             , dcc.Loading(
                 id="loading",
                 type="circle",
                 fullscreen = True,
-                children=html.Div(id="top-topics")
-            )
+                children=[
+                    # Table-element that shows the top topics from the trained model
+                    dash_table.DataTable(id="top-topics", data=[])
+                    , html.Br()
+                    # Iframe-element is used to serve the pyLDAvis visualization in html form
+                    , html.Iframe(id='pyldavis-vis',
+                        style=dict(position="absolute", width="100%", height="100%"))]
+            )          
         ])
     ])
 ])
@@ -273,7 +283,9 @@ def generate_table(dataframe):
 
 # Callback function for the topic model tab
 @app.callback(
-    Output('top-topics', 'children'),
+    Output('top-topics', 'data'),
+    Output('top-topics', 'columns'),
+    Output('pyldavis-vis', 'srcDoc'),
     Input('button', 'n_clicks'), # Only pressing the button initiates the function
     State('num-topics', 'value'), # Parameters given by the user are saved in State
     State('num-iter', 'value'),
@@ -307,9 +319,17 @@ def model_params(clicks, topics, iterations, tags, gender, rank):
             i += 1
 
         dataframe = pd.DataFrame(topic_dict)
-        table = generate_table(dataframe)
+        cols = [{"name": i, "id": i} for i in dataframe.columns]
 
-        return table
+        # Creates the pyLDAvis visualisation of the LDA model
+        vis_data = pyLDAvis.gensim.prepare(model, corpus, dictionary)
+        html_vis = pyLDAvis.prepared_data_to_html(vis_data, template_type='general')
+
+        return dataframe.to_dict('records'), cols, html_vis
+
+    else:
+        return no_update, no_update, no_update         
+
 
 @app.callback(Output('pos_graph', 'figure'), [Input('pos_dropdown', 'value')])
 
