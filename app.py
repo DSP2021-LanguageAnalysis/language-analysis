@@ -358,13 +358,14 @@ def display_multiple_tags_barchart(values):
         mask = tag_MF['Tags'].isin(values)
         fig= px.bar(
             # can choose only one tag at a time
-            data_frame=tag_MF[mask].groupby(['Year', 'SenderSex']).mean().reset_index(),
+            data_frame=tag_MF[mask].groupby(['Year', 'SenderSex', 'Tags']).mean().reset_index(),
             x='Year', 
             y='PosCountNorm',
             range_y=[0,30],
             labels={
                 'Year': 'Year', 
-                'PosCountNorm':'Percentage of Tag'},
+                'PosCountNorm':'Percentage'},
+            hover_data=['Tags'],
             color='SenderSex',
             barmode='group',
             title='Compare male and female tags')
