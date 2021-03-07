@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem.wordnet import WordNetLemmatizer
 from gensim.corpora import Dictionary
@@ -67,6 +68,9 @@ def train_lda(data, dictionary, n_topics, n_iter):
     passes = 1
     iterations = n_iter
     eval_every = None  
+    # Set random seed
+    random_seed = 135
+    state = np.random.RandomState(random_seed)
 
 
     # Train LDA model.
@@ -79,7 +83,8 @@ def train_lda(data, dictionary, n_topics, n_iter):
         iterations=iterations,
         num_topics=num_topics,
         passes=passes,
-        eval_every=eval_every
+        eval_every=eval_every,
+        random_state=state
     )
     
     top_topics = model.top_topics(data)
