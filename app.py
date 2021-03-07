@@ -90,98 +90,101 @@ app.layout = html.Div([
             html.H1(className='navbar-brand', children='Data Science Project: Language variation')]) 
     , dcc.Tabs([
         dcc.Tab(label='POS tag visualisation', children=[
-            # Simple word count graph    
-            html.Div(
-                children=[
-                    dcc.Graph(
-                        id='word-count-graph',
-                        figure=wc_fig
-                    )])
+            dcc.Tabs([
+                dcc.Tab(label='Scatter', children=[
+                    # Simple word count graph    
+                    html.Div(
+                        children=[
+                            dcc.Graph(
+                                id='word-count-graph',
+                                figure=wc_fig
+                            )])])
+                , dcc.Tab(label='Bar', children=[
+                    # POS NN1 F/M
+                    html.Div(
+                        children=[
+                            dcc.Graph(id='M/F_barChart',)
+                            , dcc.Dropdown(
+                                id='F/M_dropdown_1',
+                                options=pos_list,
+                                value=['NN1'],
+                                multi=True
+                            )])
 
-            # POS NN1 F/M
-            , html.Div(
-                children=[
-                    dcc.Graph(id='M/F_barChart',)
-                    , dcc.Dropdown(
-                        id='F/M_dropdown_1',
-                        options=pos_list,
-                        value=['NN1'],
-                        multi=True
-                    )])
+                    # POS NN1 F/M with year grouping
+                    , html.Div(
+                        children=[
+                            dcc.Graph(
+                                id='m-f-graph-year-grouping')
+                            , html.P('Number of year groups:', style={'display': 'inline-block', 'width': '10%'})
+                            , dcc.Input(
+                                id="year-group-number", 
+                                type="number", 
+                                placeholder="input number of groups",
+                                value=10,
+                                style={'display': 'inline-block'}
+                            )])
 
-            # POS NN1 F/M with year grouping
-            , html.Div(
-                children=[
-                    dcc.Graph(
-                        id='m-f-graph-year-grouping')
-                    , html.P('Number of year groups:', style={'display': 'inline-block', 'width': '10%'})
-                    , dcc.Input(
-                        id="year-group-number", 
-                        type="number", 
-                        placeholder="input number of groups",
-                        value=10,
-                        style={'display': 'inline-block'}
-                    )])
+                    # Dynamic attribute selection
+                    , html.Div(
+                        children=[
+                            dcc.Graph(id='dynamic-attribute-bar',)
 
-            # Dynamic attribute selection
-            , html.Div(
-                children=[
-                    dcc.Graph(id='dynamic-attribute-bar',)
+                            , "Select an attribute"
+                            , dcc.Dropdown(
+                                id='dynamic-attribute-selection',
+                                options=[
+                                    {'label': 'SenderSex', 'value': 'SenderSex'},
+                                    {'label': 'SenderRank', 'value': 'SenderRank'}
+                                ],
+                                value='SenderSex',
+                                multi=False
+                            )
+                            , dcc.Dropdown(
+                                id='dynamic-subattribute-selection',
+                                options=[
+                                    {'label': 'M', 'value': 'M'},
+                                    {'label': 'F', 'value': 'F'}
+                                ],
+                                value=['M', 'F'],
+                                multi=True
+                            )
+                            , html.Br() 
+                            # Button that initiates model training with the given variables
+                            , html.Button('Apply selection', id='pos_button', n_clicks = 0)])
+                ])
+                , dcc.Tab(label='Line', children=[
+                    # POS amount per year
+                    html.Div(
+                        children=[
+                            dcc.Graph(id='pos_graph')
+                            , dcc.Dropdown(
+                                id='pos_dropdown',
+                                options=pos_list,
+                                value=['NN1'],
+                                multi=True
+                            )])
 
-                    , "Select an attribute"
-                    , dcc.Dropdown(
-                        id='dynamic-attribute-selection',
-                        options=[
-                            {'label': 'SenderSex', 'value': 'SenderSex'},
-                            {'label': 'SenderRank', 'value': 'SenderRank'}
-                        ],
-                        value='SenderSex',
-                        multi=False
-                    )
-                    , dcc.Dropdown(
-                        id='dynamic-subattribute-selection',
-                        options=[
-                            {'label': 'M', 'value': 'M'},
-                            {'label': 'F', 'value': 'F'}
-                        ],
-                        value=['M', 'F'],
-                        multi=True
-                    )
-                    , html.Br() 
-                    # Button that initiates model training with the given variables
-                    , html.Button('Apply selection', id='pos_button', n_clicks = 0)])
-
-            # POS amount per year
-            , html.Div(
-                children=[
-                    dcc.Graph(id='pos_graph')
-                    , dcc.Dropdown(
-                        id='pos_dropdown',
-                        options=pos_list,
-                        value=['NN1'],
-                        multi=True
-                    )])
-
-            # POS group comparison
-            , html.Div(
-                children=[
-                    dcc.Graph(id='pos_groups_graph')
-                    , html.P(children='Group 1')
-                    , dcc.Dropdown(
-                        id='pos_groups_dropdown_1',
-                        options=pos_list,
-                        value=['NN', 'NN1'],
-                        multi=True
-                    )  
-                    , html.P(children='Group 2')
-                    , dcc.Dropdown(
-                        id='pos_groups_dropdown_2',
-                        options=pos_list,
-                        value=['VBR', 'VB'],
-                        multi=True
-                    )
-                ]
-            )
+                    # POS group comparison
+                    , html.Div(
+                        children=[
+                            dcc.Graph(id='pos_groups_graph')
+                            , html.P(children='Group 1')
+                            , dcc.Dropdown(
+                                id='pos_groups_dropdown_1',
+                                options=pos_list,
+                                value=['NN', 'NN1'],
+                                multi=True
+                            )  
+                            , html.P(children='Group 2')
+                            , dcc.Dropdown(
+                                id='pos_groups_dropdown_2',
+                                options=pos_list,
+                                value=['VBR', 'VB'],
+                                multi=True)
+                            ])
+                ])
+            ])
         ]),
         # Tab for the topic model selection and visualisation
         dcc.Tab(label='Topic modeling', children=[
