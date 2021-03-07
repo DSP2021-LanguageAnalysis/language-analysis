@@ -118,22 +118,29 @@ app.layout = html.Div([
                     # POS NN1 F/M with year grouping
                     , html.Div(
                         children=[
-                            dcc.Graph(
-                                id='m-f-graph-year-grouping')
-                            , html.P('Number of year groups:', style={'display': 'inline-block', 'width': '10%'})
+                            dcc.Graph(id='m-f-graph-year-grouping')
+                            , "Select the number of year groups"
+                            , html.Br()
                             , dcc.Input(
                                 id="year-group-number", 
                                 type="number", 
                                 placeholder="input number of groups",
-                                value=10,
-                                style={'display': 'inline-block'}
+                                value=10
                             )])
 
                     # Dynamic attribute selection
                     , html.Div(
                         children=[
-                            dcc.Graph(id='dynamic-attribute-bar',)
-
+                            dcc.Graph(id='dynamic-attribute-bar')
+                            , "Select the number of year groups"
+                            , html.Br()
+                            , dcc.Input(
+                                id="pos-year-group-number", 
+                                type="number", 
+                                placeholder="input number of groups",
+                                value=10
+                            )
+                            , html.Br() 
                             , "Select an attribute"
                             , dcc.Dropdown(
                                 id='dynamic-attribute-selection',
@@ -464,9 +471,10 @@ def pos_selection(input1):
     Output('dynamic-attribute-bar', 'figure'), 
     Input('pos_button', 'n_clicks'), # Only pressing the button initiates the function
     State('dynamic-attribute-selection', 'value'),
-    State('dynamic-subattribute-selection', 'value'))
-def pos_dynamic_attributes(clicks, input1, input2):
-    fig = pos_tab.dynamic_attributes(df, pos_counts, input1, input2)
+    State('dynamic-subattribute-selection', 'value'),
+    State('pos-year-group-number', 'value'))
+def pos_dynamic_attributes(clicks, input1, input2, period_count):
+    fig = pos_tab.dynamic_attributes(df, pos_counts, input1, input2, period_count)
     return fig
 
 
