@@ -163,7 +163,17 @@ app.layout = html.Div([
                     , html.H5(children='Set model parameters')
                     , html.Br()
                     , html.Div(children=[
-                        'Select the number of topics: '
+                        'Select the '
+                        , html.Span(
+                            'number of topics',
+                            id="tooltip-topics",
+                        style={"textDecoration": "underline", "cursor": "pointer"},
+                        )
+                        ,': '
+                        , dbc.Tooltip(
+                            'The number of requested latent topics to be extracted from the training corpus.',
+                            target="tooltip-topics",
+                        )
                         # Dash Input component for setting the number of topics
                         , dcc.Input( 
                             id='num-topics',
@@ -173,7 +183,17 @@ app.layout = html.Div([
                     ])
                     , html.Br()
                     , html.Div(children=[
-                        'Select the number of iterations: '
+                        'Select the '
+                        , html.Span(
+                            'number of iterations',
+                            id="tooltip-iterations",
+                            style={"textDecoration": "underline", "cursor": "pointer"},
+                        )
+                        ,': '
+                        , dbc.Tooltip(
+                            'Maximum number of iterations through the corpus when inferring the topic distribution of a corpus.',
+                            target="tooltip-iterations",
+                        )
                         # Dash Input component for setting the number of iterations used in the LDA model training
                         , dcc.Input( 
                             id='num-iter',
@@ -228,7 +248,12 @@ app.layout = html.Div([
             , html.Button('Train model', id='button', n_clicks = 0)
             , html.Br()
             # Div-element that shows the top topics from the trained model
-            , html.Div(id='top-topics')
+            , dcc.Loading(
+                id="loading",
+                type="circle",
+                fullscreen = True,
+                children=html.Div(id="top-topics")
+            )
         ])
     ])
 ])
@@ -278,7 +303,7 @@ def model_params(clicks, topics, iterations, tags, gender, rank):
                 words.append(t[1])
                 scores.append(t[0])
             topic_dict['Topic {}: words'.format(i)] =  words 
-            topic_dict['Topic {}: scores'.format(i)] =  scores
+            topic_dict['Topic {}: scores'.format(i)] = scores            
             i += 1
 
         dataframe = pd.DataFrame(topic_dict)
