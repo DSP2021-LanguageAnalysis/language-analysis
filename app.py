@@ -21,6 +21,7 @@ from data_parser import DataParser
 from topic_model import prepare_data, filter_by_tag, train_lda, filter_by_sex, filter_by_rank
 import pyLDAvis
 import pyLDAvis.gensim
+from pos_tab import PosTab
 
 # Keep this out of source code repository - save in a file or a database
 # Here just to demonstrate this authentication possibility
@@ -40,6 +41,8 @@ auth = dash_auth.BasicAuth(
     app,
     VALID_USERNAME_PASSWORD_PAIRS
 )
+
+pos_tab = PosTab()
 
 # Parse letters to a Pandas DataFrame
 data_parser = DataParser()
@@ -65,7 +68,6 @@ def create_dataframes():
     # Male/female noun ratio per tag
     tag_MF = df.groupby(['ID', 'Tags', 'Year', 'WordCount', 'SenderSex']).size().to_frame(name = 'SenderSexCount').reset_index()
     tag_MF['PosCountNorm'] = pos_counts['PosCount']/pos_counts['WordCount']*100
-    
 
     # NN1 tag count per year
     nn1_counts = pos_counts[pos_counts['Tags'] == 'NN1']
@@ -92,70 +94,101 @@ app.layout = html.Div([
             html.H1(className='navbar-brand', children='Data Science Project: Language variation')]) 
     , dcc.Tabs([
         dcc.Tab(label='POS tag visualisation', children=[
-            # Simple word count graph    
-            html.Div(
-                children=[
-                    dcc.Graph(
-                        id='word-count-graph',
-                        figure=wc_fig
-                    )])
+            dcc.Tabs([
+                dcc.Tab(label='Scatter', children=[
+                    # Simple word count graph    
+                    html.Div(
+                        children=[
+                            dcc.Graph(
+                                id='word-count-graph',
+                                figure=wc_fig
+                            )])])
+                , dcc.Tab(label='Bar', children=[
+                    # POS NN1 F/M
+                    html.Div(
+                        children=[
+                            dcc.Graph(id='M/F_barChart',)
+                            , dcc.Dropdown(
+                                id='F/M_dropdown_1',
+                                options=pos_list,
+                                value=['NN1'],
+                                multi=True
+                            )])
 
-            # POS NN1 F/M
-            , html.Div(
-                children=[
-                    dcc.Graph(id='M/F_barChart',)
-                    , dcc.Dropdown(
-                        id='F/M_dropdown_1',
-                        options=pos_list,
-                        value=['NN1'],
-                        multi=True
-                    )])
+                    # POS NN1 F/M with year grouping
+                    , html.Div(
+                        children=[
+                            dcc.Graph(
+                                id='m-f-graph-year-grouping')
+                            , html.P('Number of year groups:', style={'display': 'inline-block', 'width': '10%'})
+                            , dcc.Input(
+                                id="year-group-number", 
+                                type="number", 
+                                placeholder="input number of groups",
+                                value=10,
+                                style={'display': 'inline-block'}
+                            )])
 
-            # POS NN1 F/M with year grouping
-            , html.Div(
-                children=[
-                    dcc.Graph(
-                        id='m-f-graph-year-grouping')
-                    , html.P('Number of year groups:', style={'display': 'inline-block', 'width': '10%'})
-                    , dcc.Input(
-                        id="year-group-number", 
-                        type="number", 
-                        placeholder="input number of groups",
-                        value=10,
-                        style={'display': 'inline-block'}
-                    )])
+                    # Dynamic attribute selection
+                    , html.Div(
+                        children=[
+                            dcc.Graph(id='dynamic-attribute-bar',)
 
-            # POS amount per year
-            , html.Div(
-                children=[
-                    dcc.Graph(id='pos_graph')
-                    , dcc.Dropdown(
-                        id='pos_dropdown',
-                        options=pos_list,
-                        value=['NN1'],
-                        multi=True
-                    )])
+                            , "Select an attribute"
+                            , dcc.Dropdown(
+                                id='dynamic-attribute-selection',
+                                options=[
+                                    {'label': 'SenderSex', 'value': 'SenderSex'},
+                                    {'label': 'SenderRank', 'value': 'SenderRank'}
+                                ],
+                                value='SenderSex',
+                                multi=False
+                            )
+                            , dcc.Dropdown(
+                                id='dynamic-subattribute-selection',
+                                options=[
+                                    {'label': 'M', 'value': 'M'},
+                                    {'label': 'F', 'value': 'F'}
+                                ],
+                                value=['M', 'F'],
+                                multi=True
+                            )
+                            , html.Br() 
+                            # Button that initiates model training with the given variables
+                            , html.Button('Apply selection', id='pos_button', n_clicks = 0)])
+                ])
+                , dcc.Tab(label='Line', children=[
+                    # POS amount per year
+                    html.Div(
+                        children=[
+                            dcc.Graph(id='pos_graph')
+                            , dcc.Dropdown(
+                                id='pos_dropdown',
+                                options=pos_list,
+                                value=['NN1'],
+                                multi=True
+                            )])
 
-            # POS group comparison
-            , html.Div(
-                children=[
-                    dcc.Graph(id='pos_groups_graph')
-                    , html.P(children='Group 1')
-                    , dcc.Dropdown(
-                        id='pos_groups_dropdown_1',
-                        options=pos_list,
-                        value=['NN', 'NN1'],
-                        multi=True
-                    )  
-                    , html.P(children='Group 2')
-                    , dcc.Dropdown(
-                        id='pos_groups_dropdown_2',
-                        options=pos_list,
-                        value=['VBR', 'VB'],
-                        multi=True
-                    )
-                ]
-            )
+                    # POS group comparison
+                    , html.Div(
+                        children=[
+                            dcc.Graph(id='pos_groups_graph')
+                            , html.P(children='Group 1')
+                            , dcc.Dropdown(
+                                id='pos_groups_dropdown_1',
+                                options=pos_list,
+                                value=['NN', 'NN1'],
+                                multi=True
+                            )  
+                            , html.P(children='Group 2')
+                            , dcc.Dropdown(
+                                id='pos_groups_dropdown_2',
+                                options=pos_list,
+                                value=['VBR', 'VB'],
+                                multi=True)
+                            ])
+                ])
+            ])
         ]),
         # Tab for the topic model selection and visualisation
         dcc.Tab(label='Topic modeling', children=[
@@ -414,6 +447,28 @@ def display_multiple_tags_barchart(values):
             barmode='group',
             title='Compare male and female tags')
         return fig
+
+@app.callback(
+    Output('dynamic-subattribute-selection', 'value'),
+    Output('dynamic-subattribute-selection', 'options'),
+    Input('dynamic-attribute-selection', 'value')
+)
+def pos_selection(input1):
+    if input1 is None:
+        raise PreventUpdate
+    else:
+        value, options = pos_tab.selection(df, input1)
+        return value, options
+
+@app.callback(
+    Output('dynamic-attribute-bar', 'figure'), 
+    Input('pos_button', 'n_clicks'), # Only pressing the button initiates the function
+    State('dynamic-attribute-selection', 'value'),
+    State('dynamic-subattribute-selection', 'value'))
+def pos_dynamic_attributes(clicks, input1, input2):
+    fig = pos_tab.dynamic_attributes(df, pos_counts, input1, input2)
+    return fig
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
