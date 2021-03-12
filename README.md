@@ -15,5 +15,5 @@ https://github.com/orgs/DSP2021-LanguageAnalysis/projects/1
 3. Activate virtual environment with `source venv/bin/activate`
 4. Run `pip install -r requirements.txt`
 5. Add data folder `TCEECE` to local project root, this is ignored by GIT to avoid spreading the data (see `.gitignore` file)
-6. Start app with `python app.py`
+6. Start app with `python index.py`
 
