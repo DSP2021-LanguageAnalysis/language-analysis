@@ -1,6 +1,9 @@
 # Python cache
 __pycache__/
 
+# Flask cache directory
+cache-directory/
+
 # Editor specific files
 .vscode
 

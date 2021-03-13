@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import nltk
-nltk.download('wordnet')
+from nltk.corpus import wordnet
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem.wordnet import WordNetLemmatizer
 from gensim.corpora import Dictionary
