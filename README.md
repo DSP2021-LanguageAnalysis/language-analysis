@@ -25,6 +25,7 @@ General description
 4. Run `pip install -r requirements.txt`
 5. Add data folder `TCEECE` to local project root, this is ignored by GIT to avoid spreading the data (see `.gitignore` file)
 6. Start app with `python index.py`
+7. Visit `http://127.0.0.1:8050/app/postags` or `http://127.0.0.1:8050/app/topicmodel` in your browser
 
 ### Usage
 #### POS Visualisation
