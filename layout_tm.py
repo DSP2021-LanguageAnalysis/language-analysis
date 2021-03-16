@@ -149,9 +149,12 @@ layout2 = html.Div([
                                     data=[]
                 )
             ]),
-            # Iframe-element is used to serve the pyLDAvis visualization in html form
-            html.Iframe(id='pyldavis-vis',
-                        style=dict(position="absolute", width="100%", height="100%"))
+            html.Details([
+                html.Summary('Topic model visualisation'),
+                # Iframe-element is used to serve the pyLDAvis visualization in html form
+                html.Iframe(id='pyldavis-vis',
+                            style=dict(position="absolute", width="100%", height="100%"))
+            ])
         ]
     )
 ])
