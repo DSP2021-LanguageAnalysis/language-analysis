@@ -139,18 +139,14 @@ layout2 = html.Div([
                 html.Summary('Most representative letters for each topic'),
                 # Table-element that shows the most representative letters for each topic
                 dash_table.DataTable(id="letter-topics", 
-                                    data=[],
-                                    fixed_rows={'headers': True},
-                                    style_table={'height': 300, 'overflowX': 'auto'}
+                                    data=[]
                 )
             ]),
             html.Details([
-                html.Summary('Topic distribution across letters'),
+                html.Summary('Topic distribution across selected letters'),
                 # Table-element that shows the topic distribution across letters
                 dash_table.DataTable(id="letters-per-topic", 
-                                    data=[],
-                                    fixed_rows={'headers': True},
-                                    style_table={'height': 300, 'overflowX': 'auto'}
+                                    data=[]
                 )
             ]),
             # Iframe-element is used to serve the pyLDAvis visualization in html form

@@ -114,7 +114,7 @@ class TopicModel:
                     topics_df = topics_df.append(pd.Series([int(topic_num), round(prop_topic,4), topic_keywords]), ignore_index=True)
                 else:
                     break
-        topics_df.columns = ['Dominant topic', '% contribution of topic', 'Topic keywords']
+        topics_df.columns = ['Dominant topic', 'Contribution of topic to letter', 'Topic keywords']
 
         # Add sender id to the end of the output dataframe
         senders = pd.Series(texts.index)
@@ -130,13 +130,15 @@ class TopicModel:
         topics_out = dominant_topics.groupby('Dominant topic')
 
         for i, grp in topics_out:
-            topics_sorted = pd.concat([topics_sorted, grp.sort_values(['% contribution of topic'], ascending=[0]).head(1)],axis=0)
+            topics_sorted = pd.concat([topics_sorted, grp.sort_values(['Contribution of topic to letter'], ascending=[0]).head(1)],axis=0)
 
         # Reset Index    
         topics_sorted.reset_index(drop=True, inplace=True)
 
         # Format
-        topics_sorted.columns = ['Topic', "% contribution of topic", "Keywords", "Id"]
+        topics_sorted.columns = ['Topic', "Contribution of topic to letter", "Topic keywords", "Letter id"]
+
+        topics_sorted["Contribution of topic to letter"] = topics_sorted["Contribution of topic to letter"].round(decimals=3)
 
         return topics_sorted
 
@@ -156,7 +158,7 @@ class TopicModel:
         df_docs = pd.concat([topic_num_keywords, topic_counts, topic_contribution], axis=1)
 
         # Change column names
-        df_docs.columns = ['Dominant topic', 'Topic keywords', 'Num. documents', '% of documents']
+        df_docs.columns = ['Dominant topic', 'Topic keywords', 'Number of selected letters', 'Proportion of selected letters']
         
         df_docs.reset_index(drop=True, inplace=True)
 

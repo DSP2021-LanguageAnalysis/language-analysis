@@ -54,21 +54,21 @@ def model_params(clicks, topics, iterations, tags, gender, rank):
 
         # Loop that creates a dataframe from the LDA top topics list
         i=1
+        i=1
         topic_dict = {}
         for topic in top_topics:
-            words = []
-            scores = []
+            entries = []
             for t in topic[0]:
-                words.append(t[1])
-                scores.append(t[0])
-            topic_dict['Topic {}: words'.format(i)] =  words 
-            topic_dict['Topic {}: scores'.format(i)] = scores            
+                score = round(float(t[0]), 3)
+                tmp = t[1]+', '+ str(score)
+                entries.append(tmp)
+            topic_dict['Topic {}'.format(i)] =  entries       
             i += 1
 
         dataframe = pd.DataFrame(topic_dict)
         cols = [{"name": i, "id": i} for i in dataframe.columns]
-        cols2 = [{"name": i, "id": i} for i in letters_for_topics.columns]
-        cols3 = [{"name": i, "id": i} for i in letters_per_topic.columns]
+        cols2 = [{"name": i, "id": i} for i in letters_for_topics.columns[1:]]
+        cols3 = [{"name": i, "id": i} for i in letters_per_topic.columns[1:]]
 
         # Creates the pyLDAvis visualisation of the LDA model
         vis_data = pyLDAvis.gensim.prepare(model, corpus, dictionary)
