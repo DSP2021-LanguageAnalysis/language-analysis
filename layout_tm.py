@@ -126,14 +126,33 @@ layout2 = html.Div([
         type="circle",
         fullscreen = True,
         children=[
-            # Table-element that shows the top topics from the trained model
-            dash_table.DataTable(id="top-topics", data=[]),
-            html.Br(),
+            html.Details([
+                html.Summary('20 top words from each topic'),
+                # Table-element that shows the top topics from the trained model
+                dash_table.DataTable(id="top-topics", 
+                                    data=[],
+                                    fixed_rows={'headers': True},
+                                    style_table={'height': 300, 'overflowX': 'auto'}
+                )
+            ]),
+            html.Details([
+                html.Summary('Most representative letters for each topic'),
+                # Table-element that shows the most representative letters for each topic
+                dash_table.DataTable(id="letter-topics", 
+                                    data=[]
+                )
+            ]),
+            html.Details([
+                html.Summary('Topic distribution across selected letters'),
+                # Table-element that shows the topic distribution across letters
+                dash_table.DataTable(id="letters-per-topic", 
+                                    data=[]
+                )
+            ]),
             # Iframe-element is used to serve the pyLDAvis visualization in html form
             html.Iframe(id='pyldavis-vis',
-                        style=dict(position="absolute", width="100%", height="100%")
-            )
+                        style=dict(position="absolute", width="100%", height="100%"))
         ]
-    )          
+    )
 ])
     
