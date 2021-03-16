@@ -7,10 +7,11 @@ import pyLDAvis
 import pyLDAvis.gensim
 
 from app import app
-from topic_model import prepare_data, filter_by_tag, train_lda, filter_by_sex, filter_by_rank
+from topic_model import TopicModel
 from data_parser import DataParser
 
 data_parser = DataParser()
+tm = TopicModel()
 df = data_parser.letters_to_df()
 pos_counts = data_parser.get_pos_counts()
 rank_set, rank_list = data_parser.get_rank()
@@ -19,6 +20,10 @@ rank_set, rank_list = data_parser.get_rank()
 @app.callback(
     Output('top-topics', 'data'),
     Output('top-topics', 'columns'),
+    Output('letter-topics', 'data'),
+    Output('letter-topics', 'columns'),
+    Output('letters-per-topic', 'data'),
+    Output('letters-per-topic', 'columns'),
     Output('pyldavis-vis', 'srcDoc'),
     Input('button', 'n_clicks'), # Only pressing the button initiates the function
     State('num-topics', 'value'), # Parameters given by the user are saved in State
@@ -31,15 +36,21 @@ def model_params(clicks, topics, iterations, tags, gender, rank):
     if clicks > 0:
 
         # Uses the functions imported from topic_model.py
-        data = filter_by_tag(df, tags)
+        data = tm.filter_by_tag(df, tags)
         if gender != 'A':
-            data = filter_by_sex(data, gender)
+            data = tm.filter_by_sex(data, gender)
         if len(rank) != len(rank_set):
-            data = filter_by_rank(data, rank)
+            data = tm.filter_by_rank(data, rank)
         # Data preprocessing for the LDA model 
-        corpus, dictionary, docs = prepare_data(data)
+        corpus, dictionary, docs, strings = tm.prepare_data(data)
         # Creates the LDA topic model
-        model, top_topics = train_lda(corpus, dictionary, topics, iterations)
+        model, top_topics = tm.train_lda(corpus, dictionary, topics, iterations)
+
+        dominant_topics = tm.letter_topics(model, corpus, strings)
+
+        letters_for_topics = tm.get_most_representative(dominant_topics)
+
+        letters_per_topic = tm.letters_per_topic(dominant_topics)
 
         # Loop that creates a dataframe from the LDA top topics list
         i=1
@@ -56,12 +67,14 @@ def model_params(clicks, topics, iterations, tags, gender, rank):
 
         dataframe = pd.DataFrame(topic_dict)
         cols = [{"name": i, "id": i} for i in dataframe.columns]
+        cols2 = [{"name": i, "id": i} for i in letters_for_topics.columns]
+        cols3 = [{"name": i, "id": i} for i in letters_per_topic.columns]
 
         # Creates the pyLDAvis visualisation of the LDA model
         vis_data = pyLDAvis.gensim.prepare(model, corpus, dictionary)
         html_vis = pyLDAvis.prepared_data_to_html(vis_data, template_type='general')
 
-        return dataframe.to_dict('records'), cols, html_vis
+        return dataframe.to_dict('records'), cols, letters_for_topics.to_dict('records'), cols2, letters_per_topic.to_dict('records'), cols3, html_vis
 
     else:
-        return no_update, no_update, no_update         
+        return no_update, no_update, no_update, no_update, no_update, no_update, no_update           
