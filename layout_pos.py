@@ -6,21 +6,23 @@ import dash_html_components as html
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 import pandas as pd
-from data_parser import DataParser
+#from data_parser import DataParser
+from df_parser import DataParser
 
 data_parser = DataParser()
-wc_fig = data_parser.get_wc_fig()
-pos_list = data_parser.get_pos_list()
+#wc_fig = data_parser.get_wc_fig()
+#pos_list = data_parser.get_pos_list()
 
 layout1 = html.Div([
     html.Nav(
         className ='navbar navbar-expand-lg navbar-dark bg-primary', 
         children=[
-            html.H1(className='navbar-brand', children='Data Science Project: Language variation')]
-    ),
-    html.H2('POS tag visualisation'),
-    dcc.Link('Topic model', href='/app/topicmodel'),
-    dcc.Tab(children=[
+            html.H1(className='navbar-brand', children='Data Science Project: Language variation')
+            ,dcc.Link('Upload data', href='/app/upload')
+            ,dcc.Link('POS tag visualisation', href='/app/postags')
+            ,dcc.Link('Topic model', href='/app/topicmodel')
+            ])
+    , dcc.Tab(children=[
         dcc.Tabs([
             dcc.Tab(label='Scatter', 
                 children=[
@@ -29,7 +31,7 @@ layout1 = html.Div([
                         children=[
                             dcc.Graph(
                                 id='word-count-graph',
-                                figure=wc_fig 
+                                #figure=wc_fig 
                             )
                         ]
                     )
@@ -43,7 +45,7 @@ layout1 = html.Div([
                             dcc.Graph(id='M/F_barChart'),
                             dcc.Dropdown(
                                 id='F/M_dropdown_1',
-                                options=pos_list, 
+                                #options=pos_list, 
                                 value=['NN1'],
                                 multi=True
                             )
@@ -107,7 +109,7 @@ layout1 = html.Div([
                             dcc.Graph(id='pos_graph'),
                             dcc.Dropdown(
                                 id='pos_dropdown',
-                                options=pos_list, 
+                                #options=pos_list, 
                                 value=['NN1'],
                                 multi=True
                             )
@@ -120,14 +122,14 @@ layout1 = html.Div([
                             html.P(children='Group 1'),
                                 dcc.Dropdown(
                                     id='pos_groups_dropdown_1',
-                                    options=pos_list, 
+                                    #options=pos_list, 
                                     value=['NN', 'NN1'],
                                     multi=True
                                 ),  
                                 html.P(children='Group 2'),
                                 dcc.Dropdown(
                                     id='pos_groups_dropdown_2',
-                                    options=pos_list, 
+                                    #options=pos_list, 
                                     value=['VBR', 'VB'],
                                     multi=True)
                         ]

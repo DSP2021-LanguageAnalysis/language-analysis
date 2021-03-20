@@ -80,7 +80,7 @@ class DataParser():
 
         # Combines all dataframes in the list by using the concat-method of Pandas
         frame = pd.concat(li, axis=0, ignore_index=True)
-
+        frame.to_pickle('./data.pkl')
         return frame
 
     @cache.memoize()
@@ -173,3 +173,6 @@ class DataParser():
         #pc_fig = px.line(nn1_counts, x="Year", y="PosCountNorm")
 
         return fm_fig
+
+dp = DataParser()
+dp.letters_to_df()

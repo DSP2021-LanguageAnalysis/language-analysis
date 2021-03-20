@@ -25,11 +25,11 @@ app.config.suppress_callback_exceptions = True
 
 # Keep this out of source code repository - save in a file or a database
 # Here just to demonstrate this authentication possibility
-VALID_USERNAME_PASSWORD_PAIRS = {
-    'user': 'user'
-}
+# VALID_USERNAME_PASSWORD_PAIRS = {
+#     'user': 'user'
+# }
 
-auth = dash_auth.BasicAuth(
-    app,
-    VALID_USERNAME_PASSWORD_PAIRS
-)
+# auth = dash_auth.BasicAuth(
+#     app,
+#     VALID_USERNAME_PASSWORD_PAIRS
+# )

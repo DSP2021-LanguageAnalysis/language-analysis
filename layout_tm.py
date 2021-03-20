@@ -12,11 +12,11 @@ layout2 = html.Div([
         className ='navbar navbar-expand-lg navbar-dark bg-primary', 
         children=[
             html.H1(className='navbar-brand', children='Data Science Project: Language variation')
-        ]
-    ),
-    html.H2('Topic modeling'),
-    dcc.Link('POS tag visualisation', href='/app/postags'),
-    html.Div(
+            ,dcc.Link('Upload data', href='/app/upload')
+            ,dcc.Link('POS tag visualisation', href='/app/postags')
+            ,dcc.Link('Topic model', href='/app/topicmodel')
+            ])
+    , html.Div(
         children=[
             html.Br(),
             html.H4(children='Create a topic model with LDA'),

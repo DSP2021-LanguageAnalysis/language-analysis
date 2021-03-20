@@ -12,3 +12,5 @@ TCEECE/
 
 # Virtual environment
 venv/
+
+.DS_Store
