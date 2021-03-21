@@ -24,19 +24,19 @@ layout1 = html.Div([
             ])
     , dcc.Tab(children=[
         dcc.Tabs([
-            dcc.Tab(label='Scatter', 
-                children=[
-                    # Simple word count graph    
-                    html.Div(
-                        children=[
-                            dcc.Graph(
-                                id='word-count-graph',
-                                #figure=wc_fig 
-                            )
-                        ]
-                    )
-                ]
-            ),
+            # dcc.Tab(label='Scatter', 
+            #     children=[
+            #         # Simple word count graph    
+            #         html.Div(
+            #             children=[
+            #                 dcc.Graph(
+            #                     id='word-count-graph',
+            #                     #figure=wc_fig 
+            #                 )
+            #             ]
+            #         )
+            #     ]
+            # ),
             dcc.Tab(label='Bar', 
                 children=[
                     # POS NN1 F/M

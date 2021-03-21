@@ -8,10 +8,6 @@ from dash.exceptions import PreventUpdate
 
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
-import pandas as pd
-from data_parser import DataParser
-
-from app import app
 
 
 layout0 = html.Div([

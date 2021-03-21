@@ -172,6 +172,3 @@ class DataParser():
         #pc_fig = px.line(nn1_counts, x="Year", y="PosCountNorm")
 
         return fm_fig
-
-dp = DataParser()
-dp.letters_to_df()
