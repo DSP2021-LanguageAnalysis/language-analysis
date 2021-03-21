@@ -38,35 +38,12 @@ def parse_contents(contents, filename, date):
         )]), df.to_json())
 
 
-# @app.callback(Output('output-data-upload', 'children'),
-#                 Output('memory', 'data'),
-#                 Input('upload-data', 'contents'),
-#                 State('upload-data', 'filename'),
-#                 State('upload-data', 'last_modified'),
-#                 State('memory', 'data'))
-# def update_output(contents, filename, last_modified, data):
-# #def update_output(list_of_contents):
-#     if contents is None:
-#         raise PreventUpdate
-#     else:
-#         print("Starting data parsing")
-#         children, data = parse_contents(contents, filename, last_modified)
-#         print("Done with data parsing")
-#         return [children], data
-
-
-app.clientside_callback(
-    ClientsideFunction(
-        namespace='clientside',
-        function_name='large_params_function'
-    ),
-    Output('output-data-upload', 'children'),
-    Output('memory', 'data'),
-    Input('upload-data', 'contents'),
-    State('upload-data', 'filename'),
-    State('upload-data', 'last_modified'),
-    State('memory', 'data')
-)
+@app.callback(Output('output-data-upload', 'children'),
+                Output('local-storage', 'data'),
+                Input('upload-data', 'contents'),
+                State('upload-data', 'filename'),
+                State('upload-data', 'last_modified'),
+                State('local-storage', 'data'))
 def update_output(contents, filename, last_modified, data):
 #def update_output(list_of_contents):
     if contents is None:
@@ -76,3 +53,4 @@ def update_output(contents, filename, last_modified, data):
         children, data = parse_contents(contents, filename, last_modified)
         print("Done with data parsing")
         return [children], data
+        

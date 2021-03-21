@@ -13,13 +13,13 @@ import callbacks_pos, callbacks_tm, callbacks_data
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content'),
-    dcc.Store(id='memory', storage_type='memory')
+    dcc.Store(id='local-storage', storage_type='local')
 ])
 
 @app.callback(Output('page-content', 'children'),
               Input('url', 'pathname'))
 def display_page(pathname):
-    if pathname == '/':
+    if pathname == '/app/upload':
          return layout0
     elif pathname == '/app/postags':
          return layout1

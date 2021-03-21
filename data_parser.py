@@ -80,7 +80,6 @@ class DataParser():
 
         # Combines all dataframes in the list by using the concat-method of Pandas
         frame = pd.concat(li, axis=0, ignore_index=True)
-        frame.to_pickle('./data.pkl')
         return frame
 
     @cache.memoize()

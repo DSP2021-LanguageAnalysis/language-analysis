@@ -20,7 +20,7 @@ data_parser = DataParser()
 
 @app.callback(Output('pos_graph', 'figure'), 
             [Input('pos_dropdown', 'value')],
-            State('memory', 'data'))
+            State('local-storage', 'data'))
 def display_pos_graphs(selected_values, data):
 
     if selected_values is None:
@@ -47,7 +47,7 @@ def display_pos_graphs(selected_values, data):
     Output('pos_groups_graph', 'figure'), 
     [Input('pos_groups_dropdown_1', 'value'),
     Input('pos_groups_dropdown_2', 'value')],
-    State('memory', 'data'))
+    State('local-storage', 'data'))
 def display_grouped_pos_graphs(values1, values2, data):
 
     if values1 is None and values2 is None:
@@ -75,7 +75,7 @@ def display_grouped_pos_graphs(values1, values2, data):
 @app.callback(
     Output('m-f-graph-year-grouping', 'figure'), 
     [Input('year-group-number', 'value')],
-    State('memory', 'data'))
+    State('local-storage', 'data'))
 def display_grouped_pos_graphs(value, data):
 
     if value is None:
@@ -96,7 +96,7 @@ def display_grouped_pos_graphs(value, data):
 @app.callback(
     Output('M/F_barChart', 'figure'), 
     [Input('F/M_dropdown_1', 'value')],
-    State('memory', 'data'))
+    State('local-storage', 'data'))
 def display_multiple_tags_barchart(values, data):
 
     if values is None:
@@ -125,7 +125,7 @@ def display_multiple_tags_barchart(values, data):
     Output('dynamic-subattribute-selection', 'value'),
     Output('dynamic-subattribute-selection', 'options'),
     Input('dynamic-attribute-selection', 'value'),
-    State('memory', 'data'))
+    State('local-storage', 'data'))
 def pos_selection(attribute_selection, data):
     if attribute_selection is None:
         raise PreventUpdate
@@ -140,7 +140,7 @@ def pos_selection(attribute_selection, data):
     State('dynamic-attribute-selection', 'value'),
     State('dynamic-subattribute-selection', 'value'),
     State('pos-year-group-number', 'value'),
-    State('memory', 'data'))
+    State('local-storage', 'data'))
 def pos_dynamic_attributes(clicks, input1, input2, period_count, data):
     df = pd.read_json(data)
     fig = pos_tab.dynamic_attributes(df, pos_counts, input1, input2, period_count)
