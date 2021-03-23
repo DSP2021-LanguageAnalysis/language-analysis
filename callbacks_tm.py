@@ -15,6 +15,8 @@ tm = TopicModel()
 df = data_parser.letters_to_df()
 pos_counts = data_parser.get_pos_counts()
 rank_set, rank_list = data_parser.get_rank()
+rel_set, rel_list = data_parser.get_relationship()
+years_set = data_parser.get_years()
 
 # Callback function for the topic model tab
 @app.callback(
@@ -25,13 +27,18 @@ rank_set, rank_list = data_parser.get_rank()
     Output('letters-per-topic', 'data'),
     Output('letters-per-topic', 'columns'),
     Output('pyldavis-vis', 'srcDoc'),
+    Output('slider-output', 'children'),
     Input('button', 'n_clicks'), # Only pressing the button initiates the function
+    Input('time-slider', 'value'),
     State('num-topics', 'value'), # Parameters given by the user are saved in State
     State('num-iter', 'value'),
     State('tags-filter', 'value'),
     State('gender-filter', 'value'),
-    State('rank-filter', 'value'), prevent_initial_call=True)
-def model_params(clicks, topics, iterations, tags, gender, rank):
+    State('rank-filter', 'value'), 
+    State('rel-filter', 'value'), prevent_initial_call=True)
+def model_params(clicks, time, topics, iterations, tags, gender, rank, rel):
+
+    years = 'Selected period: {start} - {end}'.format(start=time[0], end=time[1])
 
     if clicks > 0:
 
@@ -41,6 +48,10 @@ def model_params(clicks, topics, iterations, tags, gender, rank):
             data = tm.filter_by_sex(data, gender)
         if len(rank) != len(rank_set):
             data = tm.filter_by_rank(data, rank)
+        if len(rel) != len(rel_set):
+            data = tm.filter_by_rel(data, rel)
+        if time[0] is not min(years_set) or time[1] is not max(years_set):
+            data = tm.filter_by_time(data, time)
         # Data preprocessing for the LDA model 
         corpus, dictionary, docs, strings = tm.prepare_data(data)
         # Creates the LDA topic model
@@ -74,7 +85,7 @@ def model_params(clicks, topics, iterations, tags, gender, rank):
         vis_data = pyLDAvis.gensim.prepare(model, corpus, dictionary)
         html_vis = pyLDAvis.prepared_data_to_html(vis_data, template_type='general')
 
-        return dataframe.to_dict('records'), cols, letters_for_topics.to_dict('records'), cols2, letters_per_topic.to_dict('records'), cols3, html_vis
+        return dataframe.to_dict('records'), cols, letters_for_topics.to_dict('records'), cols2, letters_per_topic.to_dict('records'), cols3, html_vis, years
 
     else:
-        return no_update, no_update, no_update, no_update, no_update, no_update, no_update           
+        return no_update, no_update, no_update, no_update, no_update, no_update, no_update, years           
