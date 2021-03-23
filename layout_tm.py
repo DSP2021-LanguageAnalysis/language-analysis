@@ -139,7 +139,9 @@ layout2 = html.Div([
                         step=1,
                         value=[min(data_parser.get_years()), max(data_parser.get_years())]
                     ),
-                    html.Div(id='slider-output')
+                    html.Div(id='slider-output'),
+                    # Hidden div-element 
+                    html.Div(id='slider-values', hidden=True)
                 ]
             )
         ]
