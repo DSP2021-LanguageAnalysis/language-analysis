@@ -113,6 +113,36 @@ layout2 = html.Div([
                         multi = True
                     )
                 ]
+            ),
+            html.Br(),
+            html.Div(
+                children=[ 
+                    'Select letters based on the relationship between sender and recipient: ', 
+                    # Dash Dropdown component for selecting the relationship tag for filtering the data
+                    dcc.Dropdown(
+                        id = 'rel-filter',
+                        options = data_parser.get_relationship()[1],
+                        value = list(data_parser.get_relationship()[0]),
+                        multi = True
+                    )
+                ]
+            ),
+            html.Br(),
+            html.Div(
+                children=[ 
+                    'Select time range for the letters to be used in the model: ', 
+                    # Dash Slider component for selecting the time range
+                    dcc.RangeSlider(
+                        id='time-slider',
+                        min=min(data_parser.get_years()),
+                        max=max(data_parser.get_years()),
+                        step=1,
+                        value=[min(data_parser.get_years()), max(data_parser.get_years())]
+                    ),
+                    html.Div(id='slider-output'),
+                    # Hidden div-element 
+                    html.Div(id='slider-values', hidden=True)
+                ]
             )
         ]
     ),

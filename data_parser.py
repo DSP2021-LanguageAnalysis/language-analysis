@@ -52,6 +52,7 @@ class DataParser():
                 'Words':words, 
                 'Tags':pos,
                 'Year': [self.db_letter.loc[id, 'Year']] * len(pos),
+                'Sender': [self.db_letter.loc[id, 'Sender']] * len(pos), 
                 'SenderRank': [self.db_letter.loc[id, 'SenderRank']] * len(pos),
                 'SenderSex': [self.db_person.loc[sender, 'Sex']] *len(pos),
                 'RelCode': [self.db_letter.loc[id, 'RelCode']] * len(pos),
@@ -155,6 +156,23 @@ class DataParser():
         rank_list = [{'label':rank, 'value':rank} for rank in rank_set]
 
         return rank_set, rank_list
+
+    @cache.memoize()
+    def get_relationship(self):
+
+        df = self.letters_to_df()
+        rel_set = set(df['RelCode'])
+        rel_list = [{'label':rel, 'value':rel} for rel in rel_set]
+
+        return rel_set, rel_list
+
+    @cache.memoize()
+    def get_years(self):
+
+        df = self.letters_to_df()
+        year_set = set(df['Year'])
+
+        return year_set
 
     @cache.memoize()
     def get_wc_fig(self):

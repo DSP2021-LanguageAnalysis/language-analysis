@@ -15,7 +15,7 @@ class TopicModel:
     def prepare_data(self, data):
         
         # Group the data by the letter id and concatenate words from each letter to one string
-        strings = data.groupby('ID').agg(lambda col: ' '.join(col))
+        strings = data.groupby(['ID', 'Sender']).agg(lambda col: ' '.join(col))
 
         # Create a list of strings of the letters for Gensim
         docs = list(strings['Words'])
@@ -65,6 +65,18 @@ class TopicModel:
         rank_data = data.loc[data['SenderRank'].isin(rank)]
         
         return rank_data
+    
+    # Filter the data based on the relationship between the author and the recipient
+    def filter_by_rel(self, data, rel):
+        rel_data = data.loc[data['RelCode'].isin(rel)]
+        
+        return rel_data
+    
+    # Filter the data based on the selected period
+    def filter_by_time(self, data, time):
+        period_data = data.loc[(data["Year"] >= time[0]) & (data["Year"] <= time[1])]
+
+        return period_data
 
     # Train the LDA topic model
     def train_lda(self, data, dictionary, n_topics, n_iter):
@@ -116,8 +128,8 @@ class TopicModel:
                     break
         topics_df.columns = ['Dominant topic', 'Contribution of topic to letter', 'Topic keywords']
 
-        # Add sender id to the end of the output dataframe
-        senders = pd.Series(texts.index)
+        # Add letter and sender id to the end of the output dataframe
+        senders = texts.index.to_frame(index=False)
         topics_df = pd.concat([topics_df, senders], axis=1)
 
         return topics_df
@@ -136,7 +148,7 @@ class TopicModel:
         topics_sorted.reset_index(drop=True, inplace=True)
 
         # Format
-        topics_sorted.columns = ['Topic', "Contribution of topic to letter", "Topic keywords", "Letter id"]
+        topics_sorted.columns = ['Topic', "Contribution of topic to letter", "Topic keywords", "Letter id", "Sender"]
 
         topics_sorted["Contribution of topic to letter"] = topics_sorted["Contribution of topic to letter"].round(decimals=3)
 
@@ -148,6 +160,11 @@ class TopicModel:
         # Number of documents for each topic
         topic_counts = dominant_topics['Dominant topic'].value_counts()
 
+        # Number of senders for each topic
+        sender_counts = dominant_topics.groupby('Dominant topic')["Sender"].nunique()
+
+        topics_senders = pd.concat([pd.Series(topic_counts),pd.Series(sender_counts)], axis=1).reindex(topic_counts.index)
+
         # Percentage of documents for each topic
         topic_contribution = round(topic_counts/topic_counts.sum(), 4)
 
@@ -155,10 +172,10 @@ class TopicModel:
         topic_num_keywords = dominant_topics[['Dominant topic', 'Topic keywords']].drop_duplicates().set_index('Dominant topic', drop=False)
 
         # Concatenate columnwise
-        df_docs = pd.concat([topic_num_keywords, topic_counts, topic_contribution], axis=1)
+        df_docs = pd.concat([topic_num_keywords, topics_senders, topic_contribution], axis=1)
 
         # Change column names
-        df_docs.columns = ['Dominant topic', 'Topic keywords', 'Number of selected letters', 'Proportion of selected letters']
+        df_docs.columns = ['Dominant topic', 'Topic keywords', 'Number of selected letters', 'Number of senders', 'Proportion of selected letters']
         
         df_docs.reset_index(drop=True, inplace=True)
 
