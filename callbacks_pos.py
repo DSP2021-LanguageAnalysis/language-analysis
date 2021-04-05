@@ -6,16 +6,10 @@ import plotly.express as px
 import plotly.graph_objs as go
 import pandas as pd
 
-from app import app
+from app import app, data_parser
 from pos_tab import PosTab
-from data_parser import DataParser
 
 pos_tab = PosTab()
-data_parser = DataParser()
-df = data_parser.letters_to_df()
-pos_counts = data_parser.get_pos_counts()
-nn1_MF = data_parser.get_mfn_ratio()
-tag_MF = data_parser.get_mfn_tag()
 
 @app.callback(Output('pos_graph', 'figure'), 
             [Input('pos_dropdown', 'value')])
@@ -24,6 +18,7 @@ def display_pos_graphs(selected_values):
     if selected_values is None:
         raise PreventUpdate
     else:
+        pos_counts = data_parser.get_pos_counts()
         mask = pos_counts['Tags'].isin(selected_values)
         fig = px.line(
             data_frame=pos_counts[mask].groupby(['Tags', 'Year']).mean().reset_index(), 
@@ -49,6 +44,7 @@ def display_grouped_pos_graphs(values1, values2):
         raise PreventUpdate
     else:
         fig = go.Figure()
+        pos_counts = data_parser.get_pos_counts()
         mask = pos_counts['Tags'].isin(values1)
         fig.add_scatter(
             x=pos_counts[mask].groupby(['Tags', 'Year']).mean().reset_index().groupby(['Year']).sum().reset_index()['Year'], 
@@ -75,7 +71,7 @@ def display_grouped_pos_graphs(value):
     else:
         bins = pd.interval_range(start=1700, end=1800, periods=value, closed='right')
         labels = list(bins.astype(str))
-        df = nn1_MF.copy()
+        df = data_parser.get_mfn_ratio()
         df['Year'] = df['Year'].astype('int')
         df['YearGroup'] = pd.cut(df['Year'], bins=bins,include_lowest=True, labels=labels, precision=0)
         df['YearGroup'] = df['YearGroup'].astype("str")
@@ -91,6 +87,7 @@ def display_multiple_tags_barchart(values):
     if values is None:
         raise PreventUpdate
     else:
+        tag_MF = data_parser.get_mfn_tag()
         mask = tag_MF['Tags'].isin(values)
         fig= px.bar(
             # can choose only one tag at a time
@@ -118,6 +115,7 @@ def pos_selection(input1):
         raise PreventUpdate
 
     else:
+        df = data_parser.letters_to_df()
         value, options = pos_tab.selection(df, input1)
 
         return value, options
@@ -130,6 +128,8 @@ def pos_selection(input1):
     State('pos-year-group-number', 'value'))
 def pos_dynamic_attributes(clicks, input1, input2, period_count):
 
+    df = data_parser.letters_to_df()
+    pos_counts = data_parser.get_pos_counts()
     fig = pos_tab.dynamic_attributes(df, pos_counts, input1, input2, period_count)
 
     return fig

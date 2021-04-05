@@ -7,11 +7,9 @@ import pandas as pd
 import pyLDAvis
 import pyLDAvis.gensim
 
-from app import app
+from app import app, data_parser
 from topic_model import TopicModel
-from data_parser import DataParser
 
-data_parser = DataParser()
 tm = TopicModel()
 df = data_parser.letters_to_df()
 pos_counts = data_parser.get_pos_counts()
