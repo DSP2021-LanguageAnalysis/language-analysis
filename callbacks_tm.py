@@ -2,6 +2,7 @@ import dash
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_daq as daq
 from dash import no_update
 import pandas as pd
 import pyLDAvis
@@ -46,8 +47,14 @@ def set_cities_options(selected_years):
     State('gender-filter', 'value'),
     State('rank-filter', 'value'), 
     State('rel-filter', 'value'), 
-    State('slider-values', 'value'), prevent_initial_call=True)
-def model_params(clicks, topics, iterations, tags, gender, rank, rel, years):
+    State('slider-values', 'value'),
+    State('stopwords-filter','value'),
+    State('alpha','value'),
+    State('alpha_boolean', 'value'),
+    State('eta', 'value'),
+    State('eta_boolean', 'value'),
+    State('userseed','value'), prevent_initial_call=True)
+def model_params(clicks, topics, iterations, tags, gender, rank, rel, years, userstopwords, alpha, alpha_boolean, eta, eta_boolean, userseed):
 
     # Lists all triggered callbacks 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
@@ -69,11 +76,18 @@ def model_params(clicks, topics, iterations, tags, gender, rank, rel, years):
             data = tm.filter_by_rel(data, rel)
         if years[0] is not min(years_set) or years[1] is not max(years_set):
             data = tm.filter_by_time(data, years)
+        #if len(userstopwords) != 0:
+        #    data = tm.filter_by_userstopwords(data, userstopwords)
 
         # Data preprocessing for the LDA model 
-        corpus, dictionary, docs, strings = tm.prepare_data(data)
+        corpus, dictionary, docs, strings = tm.prepare_data(data, userstopwords)
+        # Set alpha and eta according to selection
+        if alpha_boolean == True:
+            alpha = 'auto'
+        if eta_boolean == True:
+            eta = 'auto'    
         # Creates the LDA topic model
-        model, top_topics = tm.train_lda(corpus, dictionary, topics, iterations)
+        model, top_topics = tm.train_lda(corpus, dictionary, topics, iterations, alpha, eta, userseed)
 
         dominant_topics = tm.letter_topics(model, corpus, strings)
 

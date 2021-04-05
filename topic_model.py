@@ -12,7 +12,7 @@ class TopicModel:
     def __init__(self):
         return
 
-    def prepare_data(self, data):
+    def prepare_data(self, data, userstopwords):
         
         # Group the data by the letter id and concatenate words from each letter to one string
         strings = data.groupby(['ID', 'Sender']).agg(lambda col: ' '.join(col))
@@ -32,6 +32,11 @@ class TopicModel:
 
         # Remove words that are only one character.
         docs = [[token for token in doc if len(token) > 1] for doc in docs]
+
+        ###
+        # Remove user stopwords
+        docs = [[token for token in doc if (not token in userstopwords)] for doc in docs]
+        ###
         
         # Lemmatize the documents.
         lemmatizer = WordNetLemmatizer()
@@ -59,6 +64,7 @@ class TopicModel:
         gender_data = data.loc[data['SenderSex'] == sex]
         
         return gender_data
+    
 
     # Filter the data based on the rank of the author
     def filter_by_rank(self, data, rank):
@@ -78,8 +84,15 @@ class TopicModel:
 
         return period_data
 
+    # Filter out stopwords selected by user
+    def filter_by_userstopwords(self, data, userstopwords):
+        #userstopwords_data = data.loc[-data['Words'].isin(userstopwords)]
+        #userstopwords_data = [word for word in data['Words'] if word not in userstopwords]
+        userstopwords_data = data[data['Words'].isin(userstopwords) == False]
+        return userstopwords_data
+
     # Train the LDA topic model
-    def train_lda(self, data, dictionary, n_topics, n_iter):
+    def train_lda(self, data, dictionary, n_topics, n_iter, man_alpha, man_eta, userseed):
         
         # Set training parameters.
         num_topics = n_topics
@@ -88,17 +101,16 @@ class TopicModel:
         iterations = n_iter
         eval_every = None  
         # Set random seed
-        random_seed = 135
+        random_seed = userseed
         state = np.random.RandomState(random_seed)
-
 
         # Train LDA model.
         model = LdaModel(
             corpus=data,
             id2word=dictionary,
             chunksize=chunksize,
-            alpha='auto',
-            eta='auto',
+            alpha=man_alpha,
+            eta=man_eta,
             iterations=iterations,
             num_topics=num_topics,
             passes=passes,

@@ -1,6 +1,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+import dash_daq as daq
 import dash_table
 import pandas as pd
 from data_parser import DataParser
@@ -69,6 +70,99 @@ layout2 = html.Div([
                 ]
             ),
             html.Br(),
+            html.Details([
+                html.Summary('Advanced parameters'),
+                # alpha and eta
+                html.Div(
+                children=[
+                    'Select the ',
+                    html.Span(
+                        'alpha parameter',
+                        id="tooltip-alpha",
+                        style={"textDecoration": "underline", "cursor": "pointer"},
+                    ),
+                    ': ',
+                    # Tooltip component, alpha
+                    dbc.Tooltip(
+                        'smoothing parameter for prior distribution over topic weights in each document',
+                        target="tooltip-alpha",
+                    ),
+                    # Dash Input component for alpha
+                    dcc.Input( 
+                            id='alpha',
+                            type='number',
+                            value=0.5
+                    ),
+                            daq.BooleanSwitch(
+                            id='alpha_boolean',
+                            on=False,
+                            label='auto:' ,
+                            style={'display': 'inline-block'}
+                            ) ,
+                ]
+            ),
+            html.Br(),
+            ### ETA
+            html.Div(
+                children=[
+                    'Select the ',
+                    html.Span(
+                        'eta parameter',
+                        id="tooltip-eta",
+                        style={"textDecoration": "underline", "cursor": "pointer"},
+                    ),
+                    ': ',
+                    # Tooltip component, alpha
+                    dbc.Tooltip(
+                        'smoothing parameter for prior distribution over word weights in each topic',
+                        target="tooltip-eta",
+                    ),
+                    # Dash Input component for alpha
+                    dcc.Input( 
+                            id='eta',
+                            type='number',
+                            value=0.5
+                    ),
+                            daq.BooleanSwitch(
+                            id='eta_boolean',
+                            on=False,
+                            label='auto:' ,
+                            style={'display': 'inline-block'}
+                            ) ,
+                ]
+            ),
+            html.Br(),
+            html.Div(
+                children=[
+                    'Set ',
+                    html.Span(
+                        'seed',
+                        id="tooltip-seed",
+                        style={"textDecoration": "underline", "cursor": "pointer"},
+                    ),
+                    ': ',
+                    # Tooltip component, seed
+                    dbc.Tooltip(
+                        'LDA is non-deterministic – setting a seed makes results replicable',
+                        target="tooltip-seed",
+                    ),
+                    # Dash Input component for seed
+                    dcc.Input( 
+                            id='userseed',
+                            type='number',
+                            value=135
+                    ),
+                ]
+            ),
+                
+            ]),
+            html.Br(),
+            ###
+            ###
+
+
+
+            
             html.H5('Filter data by POS tags'),
             html.Br(),
             html.Div(
@@ -78,6 +172,21 @@ layout2 = html.Div([
                         id='tags-filter',
                         options = data_parser.get_pos_list(),
                         value=['NN1'],
+                        multi=True
+                    )
+                ]
+            ),
+            html.Br(),
+            html.Br(),
+            html.H5('Filter out stopwords'),
+            html.Br(),
+            html.Div(
+                children=[
+                    # Dash Dropdown component for manual stopword removal
+                    dcc.Dropdown(
+                        id='stopwords-filter',
+                        options = data_parser.get_word_list(),
+                        value=['letter'],
                         multi=True
                     )
                 ]
