@@ -9,6 +9,9 @@ cache-directory/
 
 # The data
 TCEECE/
+data/
 
 # Virtual environment
 venv/
+
+.DS_Store
