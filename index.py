@@ -27,4 +27,10 @@ def display_page(pathname):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    from waitress import serve
+    import os
+    try:
+        PORT = os.environ["PORT"]
+    except:
+        PORT = 8050
+    serve(app.server, host="0.0.0.0", port=PORT, clear_untrusted_proxy_headers=True)
