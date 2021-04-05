@@ -123,12 +123,12 @@ layout2 = html.Div([
                             type='number',
                             value=0.5
                     ),
-                            daq.BooleanSwitch(
+                    daq.BooleanSwitch(
                             id='eta_boolean',
                             on=False,
                             label='auto:' ,
                             style={'display': 'inline-block'}
-                            ) ,
+                    ),
                 ]
             ),
             html.Br(),

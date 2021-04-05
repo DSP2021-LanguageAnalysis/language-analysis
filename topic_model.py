@@ -92,7 +92,7 @@ class TopicModel:
         return userstopwords_data
 
     # Train the LDA topic model
-    def train_lda(self, data, dictionary, n_topics, n_iter, man_alpha, man_eta, userseed):
+    def train_lda(self, data, dictionary, n_topics, n_iter, man_alpha, alpha_boolean, man_eta, eta_boolean, userseed):
         
         # Set training parameters.
         num_topics = n_topics
@@ -103,6 +103,11 @@ class TopicModel:
         # Set random seed
         random_seed = userseed
         state = np.random.RandomState(random_seed)
+
+        if alpha_boolean == True:
+            man_alpha = 'auto'
+        if eta_boolean == True:
+            man_eta = 'auto'    
 
         # Train LDA model.
         model = LdaModel(

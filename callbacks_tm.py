@@ -41,6 +41,8 @@ def set_cities_options(selected_years):
     Output('letters-per-topic', 'columns'),
     Output('pyldavis-vis', 'srcDoc'),
     Input('button', 'n_clicks'), # Only pressing the button initiates the function
+    Input('alpha_boolean', 'on'),
+    Input('eta_boolean', 'on'),
     State('num-topics', 'value'), # Parameters given by the user are saved in State
     State('num-iter', 'value'),
     State('tags-filter', 'value'),
@@ -50,11 +52,9 @@ def set_cities_options(selected_years):
     State('slider-values', 'value'),
     State('stopwords-filter','value'),
     State('alpha','value'),
-    State('alpha_boolean', 'value'),
     State('eta', 'value'),
-    State('eta_boolean', 'value'),
     State('userseed','value'), prevent_initial_call=True)
-def model_params(clicks, topics, iterations, tags, gender, rank, rel, years, userstopwords, alpha, alpha_boolean, eta, eta_boolean, userseed):
+def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, gender, rank, rel, years, userstopwords, alpha, eta, userseed):
 
     # Lists all triggered callbacks 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
@@ -82,12 +82,12 @@ def model_params(clicks, topics, iterations, tags, gender, rank, rel, years, use
         # Data preprocessing for the LDA model 
         corpus, dictionary, docs, strings = tm.prepare_data(data, userstopwords)
         # Set alpha and eta according to selection
-        if alpha_boolean == True:
-            alpha = 'auto'
-        if eta_boolean == True:
-            eta = 'auto'    
+        #if alpha_boolean == True:
+        #    alpha = 'auto'
+        #if eta_boolean == True:
+        #    eta = 'auto'    
         # Creates the LDA topic model
-        model, top_topics = tm.train_lda(corpus, dictionary, topics, iterations, alpha, eta, userseed)
+        model, top_topics = tm.train_lda(corpus, dictionary, topics, iterations, alpha, alpha_boolean, eta, eta_boolean, userseed)
 
         dominant_topics = tm.letter_topics(model, corpus, strings)
 
