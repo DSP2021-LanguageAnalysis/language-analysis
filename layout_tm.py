@@ -35,7 +35,7 @@ layout2 = html.Div([
                         ': ',
                         # Tooltip component for providing additional information to the user
                         dbc.Tooltip(
-                            'The number of requested latent topics to be extracted from the training corpus.',
+                            'the number of requested latent topics to be extracted from the training corpus.',
                             target="tooltip-topics",
                         ),
                         # Dash Input component for setting the number of topics
@@ -58,7 +58,7 @@ layout2 = html.Div([
                     ': ',
                     # Tooltip component for providing additional information to the user
                     dbc.Tooltip(
-                        'Maximum number of iterations through the corpus when inferring the topic distribution of a corpus.',
+                        'maximum number of iterations through the corpus when inferring the topic distribution of a corpus.',
                         target="tooltip-iterations",
                     ),
                     # Dash Input component for setting the number of iterations used in the LDA model training
@@ -84,14 +84,15 @@ layout2 = html.Div([
                     ': ',
                     # Tooltip component, alpha
                     dbc.Tooltip(
-                        'smoothing parameter for prior distribution over topic weights in each document',
+                        'positive smoothing parameter for prior distribution over topic weights in each document',
                         target="tooltip-alpha",
                     ),
                     # Dash Input component for alpha
                     dcc.Input( 
                             id='alpha',
                             type='number',
-                            value=0.5
+                            value=0.5,
+                            min=0
                     ),
                             daq.BooleanSwitch(
                             id='alpha_boolean',
@@ -114,14 +115,15 @@ layout2 = html.Div([
                     ': ',
                     # Tooltip component, alpha
                     dbc.Tooltip(
-                        'smoothing parameter for prior distribution over word weights in each topic',
+                        'positive smoothing parameter for prior distribution over word weights in each topic',
                         target="tooltip-eta",
                     ),
                     # Dash Input component for alpha
                     dcc.Input( 
                             id='eta',
                             type='number',
-                            value=0.5
+                            value=0.5,
+                            min=0
                     ),
                     daq.BooleanSwitch(
                             id='eta_boolean',

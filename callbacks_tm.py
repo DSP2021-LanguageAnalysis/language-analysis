@@ -76,8 +76,6 @@ def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, g
             data = tm.filter_by_rel(data, rel)
         if years[0] is not min(years_set) or years[1] is not max(years_set):
             data = tm.filter_by_time(data, years)
-        #if len(userstopwords) != 0:
-        #    data = tm.filter_by_userstopwords(data, userstopwords)
 
         # Data preprocessing for the LDA model 
         corpus, dictionary, docs, strings = tm.prepare_data(data, userstopwords)
