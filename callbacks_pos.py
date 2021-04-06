@@ -6,7 +6,7 @@ import plotly.express as px
 import plotly.graph_objs as go
 import pandas as pd
 
-from app import app, data_parser
+from app import app
 from pos_tab import PosTab
 import globals
 

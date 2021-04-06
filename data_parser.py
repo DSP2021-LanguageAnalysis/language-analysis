@@ -76,20 +76,19 @@ class DataParser():
         # Uses glob-library to create a list of all the .txt-files in the folder
         all_files = glob.glob(path + "/*.txt")
 
-        self.frame = pd.read_csv(data, dtype=column_types)
+        li = []
 
-        self.pos_counts = self.frame.groupby(['ID', 'Tags', 'Year', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
-        self.pos_counts['PosCountNorm'] = self.pos_counts['PosCount']/self.pos_counts['WordCount']*100
+        # Creates separate dataframes from each letter and adds them to a list
+        for filename in all_files:
+            df = self.parse_letter(filename)
+            li.append(df)
 
-        self.word_counts = self.frame.groupby(['ID', 'Year']).size().to_frame(name = 'WordCount').reset_index()
+        # Combines all dataframes in the list by using the concat-method of Pandas
+        frame = pd.concat(li, axis=0, ignore_index=True)
 
-        return 
-        
-    def letters_to_df(self):
-        return self.frame
+        return frame
 
     def get_word_counts(self):
-        return self.word_counts
 
         df = self.df
         # Word count DataFrame

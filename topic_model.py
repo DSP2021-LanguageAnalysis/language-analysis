@@ -10,6 +10,8 @@ from gensim.models import LdaModel
 class TopicModel:
 
     def __init__(self):
+        import nltk
+        nltk.download('wordnet')
         return
 
     def prepare_data(self, data, userstopwords):
