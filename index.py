@@ -2,7 +2,9 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import pandas as pd
-import dash_auth
+
+import globals
+globals.initialize()
 
 from app import app
 from layout_pos import layout1

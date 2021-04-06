@@ -8,8 +8,15 @@ import pandas as pd
 
 from app import app, data_parser
 from pos_tab import PosTab
+import globals
+
+data_parser = globals.data_parser
 
 pos_tab = PosTab()
+df = data_parser.df
+pos_counts = data_parser.get_pos_counts()
+nn1_MF = data_parser.get_mfn_ratio()
+tag_MF = data_parser.get_mfn_tag()
 
 @app.callback(Output('pos_graph', 'figure'), 
             [Input('pos_dropdown', 'value')])

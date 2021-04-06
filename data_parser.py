@@ -2,25 +2,79 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import glob
 import plotly.express as px
-from zipfile import ZipFile
 
 class DataParser():
+    df = None
 
     def __init__(self):
-        column_types = {
-            'ID': 'object',
-            'Words': 'object',
-            'Tags': 'object',
-            'Year': 'uint16',
-            'Sender': 'object',
-            'SenderRank': 'object',
-            'SenderSex': 'object',
-            'RelCode': 'object',
-            'WordCount': 'uint16'
-        }
+        print('init')
+        self.db_person = pd.read_csv('TCEECE/metadata/database-person.txt', sep='\t', encoding='iso-8859-1')
+        self.db_person = self.db_person.set_index('PersonCode')
+        self.db_letter = pd.read_csv('TCEECE/metadata//database-letter.txt', sep='\t', encoding='iso-8859-1')
+        self.db_letter = self.db_letter.set_index('LetterID')
 
-        with ZipFile('data/full_data.zip') as zip:
-            data = zip.open('full_data.csv')
+        self.df = self.letters_to_df()
+        print('data now ready')
+        print(id(self.df))
+        return 
+        
+    # Transforms xml-file into a BeautifulSoup-object
+    def read_tei(self, tei_file):
+        with open(tei_file, 'r') as tei:
+            soup = BeautifulSoup(tei, 'lxml')
+            return soup
+        raise RuntimeError('Cannot generate a soup from the input')
+
+    # Creates a Pandas dataframe from a letter specified by the path-argument 
+    # with letted id, words and corresponding POS-tags as the columns 
+    def parse_letter(self, path):
+        lst = []
+        pos = []
+        words = []
+        
+        # Creates a BeautifulSoup-object
+        soup = self.read_tei(path)
+        
+        # Locates the letter text by using the p-tags and extracts it into a list 
+        text = list(soup.find_all('p'))
+        
+        # Splits the text into single items (word+POS-tag) and adds them to a list
+        for item in text:
+            lst += item.text.split()
+        
+        # Splits the items into POS-tags and words and adds them to separate lists
+        for item in lst:
+            part = item.partition("_")
+            pos.append(part[2])
+            words.append(part[0])
+
+        # Extracts the id of the letter from the TEI-tag
+        id = soup.tei.attrs['xml:id']
+        sender = self.db_letter.loc[id, 'Sender']
+        
+        # Combines the lists into a dict. The id is repeated for each word 
+        data = {'ID': [id] * len(pos),
+                'Words':words, 
+                'Tags':pos,
+                'Year': [self.db_letter.loc[id, 'Year']] * len(pos),
+                'Sender': [self.db_letter.loc[id, 'Sender']] * len(pos), 
+                'SenderRank': [self.db_letter.loc[id, 'SenderRank']] * len(pos),
+                'SenderSex': [self.db_person.loc[sender, 'Sex']] *len(pos),
+                'RelCode': [self.db_letter.loc[id, 'RelCode']] * len(pos),
+                'WordCount': [len(words)] * len(words)
+                }
+        
+        # Creates a Pandas Dataframe from the dict
+        df = pd.DataFrame(data) 
+        
+        return df
+
+    def letters_to_df(self):
+        # Path of the folder where the letters are located (change path to correct location when using this)
+        path = 'TCEECE/tceece-letters-c7' 
+
+        # Uses glob-library to create a list of all the .txt-files in the folder
+        all_files = glob.glob(path + "/*.txt")
 
         self.frame = pd.read_csv(data, dtype=column_types)
 
@@ -37,9 +91,15 @@ class DataParser():
     def get_word_counts(self):
         return self.word_counts
 
+        df = self.df
+        # Word count DataFrame
+        word_counts = df.groupby(['ID', 'Year']).size().to_frame(name = 'WordCount').reset_index()
+
+        return word_counts
+
     def get_pos_counts(self):
 
-        df = self.letters_to_df()
+        df = self.df
         # POS counts for each letter
         pos_counts = df.groupby(['ID', 'Tags', 'Year', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
         pos_counts['PosCountNorm'] = pos_counts['PosCount']/pos_counts['WordCount']*100
@@ -48,7 +108,7 @@ class DataParser():
 
     def get_mfn_ratio(self):
 
-        df = self.letters_to_df()
+        df = self.df
         pos_counts = self.get_pos_counts()
         # Male/female noun ratio per year group
         nn1_MF = df.groupby(['ID', 'Tags', 'Year', 'WordCount', 'SenderSex']).size().to_frame(name = 'SenderSexCount').reset_index()
@@ -62,7 +122,7 @@ class DataParser():
         
     def get_mfn_tag(self):
 
-        df = self.letters_to_df()
+        df = self.df
         pos_counts = self.get_pos_counts()
         # Male/female noun ratio per tag
         tag_MF = df.groupby(['ID', 'Tags', 'Year', 'WordCount', 'SenderSex']).size().to_frame(name = 'SenderSexCount').reset_index()
@@ -81,15 +141,23 @@ class DataParser():
 
     def get_pos_list(self):
 
-        df = self.letters_to_df()
+        df = self.df
         pos_set = set(df['Tags'])
         pos_list = [{'label':tag, 'value':tag} for tag in pos_set]
 
         return pos_list
 
+    def get_word_list(self):
+
+        df = self.df
+        word_set = set(df['Words'].str.lower())
+        word_list = [{'label':word, 'value':word} for word in word_set]
+
+        return word_list
+
     def get_rank(self):
 
-        df = self.letters_to_df()
+        df = self.df
         rank_set = set(df['SenderRank'])
         rank_list = [{'label':rank, 'value':rank} for rank in rank_set]
 
@@ -97,7 +165,7 @@ class DataParser():
 
     def get_relationship(self):
 
-        df = self.letters_to_df()
+        df = self.df
         rel_set = set(df['RelCode'])
         rel_list = [{'label':rel, 'value':rel} for rel in rel_set]
 
@@ -105,7 +173,7 @@ class DataParser():
 
     def get_years(self):
 
-        df = self.letters_to_df()
+        df = self.df
         year_set = set(df['Year'])
 
         return year_set

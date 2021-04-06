@@ -2,16 +2,18 @@ import dash
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_daq as daq
 from dash import no_update
 import pandas as pd
 import pyLDAvis
 import pyLDAvis.gensim
 
-from app import app, data_parser
-from topic_model import TopicModel
+from app import app
+import globals
 
-tm = TopicModel()
-df = data_parser.letters_to_df()
+tm = globals.topic_model
+data_parser = globals.data_parser
+df = data_parser.df
 pos_counts = data_parser.get_pos_counts()
 rank_set, rank_list = data_parser.get_rank()
 rel_set, rel_list = data_parser.get_relationship()
@@ -38,14 +40,20 @@ def set_cities_options(selected_years):
     Output('letters-per-topic', 'columns'),
     Output('pyldavis-vis', 'srcDoc'),
     Input('button', 'n_clicks'), # Only pressing the button initiates the function
+    Input('alpha_boolean', 'on'),
+    Input('eta_boolean', 'on'),
     State('num-topics', 'value'), # Parameters given by the user are saved in State
     State('num-iter', 'value'),
     State('tags-filter', 'value'),
     State('gender-filter', 'value'),
     State('rank-filter', 'value'), 
     State('rel-filter', 'value'), 
-    State('slider-values', 'value'), prevent_initial_call=True)
-def model_params(clicks, topics, iterations, tags, gender, rank, rel, years):
+    State('slider-values', 'value'),
+    State('stopwords-filter','value'),
+    State('alpha','value'),
+    State('eta', 'value'),
+    State('userseed','value'), prevent_initial_call=True)
+def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, gender, rank, rel, years, userstopwords, alpha, eta, userseed):
 
     # Lists all triggered callbacks 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
@@ -69,9 +77,14 @@ def model_params(clicks, topics, iterations, tags, gender, rank, rel, years):
             data = tm.filter_by_time(data, years)
 
         # Data preprocessing for the LDA model 
-        corpus, dictionary, docs, strings = tm.prepare_data(data)
+        corpus, dictionary, docs, strings = tm.prepare_data(data, userstopwords)
+        # Set alpha and eta according to selection
+        #if alpha_boolean == True:
+        #    alpha = 'auto'
+        #if eta_boolean == True:
+        #    eta = 'auto'    
         # Creates the LDA topic model
-        model, top_topics = tm.train_lda(corpus, dictionary, topics, iterations)
+        model, top_topics = tm.train_lda(corpus, dictionary, topics, iterations, alpha, alpha_boolean, eta, eta_boolean, userseed)
 
         dominant_topics = tm.letter_topics(model, corpus, strings)
 
