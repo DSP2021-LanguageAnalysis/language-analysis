@@ -6,9 +6,8 @@ import dash_html_components as html
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 import pandas as pd
-from data_parser import DataParser
+from app import data_parser
 
-data_parser = DataParser()
 wc_fig = data_parser.get_wc_fig()
 pos_list = data_parser.get_pos_list()
 
