@@ -8,8 +8,11 @@ import pandas as pd
 import pyLDAvis
 import pyLDAvis.gensim
 
-from app import app, data_parser, topic_model
+from app import app
+import globals
 
+tm = globals.topic_model
+data_parser = globals.data_parser
 df = data_parser.df
 pos_counts = data_parser.get_pos_counts()
 rank_set, rank_list = data_parser.get_rank()

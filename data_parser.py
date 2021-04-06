@@ -4,15 +4,18 @@ import glob
 import plotly.express as px
 
 class DataParser():
+    df = None
 
     def __init__(self):
+        print('init')
         self.db_person = pd.read_csv('TCEECE/metadata/database-person.txt', sep='\t', encoding='iso-8859-1')
         self.db_person = self.db_person.set_index('PersonCode')
         self.db_letter = pd.read_csv('TCEECE/metadata//database-letter.txt', sep='\t', encoding='iso-8859-1')
         self.db_letter = self.db_letter.set_index('LetterID')
 
         self.df = self.letters_to_df()
-
+        print('data now ready')
+        print(id(self.df))
         return 
         
     # Transforms xml-file into a BeautifulSoup-object
@@ -145,7 +148,7 @@ class DataParser():
 
     def get_word_list(self):
 
-        df = self.letters_to_df()
+        df = self.df
         word_set = set(df['Words'].str.lower())
         word_list = [{'label':word, 'value':word} for word in word_set]
 

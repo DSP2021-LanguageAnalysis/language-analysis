@@ -4,7 +4,9 @@ import dash_bootstrap_components as dbc
 import dash_daq as daq
 import dash_table
 import pandas as pd
-from app import data_parser
+import globals
+
+data_parser = globals.data_parser
 
 layout2 = html.Div([
     html.Nav(
