@@ -3,6 +3,7 @@ import pandas as pd
 import glob
 import plotly.express as px
 import string
+from pos_categories import pos_categories
 
 class DataParser():
     df = None
@@ -19,6 +20,9 @@ class DataParser():
 
             self.df = self.letters_to_df()
             self.df.to_csv(self.path_to_csv, index=False)
+        # Delete rows with missing data
+        self.df = self.df.dropna(axis='index')
+        self.pos_categories = pos_categories
         return 
         
     # Transforms xml-file into a BeautifulSoup-object
@@ -93,14 +97,6 @@ class DataParser():
 
         return frame
 
-    def get_word_counts(self):
-
-        df = self.df
-        # Word count DataFrame
-        word_counts = df.groupby(['ID', 'Year']).size().to_frame(name = 'WordCount').reset_index()
-
-        return word_counts
-
     def get_pos_counts(self):
 
         df = self.df
@@ -156,7 +152,7 @@ class DataParser():
         df = self.df
         word_set = set(df['Words'].str.lower())
         word_list = [{'label':word, 'value':word} for word in word_set]
-
+        print(word_list[0])
         return word_list
 
     def get_rank(self):
@@ -182,14 +178,6 @@ class DataParser():
 
         return year_set
 
-    def get_wc_fig(self):
-
-        word_counts = self.get_word_counts()
-        # Get specific data needed for the visualisations
-        wc_fig = px.scatter(word_counts, x="Year", y="WordCount", title='Word count for each letter in corpus')
-
-        return wc_fig
-
     def get_fm_fig(self):
 
         nn1_MF = self.get_mfn_ratio()
@@ -197,3 +185,7 @@ class DataParser():
         #pc_fig = px.line(nn1_counts, x="Year", y="PosCountNorm")
 
         return fm_fig
+
+    def list_to_dash_option_dict(self, l):
+        options = [{'label':item, 'value':item} for item in l]
+        return options
