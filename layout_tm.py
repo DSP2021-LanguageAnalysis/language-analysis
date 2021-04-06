@@ -42,7 +42,8 @@ layout2 = html.Div([
                         dcc.Input( 
                             id='num-topics',
                             type='number',
-                            value=5
+                            value=5,
+                            min=1
                         )
                 ]
             ),
@@ -65,7 +66,8 @@ layout2 = html.Div([
                     dcc.Input( 
                             id='num-iter',
                             type='number',
-                            value=50
+                            value=50,
+                            min=10
                     )
                 ]
             ),
@@ -152,7 +154,8 @@ layout2 = html.Div([
                     dcc.Input( 
                             id='userseed',
                             type='number',
-                            value=135
+                            value=135,
+                            min=1
                     ),
                 ]
             ),
