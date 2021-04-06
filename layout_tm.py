@@ -43,7 +43,7 @@ layout2 = html.Div([
                             id='num-topics',
                             type='number',
                             value=5,
-                            min=1
+                            min=2
                         )
                 ]
             ),
