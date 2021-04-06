@@ -149,6 +149,15 @@ class DataParser():
         return pos_list
 
     @cache.memoize()
+    def get_word_list(self):
+
+        df = self.letters_to_df()
+        word_set = set(df['Words'].str.lower())
+        word_list = [{'label':word, 'value':word} for word in word_set]
+
+        return word_list
+
+    @cache.memoize()
     def get_rank(self):
 
         df = self.letters_to_df()
