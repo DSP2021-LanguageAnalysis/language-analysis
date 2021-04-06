@@ -95,14 +95,6 @@ class DataParser():
 
         return frame
 
-    def get_word_counts(self):
-
-        df = self.df
-        # Word count DataFrame
-        word_counts = df.groupby(['ID', 'Year']).size().to_frame(name = 'WordCount').reset_index()
-
-        return word_counts
-
     def get_pos_counts(self):
 
         df = self.df
@@ -183,14 +175,6 @@ class DataParser():
         year_set = set(df['Year'])
 
         return year_set
-
-    def get_wc_fig(self):
-
-        word_counts = self.get_word_counts()
-        # Get specific data needed for the visualisations
-        wc_fig = px.scatter(word_counts, x="Year", y="WordCount", title='Word count for each letter in corpus')
-
-        return wc_fig
 
     def get_fm_fig(self):
 
