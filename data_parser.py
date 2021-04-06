@@ -3,6 +3,7 @@ import pandas as pd
 import glob
 import plotly.express as px
 import string
+from pos_categories import pos_categories
 
 class DataParser():
     df = None
@@ -19,6 +20,7 @@ class DataParser():
 
             self.df = self.letters_to_df()
             self.df.to_csv(self.path_to_csv, index=False)
+        self.pos_categories = pos_categories
         return 
         
     # Transforms xml-file into a BeautifulSoup-object
@@ -197,3 +199,7 @@ class DataParser():
         #pc_fig = px.line(nn1_counts, x="Year", y="PosCountNorm")
 
         return fm_fig
+
+    def list_to_dash_option_dict(self, l):
+        options = [{'label':item, 'value':item} for item in l]
+        return options
