@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import glob
 import plotly.express as px
+import string
 
 class DataParser():
     df = None
@@ -47,6 +48,8 @@ class DataParser():
         # Splits the items into POS-tags and words and adds them to separate lists
         for item in lst:
             part = item.partition("_")
+            if part[2] == '' or  part[2][0] in string.punctuation:
+                continue
             pos.append(part[2])
             words.append(part[0])
 
