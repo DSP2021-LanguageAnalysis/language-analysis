@@ -20,6 +20,8 @@ class DataParser():
 
             self.df = self.letters_to_df()
             self.df.to_csv(self.path_to_csv, index=False)
+        # Delete rows with missing data
+        self.df = self.df.dropna(axis='index')
         self.pos_categories = pos_categories
         return 
         
@@ -150,7 +152,7 @@ class DataParser():
         df = self.df
         word_set = set(df['Words'].str.lower())
         word_list = [{'label':word, 'value':word} for word in word_set]
-
+        print(word_list[0])
         return word_list
 
     def get_rank(self):
