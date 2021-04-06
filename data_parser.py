@@ -143,7 +143,6 @@ class DataParser():
 
         return pos_list
 
-    @cache.memoize()
     def get_word_list(self):
 
         df = self.letters_to_df()
@@ -152,7 +151,6 @@ class DataParser():
 
         return word_list
 
-    @cache.memoize()
     def get_rank(self):
 
         df = self.df
