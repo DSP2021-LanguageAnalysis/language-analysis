@@ -8,11 +8,12 @@ import pandas as pd
 
 from app import app
 from pos_tab import PosTab
-from data_parser import DataParser
+import globals
+
+data_parser = globals.data_parser
 
 pos_tab = PosTab()
-data_parser = DataParser()
-df = data_parser.letters_to_df()
+df = data_parser.df
 pos_counts = data_parser.get_pos_counts()
 nn1_MF = data_parser.get_mfn_ratio()
 tag_MF = data_parser.get_mfn_tag()

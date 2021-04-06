@@ -9,12 +9,11 @@ import pyLDAvis
 import pyLDAvis.gensim
 
 from app import app
-from topic_model import TopicModel
-from data_parser import DataParser
+import globals
 
-data_parser = DataParser()
-tm = TopicModel()
-df = data_parser.letters_to_df()
+tm = globals.topic_model
+data_parser = globals.data_parser
+df = data_parser.df
 pos_counts = data_parser.get_pos_counts()
 rank_set, rank_list = data_parser.get_rank()
 rel_set, rel_list = data_parser.get_relationship()
