@@ -2,20 +2,23 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import glob
 import plotly.express as px
+import string
 
 class DataParser():
     df = None
+    path_to_csv = 'TCEECE/data.csv'
 
     def __init__(self):
-        print('init')
-        self.db_person = pd.read_csv('TCEECE/metadata/database-person.txt', sep='\t', encoding='iso-8859-1')
-        self.db_person = self.db_person.set_index('PersonCode')
-        self.db_letter = pd.read_csv('TCEECE/metadata//database-letter.txt', sep='\t', encoding='iso-8859-1')
-        self.db_letter = self.db_letter.set_index('LetterID')
+        try:
+            self.df = pd.read_csv(self.path_to_csv, index_col=False)
+        except:
+            self.db_person = pd.read_csv('TCEECE/metadata/database-person.txt', sep='\t', encoding='iso-8859-1')
+            self.db_person = self.db_person.set_index('PersonCode')
+            self.db_letter = pd.read_csv('TCEECE/metadata//database-letter.txt', sep='\t', encoding='iso-8859-1')
+            self.db_letter = self.db_letter.set_index('LetterID')
 
-        self.df = self.letters_to_df()
-        print('data now ready')
-        print(id(self.df))
+            self.df = self.letters_to_df()
+            self.df.to_csv(self.path_to_csv, index=False)
         return 
         
     # Transforms xml-file into a BeautifulSoup-object
@@ -45,6 +48,8 @@ class DataParser():
         # Splits the items into POS-tags and words and adds them to separate lists
         for item in lst:
             part = item.partition("_")
+            if part[2] == '' or  part[2][0] in string.punctuation:
+                continue
             pos.append(part[2])
             words.append(part[0])
 
