@@ -4,8 +4,6 @@
 
 import dash
 import dash_bootstrap_components as dbc
-from data_parser import DataParser
-from topic_model import TopicModel
 import time
 
 external_stylesheets = [
@@ -13,13 +11,5 @@ external_stylesheets = [
         dbc.themes.FLATLY
     ]
 
-# Create the app, figures and define layout
-global app
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.config.suppress_callback_exceptions = True
-
-global data_parser 
-data_parser = DataParser()
-
-global topic_model
-topic_model = TopicModel()
