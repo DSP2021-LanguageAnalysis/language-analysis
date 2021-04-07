@@ -9,16 +9,22 @@ from gensim.models import LdaModel
 
 class TopicModel:
 
+    model = None
+    corpus = None
+    strings = None
+    docs = None
+    dictionary = None
+
     def __init__(self):
         return
 
     def prepare_data(self, data, userstopwords):
         
         # Group the data by the letter id and concatenate words from each letter to one string
-        strings = data.groupby(['ID', 'Sender']).agg(lambda col: ' '.join(col))
+        self.strings = data.groupby(['ID', 'Sender','Year']).agg(lambda col: ' '.join(col))
 
         # Create a list of strings of the letters for Gensim
-        docs = list(strings['Words'])
+        docs = list(self.strings['Words'])
         
         # Split the documents into tokens.
         tokenizer = RegexpTokenizer(r'\w+')
@@ -40,18 +46,18 @@ class TopicModel:
         
         # Lemmatize the documents.
         lemmatizer = WordNetLemmatizer()
-        docs = [[lemmatizer.lemmatize(token) for token in doc] for doc in docs]
+        self.docs = [[lemmatizer.lemmatize(token) for token in doc] for doc in docs]
         
         # Create a dictionary representation of the documents.
-        dictionary = Dictionary(docs)
+        self.dictionary = Dictionary(self.docs)
 
         # Filter out words that occur less than 10 documents, or more than 50% of the documents.
         #dictionary.filter_extremes(no_below=10, no_above=0.5)
         
         # Bag-of-words representation of the documents.
-        corpus = [dictionary.doc2bow(doc) for doc in docs]
+        self.corpus = [self.dictionary.doc2bow(doc) for doc in self.docs]
         
-        return corpus, dictionary, docs, strings
+        return self.corpus, self.dictionary, self.docs, self.strings
 
     # Filter the data based on the POS tags 
     def filter_by_tag(self, data, tags):
@@ -110,7 +116,7 @@ class TopicModel:
             man_eta = 'auto'    
 
         # Train LDA model.
-        model = LdaModel(
+        self.model = LdaModel(
             corpus=data,
             id2word=dictionary,
             chunksize=chunksize,
@@ -123,30 +129,66 @@ class TopicModel:
             random_state=state
         )
         
-        top_topics = model.top_topics(data)
+        return self.model
+
+    # Extracts the 20 words with highest scores for each topic into a dataframe
+    def get_topics(self):
+        d = {}
+        for idx, topic in self.model.print_topics(num_words=20):
+            d['Topic {}'.format(idx)] = topic.replace("*", ", ").split("+")
+    
+        df = pd.DataFrame(d)
+    
+        return df
+    
+    # Lists the topic distribution for given letter
+    #def get_letter_topics(self, index):
+    #    d = {}
+    #    #for ind, score in sorted(self.model[self.corpus[index]], key=lambda tup: -1*tup[1]):
+    #    for ind, score in self.model[self.corpus[index]]:
+    #        d["Topic {}".format(ind)] = [round(float(score), 3)]
+    
+    #    df = pd.DataFrame(d)
+    
+    #    return df
+
+    # Lists the topic distribution for given letters
+    def get_letter_topics(self, indices):
+        d = {}
+        num_topics = len(self.model.print_topics())
+        d["Letter"] = [', '.join(map(str, self.strings.index[ind])) for ind in indices]
         
-        return model, top_topics
+        for n in range(num_topics):
+            d["Topic {}".format(n)] = [0]*len(indices)
+        
+        for i, index in enumerate(indices):
+            for ind, score in self.model[self.corpus[index]]:
+                topic = "Topic {}".format(ind)
+                d[topic][i] = round(float(score), 3)
+
+        df = pd.DataFrame(d)
+        
+        return df
 
     # Lists the main topics for each letter
-    def letter_topics(self, ldamodel, corpus, texts):
+    def letter_topics(self):
         # Init output
         topics_df = pd.DataFrame()
 
         # Get main topic in each letter
-        for i, row in enumerate(ldamodel[corpus]):
+        for i, row in enumerate(self.model[self.corpus]):
             row = sorted(row, key=lambda x: (x[1]), reverse=True)
             # Get the dominant topic, percentage contribution and keywords for each letter
             for j, (topic_num, prop_topic) in enumerate(row):
                 if j == 0:  # dominant topic
-                    wp = ldamodel.show_topic(topic_num)
-                    topic_keywords = ", ".join([word for word, prop in wp])
-                    topics_df = topics_df.append(pd.Series([int(topic_num), round(prop_topic,4), topic_keywords]), ignore_index=True)
+                    wp = self.model.show_topic(topic_num)
+                    topics_df = topics_df.append(pd.Series([int(topic_num), round(prop_topic,4)]), ignore_index=True)
                 else:
                     break
-        topics_df.columns = ['Dominant topic', 'Contribution of topic to letter', 'Topic keywords']
+        topics_df.columns = ['Dominant topic', 'Contribution of topic to letter']
 
         # Add letter and sender id to the end of the output dataframe
-        senders = texts.index.to_frame(index=False)
+        senders = self.strings.index.to_frame(index=False)
         topics_df = pd.concat([topics_df, senders], axis=1)
 
         return topics_df
@@ -159,13 +201,13 @@ class TopicModel:
         topics_out = dominant_topics.groupby('Dominant topic')
 
         for i, grp in topics_out:
-            topics_sorted = pd.concat([topics_sorted, grp.sort_values(['Contribution of topic to letter'], ascending=[0]).head(1)],axis=0)
+            topics_sorted = pd.concat([topics_sorted, grp.sort_values(['Contribution of topic to letter'], ascending=[0]).head(10)],axis=0)
 
         # Reset Index    
         topics_sorted.reset_index(drop=True, inplace=True)
 
         # Format
-        topics_sorted.columns = ['Topic', "Contribution of topic to letter", "Topic keywords", "Letter id", "Sender"]
+        topics_sorted.columns = ['Topic', "Contribution of topic to letter", "Letter id", "Sender", "Year"]
 
         topics_sorted["Contribution of topic to letter"] = topics_sorted["Contribution of topic to letter"].round(decimals=3)
 
@@ -186,14 +228,21 @@ class TopicModel:
         topic_contribution = round(topic_counts/topic_counts.sum(), 4)
 
         # Topic number and keywords
-        topic_num_keywords = dominant_topics[['Dominant topic', 'Topic keywords']].drop_duplicates().set_index('Dominant topic', drop=False)
+        topic_num_keywords = dominant_topics['Dominant topic'].to_frame().drop_duplicates().set_index('Dominant topic', drop=False)
 
         # Concatenate columnwise
         df_docs = pd.concat([topic_num_keywords, topics_senders, topic_contribution], axis=1)
 
         # Change column names
-        df_docs.columns = ['Dominant topic', 'Topic keywords', 'Number of selected letters', 'Number of senders', 'Proportion of selected letters']
+        df_docs.columns = ['Dominant topic', 'Number of selected letters', 'Number of senders', 'Proportion of selected letters']
         
         df_docs.reset_index(drop=True, inplace=True)
 
         return df_docs
+
+    # Returns a list of letter ids, senders and years for the "topics per letter"-dropdown
+    def get_letter_list(self):
+    
+        letter_list = [{'label':', '.join(map(str, word)), 'value':i} for i,word in enumerate(self.strings.index)]
+ 
+        return letter_list

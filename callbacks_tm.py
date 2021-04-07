@@ -4,6 +4,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_daq as daq
 from dash import no_update
+from dash.exceptions import PreventUpdate
 import pandas as pd
 import pyLDAvis
 import pyLDAvis.gensim
@@ -30,6 +31,21 @@ def set_cities_options(selected_years):
 
     return years, selected_years
 
+@app.callback(
+    Output('letter-scores', 'data'), 
+    Output('letter-scores', 'columns'), 
+    Input('button2', 'n_clicks'),
+    State('letter-list', 'value'), prevent_initial_call=True)
+def set_letter_topics(clicks,indices):
+    if indices:
+        letter_topics = tm.get_letter_topics(indices)
+        cols = [{"name": i, "id": i} for i in letter_topics.columns]
+
+        return letter_topics.to_dict('records'), cols
+    else:
+        return None, None
+
+
 # Callback function for the topic model tab
 @app.callback(
     Output('top-topics', 'data'),
@@ -39,6 +55,8 @@ def set_cities_options(selected_years):
     Output('letters-per-topic', 'data'),
     Output('letters-per-topic', 'columns'),
     Output('pyldavis-vis', 'srcDoc'),
+    Output('letter-list','options'),
+    Output('tm-results','hidden'),
     Input('button', 'n_clicks'), # Only pressing the button initiates the function
     Input('alpha_boolean', 'on'),
     Input('eta_boolean', 'on'),
@@ -78,43 +96,30 @@ def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, g
 
         # Data preprocessing for the LDA model 
         corpus, dictionary, docs, strings = tm.prepare_data(data, userstopwords)
-        # Set alpha and eta according to selection
-        #if alpha_boolean == True:
-        #    alpha = 'auto'
-        #if eta_boolean == True:
-        #    eta = 'auto'    
+   
         # Creates the LDA topic model
-        model, top_topics = tm.train_lda(corpus, dictionary, topics, iterations, alpha, alpha_boolean, eta, eta_boolean, userseed)
+        model = tm.train_lda(corpus, dictionary, topics, iterations, alpha, alpha_boolean, eta, eta_boolean, userseed)
 
-        dominant_topics = tm.letter_topics(model, corpus, strings)
+        # Gets the top 20 words for each topic
+        topics_df = tm.get_topics()
+
+        dominant_topics = tm.letter_topics()
 
         letters_for_topics = tm.get_most_representative(dominant_topics)
 
         letters_per_topic = tm.letters_per_topic(dominant_topics)
 
-        # Loop that creates a dataframe from the LDA top topics list
-        i=1
-        i=1
-        topic_dict = {}
-        for topic in top_topics:
-            entries = []
-            for t in topic[0]:
-                score = round(float(t[0]), 3)
-                tmp = t[1]+', '+ str(score)
-                entries.append(tmp)
-            topic_dict['Topic {}'.format(i)] =  entries       
-            i += 1
+        letter_list = tm.get_letter_list()
 
-        dataframe = pd.DataFrame(topic_dict)
-        cols = [{"name": i, "id": i} for i in dataframe.columns]
-        cols2 = [{"name": i, "id": i} for i in letters_for_topics.columns[1:]]
-        cols3 = [{"name": i, "id": i} for i in letters_per_topic.columns[1:]]
+        cols = [{"name": i, "id": i} for i in topics_df.columns]
+        cols2 = [{"name": i, "id": i} for i in letters_for_topics.columns]
+        cols3 = [{"name": i, "id": i} for i in letters_per_topic.columns]
 
         # Creates the pyLDAvis visualisation of the LDA model
         vis_data = pyLDAvis.gensim.prepare(model, corpus, dictionary)
         html_vis = pyLDAvis.prepared_data_to_html(vis_data, template_type='general')
 
-        return dataframe.to_dict('records'), cols, letters_for_topics.to_dict('records'), cols2, letters_per_topic.to_dict('records'), cols3, html_vis
+        return topics_df.to_dict('records'), cols, letters_for_topics.to_dict('records'), cols2, letters_per_topic.to_dict('records'), cols3, html_vis, letter_list, False
 
     else:
-        return no_update, no_update, no_update, no_update, no_update, no_update, no_update          
+        return no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update, True          
