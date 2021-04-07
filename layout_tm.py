@@ -8,7 +8,9 @@ import globals
 
 data_parser = globals.data_parser
 
-layout2 = html.Div([
+layout2 = html.Div(
+    style={'padding': '20px'},
+    children=[
     html.Nav(
         className ='navbar navbar-expand-lg navbar-dark bg-primary', 
         children=[
@@ -73,7 +75,8 @@ layout2 = html.Div([
             ),
             html.Br(),
             html.Details([
-                html.Summary('Advanced parameters'),
+                html.Summary('Advanced parameters',
+                            style={'fontWeight':'bold'}),
                 # alpha and eta
                 html.Div(
                 children=[
@@ -262,43 +265,81 @@ layout2 = html.Div([
     ),
     html.Br(),
     # Button that initiates model training with the given variables
-    html.Button('Train model', id='button', n_clicks = 0),
+    html.Button('Train model', 
+                id='button', 
+                n_clicks = 0),
     html.Br(),
     # Loading-element wraps the LDA model visualisations
     dcc.Loading(
         id="loading",
         type="circle",
         fullscreen = True,
+        style={'paddingTop': '15px'},
         children=[
-            html.Details([
-                html.Summary('20 top words from each topic'),
-                # Table-element that shows the top topics from the trained model
-                dash_table.DataTable(id="top-topics", 
-                                    data=[],
-                                    fixed_rows={'headers': True},
-                                    style_table={'height': 300, 'overflowX': 'auto'}
-                )
-            ]),
-            html.Details([
-                html.Summary('Most representative letters for each topic'),
-                # Table-element that shows the most representative letters for each topic
-                dash_table.DataTable(id="letter-topics", 
-                                    data=[]
-                )
-            ]),
-            html.Details([
-                html.Summary('Topic distribution across selected letters'),
-                # Table-element that shows the topic distribution across letters
-                dash_table.DataTable(id="letters-per-topic", 
-                                    data=[]
-                )
-            ]),
-            html.Details([
-                html.Summary('Topic model visualisation'),
-                # Iframe-element is used to serve the pyLDAvis visualization in html form
-                html.Iframe(id='pyldavis-vis',
-                            style=dict(position="absolute", width="100%", height="100%"))
-            ])
+            html.Div(
+                id='tm-results',
+                hidden=True,
+                children=[
+                    html.Details(
+                        style={'paddingTop': '15px'},
+                        children=[
+                            html.Summary('20 top words from each topic',
+                                        style={'fontWeight':'bold'}),
+                            # Table-element that shows the top topics from the trained model
+                            dash_table.DataTable(id="top-topics", 
+                                                data=[],
+                                                fixed_rows={'headers': True},
+                                                style_table={'height': 300, 'overflowX': 'auto'}
+                            )
+                    ]),
+                    html.Details(
+                        style={'paddingTop': '15px'},
+                        children=[
+                            html.Summary('Most representative letters for each topic',
+                                        style={'fontWeight':'bold'}),
+                            # Table-element that shows the most representative letters for each topic
+                            dash_table.DataTable(id="letter-topics", 
+                                                data=[]
+                            )
+                    ]),
+                    html.Details(
+                        style={'paddingTop': '15px'},
+                        children=[
+                            html.Summary('Topic distribution across selected letters',
+                                        style={'fontWeight':'bold'}),
+                            # Table-element that shows the topic distribution across letters
+                            dash_table.DataTable(id="letters-per-topic", 
+                                                data=[],
+                            )
+                    ]),
+                    html.Details(
+                        style={'paddingTop': '15px'},
+                        children=[
+                            html.Summary('Topic distribution in individual letters',
+                                        style={'fontWeight':'bold'}),
+                            dcc.Dropdown(id="letter-list", 
+                                        multi=True,
+                                        persistence=False),
+                            html.Button('Get topics', 
+                                        id='button2', 
+                                        n_clicks = 0,
+                                        style={'padding': '5px'}), 
+                            dash_table.DataTable(id="letter-scores", 
+                                                data=[]
+                            )
+                    ]),
+                    html.Details(
+                        style={'paddingTop': '15px'},
+                        children=[
+                            html.Summary('Topic model visualisation',
+                                        style={'fontWeight':'bold'}),
+                            # Iframe-element is used to serve the pyLDAvis visualization in html form
+                            html.Iframe(id='pyldavis-vis',
+                                        style=dict(position="absolute", width="100%", height="100%"))
+                        ], 
+                        open='open')
+                ]
+            )
         ]
     )
 ])
