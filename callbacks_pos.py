@@ -59,7 +59,7 @@ def line_group_2_options(mains):
     [State('pos_groups_dropdown_1_sub', 'value')],
     [State('pos_groups_dropdown_2_main', 'value')],
     [State('pos_groups_dropdown_2_sub', 'value')],
-    [State('year-group-number', 'value')])
+    [State('year-group-number-line', 'value')])
 def display_line_graph(n_clicks, values0, values1, values2, values3, periods):
 
     if n_clicks is not None:
