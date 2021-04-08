@@ -2,20 +2,27 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import glob
 import plotly.express as px
+import string
+from pos_categories import pos_categories
 
 class DataParser():
     df = None
+    path_to_csv = 'TCEECE/data.csv'
 
     def __init__(self):
-        print('init')
-        self.db_person = pd.read_csv('TCEECE/metadata/database-person.txt', sep='\t', encoding='iso-8859-1')
-        self.db_person = self.db_person.set_index('PersonCode')
-        self.db_letter = pd.read_csv('TCEECE/metadata//database-letter.txt', sep='\t', encoding='iso-8859-1')
-        self.db_letter = self.db_letter.set_index('LetterID')
+        try:
+            self.df = pd.read_csv(self.path_to_csv, index_col=False)
+        except:
+            self.db_person = pd.read_csv('TCEECE/metadata/database-person.txt', sep='\t', encoding='iso-8859-1')
+            self.db_person = self.db_person.set_index('PersonCode')
+            self.db_letter = pd.read_csv('TCEECE/metadata//database-letter.txt', sep='\t', encoding='iso-8859-1')
+            self.db_letter = self.db_letter.set_index('LetterID')
 
-        self.df = self.letters_to_df()
-        print('data now ready')
-        print(id(self.df))
+            self.df = self.letters_to_df()
+            self.df.to_csv(self.path_to_csv, index=False)
+        # Delete rows with missing data
+        self.df = self.df.dropna(axis='index')
+        self.pos_categories = pos_categories
         return 
         
     # Transforms xml-file into a BeautifulSoup-object
@@ -45,6 +52,8 @@ class DataParser():
         # Splits the items into POS-tags and words and adds them to separate lists
         for item in lst:
             part = item.partition("_")
+            if part[2] == '' or  part[2][0] in string.punctuation:
+                continue
             pos.append(part[2])
             words.append(part[0])
 
@@ -87,14 +96,6 @@ class DataParser():
         frame = pd.concat(li, axis=0, ignore_index=True)
 
         return frame
-
-    def get_word_counts(self):
-
-        df = self.df
-        # Word count DataFrame
-        word_counts = df.groupby(['ID', 'Year']).size().to_frame(name = 'WordCount').reset_index()
-
-        return word_counts
 
     def get_pos_counts(self):
 
@@ -151,7 +152,7 @@ class DataParser():
         df = self.df
         word_set = set(df['Words'].str.lower())
         word_list = [{'label':word, 'value':word} for word in word_set]
-
+        print(word_list[0])
         return word_list
 
     def get_rank(self):
@@ -177,14 +178,6 @@ class DataParser():
 
         return year_set
 
-    def get_wc_fig(self):
-
-        word_counts = self.get_word_counts()
-        # Get specific data needed for the visualisations
-        wc_fig = px.scatter(word_counts, x="Year", y="WordCount", title='Word count for each letter in corpus')
-
-        return wc_fig
-
     def get_fm_fig(self):
 
         nn1_MF = self.get_mfn_ratio()
@@ -192,3 +185,7 @@ class DataParser():
         #pc_fig = px.line(nn1_counts, x="Year", y="PosCountNorm")
 
         return fm_fig
+
+    def list_to_dash_option_dict(self, l):
+        options = [{'label':item, 'value':item} for item in l]
+        return options

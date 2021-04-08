@@ -1,3 +1,4 @@
+import dash
 from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
@@ -18,52 +19,75 @@ pos_counts = data_parser.get_pos_counts()
 nn1_MF = data_parser.get_mfn_ratio()
 tag_MF = data_parser.get_mfn_tag()
 
-@app.callback(Output('pos_graph', 'figure'), 
-            [Input('pos_dropdown', 'value')])
-def display_pos_graphs(selected_values):
 
-    if selected_values is None:
-        raise PreventUpdate
-    else:
-        pos_counts = data_parser.get_pos_counts()
-        mask = pos_counts['Tags'].isin(selected_values)
-        fig = px.line(
-            data_frame=pos_counts[mask].groupby(['Tags', 'Year']).mean().reset_index(), 
-            x="Year", 
-            y="PosCountNorm", 
-            range_y=[0,50],
-            labels={
-                'Year': 'Year', 
-                'PosCountNorm':'%'},
-            color='Tags',
-            title='Percentage of POS per year')
+@app.callback(
+    Output('pos_groups_dropdown_1_sub', 'value'),
+    Output('pos_groups_dropdown_1_sub', 'options'),
+    [Input('pos_groups_dropdown_1_main', 'value')])
+def line_group_1_options(mains):
 
-        return fig
+    values = []
+    options = []
+    for main in mains:
+        value = list(data_parser.pos_categories[main].keys())
+        values.extend(value)
+        options.extend(data_parser.list_to_dash_option_dict(value))
+
+    return values, options
 
 
 @app.callback(
-    Output('pos_groups_graph', 'figure'), 
-    [Input('pos_groups_dropdown_1', 'value'),
-    Input('pos_groups_dropdown_2', 'value')])
-def display_grouped_pos_graphs(values1, values2):
+    Output('pos_groups_dropdown_2_sub', 'value'),
+    Output('pos_groups_dropdown_2_sub', 'options'),
+    [Input('pos_groups_dropdown_2_main', 'value')])
+def line_group_2_options(mains):
 
-    if values1 is None and values2 is None:
-        raise PreventUpdate
-    else:
+    values = []
+    options = []
+    for main in mains:
+        value = list(data_parser.pos_categories[main].keys())
+        values.extend(value)
+        options.extend(data_parser.list_to_dash_option_dict(value))
+    
+    return values, options
+
+
+@app.callback(
+    Output('line_graph', 'figure'), 
+    Input('update_line_button', 'n_clicks'), # Only pressing the button initiates the function
+    [State('pos_groups_dropdown_1_main', 'value')],
+    [State('pos_groups_dropdown_1_sub', 'value')],
+    [State('pos_groups_dropdown_2_main', 'value')],
+    [State('pos_groups_dropdown_2_sub', 'value')],
+    [State('year-group-number', 'value')])
+def display_line_graph(n_clicks, values0, values1, values2, values3, periods):
+
+    if n_clicks is not None:
+        bins = pd.interval_range(start=1700, end=1800, periods=periods, closed='right')
+        labels = list(bins.astype(str))
+
+        df = data_parser.df
+        df = df.groupby(['ID', 'SenderSex', 'SenderRank', 'RelCode', 'Tags', 'Year', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
+        df['PosCountNorm'] = df['PosCount']/df['WordCount']*100
+        
+        df['Year'] = df['Year'].astype('int')
+        df['YearGroup'] = pd.cut(df['Year'], bins=bins,include_lowest=True, labels=labels, precision=0)
+        df['YearGroup'] = df['YearGroup'].astype("str")
+        df = df.groupby(['YearGroup', 'Tags']).mean().reset_index()
+
         fig = go.Figure()
-        pos_counts = data_parser.get_pos_counts()
-        mask = pos_counts['Tags'].isin(values1)
+        mask = df['Tags'].isin(values1)
         fig.add_scatter(
-            x=pos_counts[mask].groupby(['Tags', 'Year']).mean().reset_index().groupby(['Year']).sum().reset_index()['Year'], 
-            y=pos_counts[mask].groupby(['Tags', 'Year']).mean().reset_index().groupby(['Year']).sum().reset_index()['PosCountNorm'],
-            name='Group 1')
+            x=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['YearGroup'], 
+            y=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['PosCountNorm'],
+            name='Line 1')
 
-        mask = pos_counts['Tags'].isin(values2)
+        mask = pos_counts['Tags'].isin(values3)
         fig.add_scatter(
-            x=pos_counts[mask].groupby(['Tags', 'Year']).mean().reset_index().groupby(['Year']).sum().reset_index()['Year'], 
-            y=pos_counts[mask].groupby(['Tags', 'Year']).mean().reset_index().groupby(['Year']).sum().reset_index()['PosCountNorm'],
-            name='Group 2')
-        fig.update_layout(yaxis_range=[0,50], title='Build POS groups and compare')
+            x=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['YearGroup'], 
+            y=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['PosCountNorm'],
+            name='Line 2')
+        fig.update_layout(yaxis_range=[0,50])
 
         return fig
 
@@ -71,7 +95,7 @@ def display_grouped_pos_graphs(values1, values2):
 @app.callback(
     Output('m-f-graph-year-grouping', 'figure'), 
     [Input('year-group-number', 'value')])
-def display_grouped_pos_graphs(value):
+def display_grouped_pos_graphs1(value):
 
     if value is None:
         raise PreventUpdate
