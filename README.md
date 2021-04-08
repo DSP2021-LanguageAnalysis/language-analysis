@@ -15,7 +15,7 @@ Data Science Master's Programme, University of Helsinki
 https://github.com/orgs/DSP2021-LanguageAnalysis/projects/1
 
 ### Description
-General description
+This app allows for the exploration of a corpus of historical letters using data science methods. The app has two sections. The first is the part of speech, or POS tag, visualisation section. Here there are two tabs, containing bar and line graphs, to give the user a general overview of the dataset. This section contains various options to filter and restrict the dataset to allow the user more freedom in their exploration. The second part of the app is the topic model section. This allows the user to generate, using the latent dirichlet allocation algorithm, a chosen number of “topics” from the data set. When properly filtered and parameterized, this allows the user to see which topics dominated the discussion in the letters. The app gives a wide array of options, so that the user can adjust based on their own questions of interest. 
 
 ### Newest online version
 Go to http://193.166.25.206:8050/app/postags
