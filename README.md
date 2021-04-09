@@ -15,7 +15,9 @@ Data Science Master's Programme, University of Helsinki
 https://github.com/orgs/DSP2021-LanguageAnalysis/projects/1
 
 ### Description
-This app allows for the exploration of a corpus of historical letters using data science methods. The app has two sections. The first is the part of speech, or POS tag, visualisation section. Here there are two tabs, containing bar and line graphs, to give the user a general overview of the dataset. This section contains various options to filter and restrict the dataset to allow the user more freedom in their exploration. The second part of the app is the topic model section. This allows the user to generate, using the latent dirichlet allocation algorithm, a chosen number of “topics” from the data set. When properly filtered and parameterized, this allows the user to see which topics dominated the discussion in the letters. The app gives a wide array of options, so that the user can adjust based on their own questions of interest. 
+This app allows for the exploration of a corpus of historical letters using data science methods. The app has two sections. 
+The first is the part of speech, or POS tag, visualisation section. Here there are two tabs, containing bar and line graphs, to give the user a general overview of the dataset. This section contains various options to filter and restrict the dataset to allow the user more freedom in their exploration. 
+The second part of the app is the topic model section. This allows the user to generate, using the latent dirichlet allocation algorithm, a chosen number of “topics” from the data set. When properly filtered and parameterized, this allows the user to see which topics dominated the discussion in the letters. The app gives a wide array of options, so that the user can adjust based on their own questions of interest. 
 
 ### Newest online version
 Go to http://193.166.25.206:8050/app/postags
@@ -104,6 +106,17 @@ Go to http://193.166.25.206:8050/app/postags
 •	Groups and compare
 
 ### Topic model
-
+#### Latent Dirichlet Allocation
+Latent dirichlet allocation, or LDA for short, is an algorithm used for topic modelling in natural language processing. Topics are groups of items, in this case tokens, which belong together due to their usage and prominence in the texts. Topics can be utilised to fully explore a corpora in unearthing and classifying the underlying themes present. 
+Preprocessing of the data plays a big part in obtaining significant results through this method, as the majority of words do not contribute any information about the topics themselves, but are there for other purposes, such as conveying the subjects in question, or linking together parts of the sentence. 
+In brief, the algorithm works by iterating over documents. Firstly each word w in the document is assigned to one of k topics, at random. Then, conditional probabilities are calculated to represent the likelihood that w belongs to that topic. Then the words in the topics are updated based on these probabilities and the algorithm repeats.
+#### Iterations
+Controls how many times the algorithm repeats a certain process, called the E-step, on each document. The E-step is a process during which the optimal values of the “variational parameters” are found for a document. The variational parameters are used to compute a lower bound for the log likelihood of the data, and when optimised will produce the tightest possible lower bound. Then inferences can be made about the log likelihood of the entire data, which is necessary for predicting which words belong to which topics.
+#### Hyperparameters - Alpha and Eta
+#### Alpha - Interpretation
+Low alpha means each document is likely to consist of a few, or even one dominant topic. High alpha means each document is likely to consist of a mix of most of the topics. 
+#### Eta - Interpretation
+Low eta means each topic is likely to be composed of only a few dominant words. High eta means each topic is likely to consist of a mixture of many words. 
+Ideally, we would like our documents to consist of only a few topics, and the words within those topics to belong to only one or a few of those topics. As such, alpha and eta can be adjusted to suit these purposes. 
 ### Credits and Licence
 
