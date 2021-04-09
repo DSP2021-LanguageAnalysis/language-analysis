@@ -32,6 +32,37 @@ layout1 = html.Div([
             ),
             dcc.Tab(label='Bar', 
                 children=[
+                    # main bar chart
+                    html.Div(
+                        children=[
+                            dcc.Graph(id='bar_chart'),
+                            "Select the number of year groups",
+                            html.Br(),
+                            dcc.Input(
+                                id="year-group-number-bar", 
+                                type="number", 
+                                placeholder="input number of groups",
+                                value=10
+                            ),
+                            html.Hr(),
+                            'Tag selection',
+                            html.Br(),
+                            dcc.Dropdown(
+                                id='pos_groups_dropdown_bar1_main',
+                                options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories.keys())), 
+                                value=['nouns'],
+                                multi=True
+                            ),
+                            dcc.Dropdown(
+                                id='pos_groups_dropdown_bar1_sub',
+                                options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
+                                value=list(data_parser.pos_categories['nouns'].keys()),
+                                multi=True
+                            ),
+                            html.Br(), 
+                            html.Button('Apply selection', id='update_bar_button', n_clicks = 0)
+                        ]
+                    ),
                     # POS NN1 F/M
                     html.Div(
                         children=[
