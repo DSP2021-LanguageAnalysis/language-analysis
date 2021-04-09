@@ -14,6 +14,7 @@ class TopicModel:
     strings = None
     docs = None
     dictionary = None
+    topic_letters = None
 
     def __init__(self):
         return
@@ -134,23 +135,16 @@ class TopicModel:
     # Extracts the 20 words with highest scores for each topic into a dataframe
     def get_topics(self):
         d = {}
-        for idx, topic in self.model.print_topics(num_words=20):
+        topic_ids = []
+        for idx, topic in self.model.print_topics(num_topics=-1, num_words=20):
             d['Topic {}'.format(idx)] = topic.replace("*", ", ").split("+")
+            topic_ids.append(idx)
     
         df = pd.DataFrame(d)
+        topic_list = [{'label':"Topic {}".format(id), 'value':id} for id in set(topic_ids)]
     
-        return df
+        return df, topic_list
     
-    # Lists the topic distribution for given letter
-    #def get_letter_topics(self, index):
-    #    d = {}
-    #    #for ind, score in sorted(self.model[self.corpus[index]], key=lambda tup: -1*tup[1]):
-    #    for ind, score in self.model[self.corpus[index]]:
-    #        d["Topic {}".format(ind)] = [round(float(score), 3)]
-    
-    #    df = pd.DataFrame(d)
-    
-    #    return df
 
     # Lists the topic distribution for given letters
     def get_letter_topics(self, indices):
@@ -211,7 +205,7 @@ class TopicModel:
 
         topics_sorted["Contribution of topic to letter"] = topics_sorted["Contribution of topic to letter"].round(decimals=3)
 
-        return topics_sorted
+        self.topic_letters = topics_sorted
 
     # Counts the number and percentage of documents for which each topic is dominant
     def letters_per_topic(self, dominant_topics):
@@ -246,3 +240,9 @@ class TopicModel:
         letter_list = [{'label':', '.join(map(str, word)), 'value':i} for i,word in enumerate(self.strings.index)]
  
         return letter_list
+    
+    # Returns a dataframe of the most representative letters for the requested topic
+    def get_topic_letters(self, topic):
+        topic_df = self.topic_letters.loc[self.topic_letters['Topic'] == topic]
+
+        return topic_df
