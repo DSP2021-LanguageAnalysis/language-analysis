@@ -200,9 +200,9 @@ layout2 = html.Div(
                 ]
             ),
             html.Br(),
-            html.Br()
-            html.H5('Filter extremes')
-            html.Br()
+            html.Br(),
+            html.H5('Filter extremes'),
+            html.Br(),
             html.Div(
                 children=[
                     'Filter tokens appearing in less than selected',
