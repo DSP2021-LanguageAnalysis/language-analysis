@@ -295,13 +295,16 @@ layout2 = html.Div(
                     html.Details(
                         style={'paddingTop': '15px'},
                         children=[
-                            html.Summary('Most representative letters for each topic',
-                                        style={'fontWeight':'bold'}),
+                            html.Summary('Most representative letters for selected topic',
+                                    style={'fontWeight':'bold'}),
+                            dcc.Dropdown(id="topic-selector", 
+                                        persistence=False),
                             # Table-element that shows the most representative letters for each topic
                             dash_table.DataTable(id="letter-topics", 
                                                 data=[]
                             )
-                    ]),
+                        ]
+                    ),
                     html.Details(
                         style={'paddingTop': '15px'},
                         children=[
@@ -322,8 +325,7 @@ layout2 = html.Div(
                                         persistence=False),
                             html.Button('Get topics', 
                                         id='button2', 
-                                        n_clicks = 0,
-                                        style={'padding': '5px'}), 
+                                        n_clicks = 0), 
                             dash_table.DataTable(id="letter-scores", 
                                                 data=[]
                             )

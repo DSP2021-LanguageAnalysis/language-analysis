@@ -26,11 +26,12 @@ pos_tags = data_parser.get_pos_list()
     Output('slider-output', 'children'), # Modified string with the years is passed to the Div-element
     Output('slider-values', 'value'), # Unmodified list of the selected years is passed to the next callback 
     Input('time-slider', 'value'))
-def set_cities_options(selected_years):
+def set_years(selected_years):
     years = 'Selected period: {start} - {end}'.format(start=selected_years[0], end=selected_years[1])
 
     return years, selected_years
 
+# Callback for the letter selector
 @app.callback(
     Output('letter-scores', 'data'), 
     Output('letter-scores', 'columns'), 
@@ -45,13 +46,27 @@ def set_letter_topics(clicks,indices):
     else:
         return None, None
 
+# Callback for the topic selector and data table
+@app.callback(
+    Output('letter-topics', 'data'),
+    Output('letter-topics', 'columns'),
+    Input('topic-selector', 'value'), prevent_initial_call=True)
+def get_letters_per_topic(topic_id):
+    if topic_id:
+        letters_for_topic = tm.get_topic_letters(topic_id)
+        letters_for_topic = letters_for_topic.drop(columns=['Topic'])
+        cols = [{"name": i, "id": i} for i in letters_for_topic.columns]
+
+        return letters_for_topic.to_dict('records'), cols
+    else:
+        return None, None
+
 
 # Callback function for the topic model tab
 @app.callback(
     Output('top-topics', 'data'),
     Output('top-topics', 'columns'),
-    Output('letter-topics', 'data'),
-    Output('letter-topics', 'columns'),
+    Output('topic-selector', 'options'),
     Output('letters-per-topic', 'data'),
     Output('letters-per-topic', 'columns'),
     Output('pyldavis-vis', 'srcDoc'),
@@ -100,26 +115,25 @@ def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, g
         # Creates the LDA topic model
         model = tm.train_lda(corpus, dictionary, topics, iterations, alpha, alpha_boolean, eta, eta_boolean, userseed)
 
-        # Gets the top 20 words for each topic
-        topics_df = tm.get_topics()
+        # Gets the top 20 words for each topic and topic list for the dropdown
+        topics_df, topic_list = tm.get_topics()
 
         dominant_topics = tm.letter_topics()
 
-        letters_for_topics = tm.get_most_representative(dominant_topics)
-
         letters_per_topic = tm.letters_per_topic(dominant_topics)
+
+        tm.get_most_representative(dominant_topics)
 
         letter_list = tm.get_letter_list()
 
         cols = [{"name": i, "id": i} for i in topics_df.columns]
-        cols2 = [{"name": i, "id": i} for i in letters_for_topics.columns]
-        cols3 = [{"name": i, "id": i} for i in letters_per_topic.columns]
+        cols2 = [{"name": i, "id": i} for i in letters_per_topic.columns]
 
         # Creates the pyLDAvis visualisation of the LDA model
         vis_data = pyLDAvis.gensim.prepare(model, corpus, dictionary)
         html_vis = pyLDAvis.prepared_data_to_html(vis_data, template_type='general')
 
-        return topics_df.to_dict('records'), cols, letters_for_topics.to_dict('records'), cols2, letters_per_topic.to_dict('records'), cols3, html_vis, letter_list, False
+        return topics_df.to_dict('records'), cols, topic_list, letters_per_topic.to_dict('records'), cols2, html_vis, letter_list, False
 
     else:
-        return no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update, True          
+        return no_update, no_update, no_update, no_update, no_update, no_update, no_update, True          
