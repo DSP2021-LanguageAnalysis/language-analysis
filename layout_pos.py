@@ -63,32 +63,6 @@ layout1 = html.Div([
                             html.Button('Apply selection', id='update_bar_button', n_clicks = 0)
                         ]
                     ),
-                    # POS NN1 F/M
-                    html.Div(
-                        children=[
-                            dcc.Graph(id='M/F_barChart'),
-                            dcc.Dropdown(
-                                id='F/M_dropdown_1',
-                                options=pos_list, 
-                                value=['NN1'],
-                                multi=True
-                            )
-                        ]
-                    ),
-                    # POS NN1 F/M with year grouping
-                    html.Div(
-                        children=[
-                            dcc.Graph(id='m-f-graph-year-grouping'),
-                            "Select the number of year groups",
-                            html.Br(),
-                            dcc.Input(
-                                id="year-group-number", 
-                                type="number", 
-                                placeholder="input number of groups",
-                                value=10
-                            )
-                        ]
-                    ),
                     # Dynamic attribute selection
                     html.Div(
                         children=[

@@ -35,7 +35,7 @@ def line_group_1_options(mains):
 
     return values, options
 
-
+# line graph
 @app.callback(
     Output('pos_groups_dropdown_2_sub', 'value'),
     Output('pos_groups_dropdown_2_sub', 'options'),
@@ -91,7 +91,7 @@ def display_line_graph(n_clicks, values0, values1, values2, values3, periods):
 
         return fig
 
-
+# main bar chart
 @app.callback(
     Output('pos_groups_dropdown_bar1_sub', 'value'),
     Output('pos_groups_dropdown_bar1_sub', 'options'),
@@ -148,49 +148,7 @@ def display_bar_chart(n_clicks, values0, values1, periods):
 
         return fig
 
-@app.callback(
-    Output('m-f-graph-year-grouping', 'figure'), 
-    [Input('year-group-number', 'value')])
-def display_grouped_pos_graphs1(value):
-
-    if value is None:
-        raise PreventUpdate
-    else:
-        bins = pd.interval_range(start=1700, end=1800, periods=value, closed='right')
-        labels = list(bins.astype(str))
-        df = nn1_MF.copy()
-        df['Year'] = df['Year'].astype('int')
-        df['YearGroup'] = pd.cut(df['Year'], bins=bins,include_lowest=True, labels=labels, precision=0)
-        df['YearGroup'] = df['YearGroup'].astype("str")
-        df = df.groupby(['YearGroup', 'SenderSex']).mean().reset_index()
-
-        return px.bar(df, x="YearGroup", y="PosCountNorm", color='SenderSex', barmode='group', title='Dynamically group years')  
-
-@app.callback(
-    Output('M/F_barChart', 'figure'), 
-    [Input('F/M_dropdown_1', 'value')])
-def display_multiple_tags_barchart(values):
-
-    if values is None:
-        raise PreventUpdate
-    else:
-        mask = tag_MF['Tags'].isin(values)
-        fig= px.bar(
-            # can choose only one tag at a time
-            data_frame=tag_MF[mask].groupby(['Year', 'SenderSex', 'Tags']).mean().reset_index(),
-            x='Year', 
-            y='PosCountNorm',
-            range_y=[0,30],
-            labels={
-                'Year': 'Year', 
-                'PosCountNorm':'Percentage'},
-            hover_data=['Tags'],
-            color='SenderSex',
-            barmode='group',
-            title='Compare male and female tags')
-
-        return fig
-
+# Dynamic grouping bar chart
 @app.callback(
     Output('dynamic-subattribute-selection', 'value'),
     Output('dynamic-subattribute-selection', 'options'),
