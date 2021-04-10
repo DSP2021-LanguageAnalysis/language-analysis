@@ -20,6 +20,17 @@ nn1_MF = data_parser.get_mfn_ratio()
 tag_MF = data_parser.get_mfn_tag()
 
 
+# Callback for the slider element
+@app.callback(
+    Output('line_slider_output', 'children'), # Modified string with the years is passed to the Div-element
+    Output('line_slider_values', 'value'), # Unmodified list of the selected years is passed to the next callback 
+    Input('line_time_slider', 'value'))
+def set_years(selected_years):
+    years = 'Selected period: {start} - {end}'.format(start=selected_years[0], end=selected_years[1])
+
+    return years, selected_years
+
+
 @app.callback(
     Output('pos_groups_dropdown_1_sub', 'value'),
     Output('pos_groups_dropdown_1_sub', 'options'),
@@ -59,11 +70,15 @@ def line_group_2_options(mains):
     [State('pos_groups_dropdown_1_sub', 'value')],
     [State('pos_groups_dropdown_2_main', 'value')],
     [State('pos_groups_dropdown_2_sub', 'value')],
-    [State('year-group-number-line', 'value')])
-def display_line_graph(n_clicks, values0, values1, values2, values3, periods):
+    [State('line_period_length', 'value')],
+    [State('line_time_slider', 'value')])
+def display_line_graph(n_clicks, values0, values1, values2, values3, periods, years):
 
     if n_clicks is not None:
-        bins = pd.interval_range(start=1700, end=1800, periods=periods, closed='right')
+        start = years[0]
+        end = years[1]
+        number_of_periods = (end - start) / periods
+        bins = pd.interval_range(start=start, end=end, periods=number_of_periods, closed='right')
         labels = list(bins.astype(str))
 
         df = data_parser.df
