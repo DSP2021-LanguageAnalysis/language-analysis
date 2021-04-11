@@ -171,6 +171,7 @@ def bar_tag_options(mains, data):
     [State('pos_groups_dropdown_bar1_main', 'value')],
     [State('pos_groups_dropdown_bar1_sub', 'value')],
     [State('year-group-number-bar', 'value')])
+
 def display_bar_chart(n_clicks, values0, values1, periods):
 
     if n_clicks is not None:
@@ -199,9 +200,49 @@ def display_bar_chart(n_clicks, values0, values1, periods):
             hover_data=['Tags'],
             color='SenderSex',
             barmode='group',
-            title='main bar chart')
-
+            title='Main Bar Chart')
         fig.update_layout(yaxis_range=[0,50])
+
+        return fig
+
+# TEsting wordcount bar chart
+@app.callback(
+    Output('count_bar_chart', 'figure'), 
+    Input('update_count_button', 'n_clicks'), # Only pressing the button initiates the function
+    [State('pos_groups_dropdown_count_main', 'value')],
+    [State('pos_groups_dropdown_count_sub', 'value')],
+    [State('year-group-number-count', 'value')])
+
+def display_bar_chart(n_clicks, values0, values1, periods):
+
+    if n_clicks is not None:
+        bins = pd.interval_range(start=1680, end=1800, periods=periods, closed='right')
+        labels = list(bins.astype(str))
+
+        df = data_parser.df
+        df = df.groupby(['ID', 'SenderSex', 'SenderRank', 'RelCode', 'Tags', 'Year', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
+        df['PosCountNorm'] = df['PosCount']/df['WordCount']*100
+        
+        df['Year'] = df['Year'].astype('int')
+        df['YearGroup'] = pd.cut(df['Year'], bins=bins,include_lowest=True, labels=labels, precision=0)
+        df['YearGroup'] = df['YearGroup'].astype("str")
+        df = df.groupby(['YearGroup', 'Tags', 'SenderSex']).mean().reset_index()
+
+        fig = go.Figure()
+        mask = df['Tags'].isin(values1)
+        fig= px.bar(
+            data_frame=df[mask].groupby(['Tags', 'YearGroup', 'SenderSex']).mean().reset_index(),
+            x='YearGroup', 
+            y='PosCount',
+            range_y=[0,200],
+            labels={
+                'YearGroup': 'Year', 
+                'PosCount':'Number of words'},
+            hover_data=['Tags'],
+            color='SenderSex',
+            barmode='group',
+            title='Wordcount of each period')
+        fig.update_layout(yaxis_range=[0,200])
 
         return fig
 
