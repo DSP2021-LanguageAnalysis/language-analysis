@@ -219,7 +219,7 @@ layout2 = html.Div(
                         ),
                         # Dash Input component for setting the number of topics
                         dcc.Input( 
-                            id='filter-low',
+                            id='min_doc',
                             type='number',
                             value=10,
                             min=0
@@ -243,7 +243,7 @@ layout2 = html.Div(
                         ),
                         # Dash Input component for setting the number of topics
                         dcc.Input( 
-                            id='filter-high',
+                            id='max_prop',
                             type='number',
                             value=50,
                             min=1
