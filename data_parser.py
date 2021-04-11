@@ -189,3 +189,14 @@ class DataParser():
     def list_to_dash_option_dict(self, l):
         options = [{'label':item, 'value':item} for item in l]
         return options
+
+    def get_pos_categories(self, custom):
+        try:
+            all_pos_categories = dict()
+            all_pos_categories.update(self.pos_categories)
+            all_pos_categories.update(custom)
+            print(all_pos_categories)
+            return all_pos_categories
+        except Exception as e:
+            print(e)
+            return self.pos_categories

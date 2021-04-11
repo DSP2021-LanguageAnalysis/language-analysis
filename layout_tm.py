@@ -19,6 +19,7 @@ layout2 = html.Div(
     ),
     html.H2('Topic modeling'),
     dcc.Link('POS tag visualisation', href='/app/postags'),
+    dcc.Link('Add custom groups', href='/app/customize'),
     html.Div(
         children=[
             html.Br(),
