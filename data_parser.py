@@ -195,7 +195,6 @@ class DataParser():
             all_pos_categories = dict()
             all_pos_categories.update(self.pos_categories)
             all_pos_categories.update(custom)
-            print(all_pos_categories)
             return all_pos_categories
         except Exception as e:
             print(e)
