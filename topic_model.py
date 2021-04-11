@@ -50,10 +50,10 @@ class TopicModel:
         self.docs = [[lemmatizer.lemmatize(token) for token in doc] for doc in docs]
         
         # Create a dictionary representation of the documents.
-        self.dictionary = Dictionary(self.docs)
+        self.dictionary = Dictionary(self.docs).filter_extremes(no_below=min_doc, no_above=max_prop)
 
         # Filter out words that occur less than 10 documents, or more than 50% of the documents.
-        dictionary.filter_extremes(no_below=min_doc, no_above=max_prop)
+        #dictionary.filter_extremes(no_below=min_doc, no_above=max_prop)
         
         # Bag-of-words representation of the documents.
         self.corpus = [self.dictionary.doc2bow(doc) for doc in self.docs]
