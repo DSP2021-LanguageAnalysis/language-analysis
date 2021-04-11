@@ -52,55 +52,6 @@ layout1 = html.Div([
                     html.Div(
                         children=[
                             dcc.Graph(id='line_graph'),
-                            "Select the number of year groups",
-                            html.Br(),
-                            dcc.Input(
-                                id="year-group-number-line", 
-                                type="number", 
-                                placeholder="input number of groups",
-                                value=10
-                            ),
-                            html.Hr(),
-                            'Selections for line 1',
-                            html.Br(),
-                            dcc.Dropdown(
-                                id='pos_groups_dropdown_1_main',
-                                options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories.keys())), 
-                                value=['nouns'],
-                                multi=True
-                            ),
-                            dcc.Dropdown(
-                                id='pos_groups_dropdown_1_sub',
-                                options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
-                                value=list(data_parser.pos_categories['nouns'].keys()),
-                                multi=True
-                            ),   
-                            html.Br(),
-                            'Selections for line 2',
-                            html.Br(),
-                            dcc.Dropdown(
-                                id='pos_groups_dropdown_2_main',
-                                options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories.keys())), 
-                                value=['pronouns'],
-                                multi=True
-                            ),
-                            dcc.Dropdown(
-                                id='pos_groups_dropdown_2_sub',
-                                options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['pronouns'].keys())), 
-                                value=list(data_parser.pos_categories['pronouns'].keys()),
-                                multi=True
-                            ),
-                            html.Br(), 
-                            html.Button('Apply selection', id='update_line_button', n_clicks = 0)
-                        ]
-                    )
-                ]
-            ),
-            dcc.Tab(label='Line', 
-                children=[
-                    html.Div(
-                        children=[
-                            dcc.Graph(id='line_graph'),
                             'Select time range:', 
                             # Dash Slider component for selecting the time range
                             dcc.RangeSlider(
@@ -123,6 +74,19 @@ layout1 = html.Div([
                                 value=20
                             ),
                             html.Br(),
+                            html.Br(),
+                            'Which lines are visible:',
+                            html.Br(),
+                            dcc.Checklist(
+                                id='line_visibility',
+                                options=[
+                                    {'label': 'Line 1', 'value': '1'},
+                                    {'label': 'Line 2', 'value': '2'},
+                                    {'label': 'Line 3', 'value': '3'}
+                                ],
+                                value=['1'],
+                                labelStyle={'display': 'inline-block', 'margin-left': '10px'}
+                            ),
                             html.Br(),
                             ## Selections for group 1
                             html.Details([
@@ -226,14 +190,70 @@ layout1 = html.Div([
                                     "POS-tags",
                                     dcc.Dropdown(
                                         id='pos_groups_dropdown_2_main',
+                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories.keys())), 
+                                        value=['pronouns'],
+                                        multi=True
+                                    ),
+                                    dcc.Dropdown(
+                                        id='pos_groups_dropdown_2_sub',
+                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['pronouns'].keys())), 
+                                        value=list(data_parser.pos_categories['pronouns'].keys()),
+                                        multi=True
+                                    ) 
+                            ])]),
+                            html.Details([
+                                html.Summary('Line 3', style={'fontWeight':'bold'}),
+                                html.Div(children=[
+                                    "Sender sex",
+                                    dcc.Dropdown(
+                                        id='line_sex3',
+                                        options=[
+                                            {'label': 'M', 'value': 'M'},
+                                            {'label': 'F', 'value': 'F'}
+                                        ], 
+                                        value=['M', 'F'],
+                                        multi=True
+                                    ),   
+                                    html.Br(),
+                                    "Sender rank",
+                                    dcc.Dropdown(
+                                        id='line_senderrank_main3',
                                         options=[], 
                                         value=[],
                                         multi=True
                                     ),
                                     dcc.Dropdown(
-                                        id='pos_groups_dropdown_2_sub',
-                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
-                                        value=list(data_parser.pos_categories['nouns'].keys()),
+                                        id='line_senderrank_sub3',
+                                        options=[], 
+                                        value=[],
+                                        multi=True
+                                    ),   
+                                    html.Br(),
+                                    "Relationship",
+                                    dcc.Dropdown(
+                                        id='line_relationship_main3',
+                                        options=[],
+                                        value=[],
+                                        multi=True
+                                    ),
+                                    dcc.Dropdown(
+                                        id='line_relationship_sub3',
+                                        options=[], 
+                                        value=[],
+                                        multi=True
+                                    ),   
+                                    html.Br(),
+                                    "POS-tags",
+                                    dcc.Dropdown(
+                                        id='pos_groups_dropdown_3_main',
+                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories.keys())), 
+                                        value=['verbs'],
+                                        multi=True
+                                    ),
+                                    dcc.Dropdown(
+                                        id='pos_groups_dropdown_3_sub',
+                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['verbs'].keys())), 
+                                        value=list(data_parser.pos_categories['verbs'].keys()),
                                         multi=True
                                     ) 
                             ])]),

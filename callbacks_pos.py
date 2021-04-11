@@ -70,9 +70,12 @@ def line_group_2_options(mains):
     [State('pos_groups_dropdown_1_sub', 'value')],
     [State('pos_groups_dropdown_2_main', 'value')],
     [State('pos_groups_dropdown_2_sub', 'value')],
+    [State('pos_groups_dropdown_3_main', 'value')],
+    [State('pos_groups_dropdown_3_sub', 'value')],
     [State('line_period_length', 'value')],
-    [State('line_time_slider', 'value')])
-def display_line_graph(n_clicks, values0, values1, values2, values3, periods, years):
+    [State('line_time_slider', 'value')],
+    [State('line_visibility', 'value')])
+def display_line_graph(n_clicks, values0, pos_sub_1, values2, pos_sub_2, pos_main_3, pos_sub_3, periods, years, visibility):
 
     if n_clicks is not None:
         start = years[0]
@@ -91,17 +94,26 @@ def display_line_graph(n_clicks, values0, values1, values2, values3, periods, ye
         df = df.groupby(['YearGroup', 'Tags']).mean().reset_index()
 
         fig = go.Figure()
-        mask = df['Tags'].isin(values1)
-        fig.add_scatter(
-            x=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['YearGroup'], 
-            y=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['PosCountNorm'],
-            name='Line 1')
+        
+        if '1' in visibility:
+            mask = df['Tags'].isin(pos_sub_1)
+            fig.add_scatter(
+                x=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['YearGroup'], 
+                y=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['PosCountNorm'],
+                name='Line 1')
+        if '2' in visibility:
+            mask = df['Tags'].isin(pos_sub_2)
+            fig.add_scatter(
+                x=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['YearGroup'], 
+                y=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['PosCountNorm'],
+                name='Line 2')
+        if '3' in visibility:
+            mask = df['Tags'].isin(pos_sub_3)
+            fig.add_scatter(
+                x=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['YearGroup'], 
+                y=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['PosCountNorm'],
+                name='Line 3')
 
-        mask = pos_counts['Tags'].isin(values3)
-        fig.add_scatter(
-            x=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['YearGroup'], 
-            y=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['PosCountNorm'],
-            name='Line 2')
         fig.update_layout(yaxis_range=[0,50])
 
         return fig
