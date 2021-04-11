@@ -201,6 +201,57 @@ layout2 = html.Div(
                 ]
             ),
             html.Br(),
+            html.Br(),
+            html.H5('Filter extremes'),
+            html.Br(),
+            html.Div(
+                children=[
+                    'Filter tokens appearing in less than selected ',
+                    html.Span(
+                        'number of documents',
+                        id="tooltip-extreme-low",
+                        style={"textDecoration": "underline", "cursor": "pointer"},
+                        ),
+                        ': ',
+                        # Tooltip component for providing additional information to the user
+                        dbc.Tooltip(
+                            'Tokens that feature in less than the selected number of documents will not be considered in the model',
+                            target="tooltip-extreme-low",
+                        ),
+                        # Dash Input component for setting the number of topics
+                        dcc.Input( 
+                            id='filter-low',
+                            type='number',
+                            value=0,
+                            min=0
+                        )
+                ]
+            ),
+            html.Br(),
+            html.Div(
+                children=[
+                    'Filter tokens appearing in more than selected ',
+                    html.Span(
+                        'proportion of documents',
+                        id="tooltip-extreme-high",
+                        style={"textDecoration": "underline", "cursor": "pointer"},
+                        ),
+                        ': ',
+                        # Tooltip component for providing additional information to the user
+                        dbc.Tooltip(
+                            'Tokens that feature in more than the selected proportion of documents will not be considered in the model',
+                            target="tooltip-extreme-high",
+                        ),
+                        # Dash Input component for setting the number of topics
+                        dcc.Input( 
+                            id='filter-high',
+                            type='number',
+                            value=1,
+                            min=0.01
+                        )
+                ]
+            ),
+            html.Br(),
             html.H5('Filter by metadata'),
             html.Br(),
             html.Div(

@@ -85,8 +85,10 @@ def get_letters_per_topic(topic_id):
     State('stopwords-filter','value'),
     State('alpha','value'),
     State('eta', 'value'),
-    State('userseed','value'), prevent_initial_call=True)
-def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, gender, rank, rel, years, userstopwords, alpha, eta, userseed):
+    State('userseed','value'), 
+    State('filter-low','value'),
+    State('filter-high','value'), prevent_initial_call=True)
+def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, gender, rank, rel, years, userstopwords, alpha, eta, userseed, min_doc, max_prop):
 
     # Lists all triggered callbacks 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
@@ -110,7 +112,7 @@ def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, g
             data = tm.filter_by_time(data, years)
 
         # Data preprocessing for the LDA model 
-        corpus, dictionary, docs, strings = tm.prepare_data(data, userstopwords)
+        corpus, dictionary, docs, strings = tm.prepare_data(data, userstopwords, min_doc, max_prop)
    
         # Creates the LDA topic model
         model = tm.train_lda(corpus, dictionary, topics, iterations, alpha, alpha_boolean, eta, eta_boolean, userseed)
