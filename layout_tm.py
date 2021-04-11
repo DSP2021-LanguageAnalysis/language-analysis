@@ -207,7 +207,7 @@ layout2 = html.Div(
                 children=[
                     'Filter tokens appearing in less than selected',
                     html.Span(
-                        'number of documents',
+                        ' number of documents',
                         id="tooltip-extreme-low",
                         style={"textDecoration": "underline", "cursor": "pointer"},
                         ),
@@ -231,7 +231,7 @@ layout2 = html.Div(
                 children=[
                     'Filter tokens appearing in more than selected',
                     html.Span(
-                        'proportion of documents',
+                        ' proportion of documents',
                         id="tooltip-extreme-high",
                         style={"textDecoration": "underline", "cursor": "pointer"},
                         ),
