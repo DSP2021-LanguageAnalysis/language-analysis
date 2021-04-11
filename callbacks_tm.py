@@ -86,8 +86,8 @@ def get_letters_per_topic(topic_id):
     State('alpha','value'),
     State('eta', 'value'),
     State('userseed','value'), 
-    State('filter_low','value'),
-    State('filter_high','value'), prevent_initial_call=True)
+    State('min_doc','value'),
+    State('max_prop','value'), prevent_initial_call=True)
 def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, gender, rank, rel, years, userstopwords, alpha, eta, userseed, min_doc, max_prop):
 
     # Lists all triggered callbacks 
