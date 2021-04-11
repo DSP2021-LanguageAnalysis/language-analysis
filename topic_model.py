@@ -19,7 +19,7 @@ class TopicModel:
     def __init__(self):
         return
 
-    def prepare_data(self, data, userstopwords):
+    def prepare_data(self, data, userstopwords, min_doc, max_prop):
         
         # Group the data by the letter id and concatenate words from each letter to one string
         self.strings = data.groupby(['ID', 'Sender','Year']).agg(lambda col: ' '.join(col))
@@ -52,8 +52,8 @@ class TopicModel:
         # Create a dictionary representation of the documents.
         self.dictionary = Dictionary(self.docs)
 
-        # Filter out words that occur less than 10 documents, or more than 50% of the documents.
-        #dictionary.filter_extremes(no_below=10, no_above=0.5)
+        # Filter out words that occur in less than min_doc documents, or more than max_prop% of the documents.
+        self.dictionary.filter_extremes(no_below=min_doc, no_above=max_prop)
         
         # Bag-of-words representation of the documents.
         self.corpus = [self.dictionary.doc2bow(doc) for doc in self.docs]
