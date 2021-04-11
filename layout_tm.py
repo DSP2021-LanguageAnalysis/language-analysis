@@ -205,9 +205,9 @@ layout2 = html.Div(
             html.Br(),
             html.Div(
                 children=[
-                    'Filter tokens appearing in less than selected',
+                    'Filter tokens appearing in less than selected ',
                     html.Span(
-                        ' number of documents',
+                        'number of documents',
                         id="tooltip-extreme-low",
                         style={"textDecoration": "underline", "cursor": "pointer"},
                         ),
@@ -221,7 +221,7 @@ layout2 = html.Div(
                         dcc.Input( 
                             id='filter-low',
                             type='number',
-                            value=10,
+                            value=0,
                             min=0
                         )
                 ]
@@ -229,9 +229,9 @@ layout2 = html.Div(
             html.Br(),
             html.Div(
                 children=[
-                    'Filter tokens appearing in more than selected',
+                    'Filter tokens appearing in more than selected ',
                     html.Span(
-                        ' proportion of documents',
+                        'proportion of documents',
                         id="tooltip-extreme-high",
                         style={"textDecoration": "underline", "cursor": "pointer"},
                         ),
@@ -245,8 +245,8 @@ layout2 = html.Div(
                         dcc.Input( 
                             id='filter-high',
                             type='number',
-                            value=50,
-                            min=1
+                            value=1,
+                            min=0.01
                         )
                 ]
             ),
