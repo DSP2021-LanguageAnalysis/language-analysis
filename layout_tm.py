@@ -246,7 +246,7 @@ layout2 = html.Div(
                             id='filter-high',
                             type='number',
                             value=50,
-                            min=0
+                            min=1
                         )
                 ]
             ),
