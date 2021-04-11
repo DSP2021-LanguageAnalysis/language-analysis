@@ -21,6 +21,22 @@ rel_set, rel_list = data_parser.get_relationship()
 years_set = data_parser.get_years()
 pos_tags = data_parser.get_pos_list()
 
+# Callback for the POS tag selector
+@app.callback(
+    Output('pos_tm_sub', 'value'),
+    Output('pos_tm_sub', 'options'),
+    [Input('pos_tm_main', 'value')],
+    State('session', 'data'))
+def tm_pos_options(mains, data):
+    values = []
+    options = []
+    for main in mains:
+        value = list(data_parser.get_pos_categories(data)[main].keys())
+        values.extend(value)
+        options.extend(data_parser.list_to_dash_option_dict(value))
+
+    return values, options
+
 # Callback for the slider element
 @app.callback(
     Output('slider-output', 'children'), # Modified string with the years is passed to the Div-element
@@ -73,11 +89,11 @@ def get_letters_per_topic(topic_id):
     Output('letter-list','options'),
     Output('tm-results','hidden'),
     Input('button', 'n_clicks'), # Only pressing the button initiates the function
-    Input('alpha_boolean', 'on'),
-    Input('eta_boolean', 'on'),
+    State('alpha_boolean', 'on'),
+    State('eta_boolean', 'on'),
     State('num-topics', 'value'), # Parameters given by the user are saved in State
     State('num-iter', 'value'),
-    State('tags-filter', 'value'),
+    State('pos_tm_sub', 'value'),
     State('gender-filter', 'value'),
     State('rank-filter', 'value'), 
     State('rel-filter', 'value'), 
@@ -100,7 +116,7 @@ def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, g
         data = df
 
         # Filters the data based on user's choices
-        if len(tags) != len(pos_tags):
+        if tags.sort() != list(data_parser.pos_categories['nouns'].keys()).sort():
             data = tm.filter_by_tag(df, tags)
         if gender != 'A':
             data = tm.filter_by_sex(data, gender)

@@ -121,7 +121,7 @@ layout2 = html.Div(
                     ': ',
                     # Tooltip component, alpha
                     dbc.Tooltip(
-                        'positive smoothing parameter for prior distribution over word weights in each topic',
+                        'Positive smoothing parameter for prior distribution over word weights in each topic',
                         target="tooltip-eta",
                     ),
                     # Dash Input component for alpha
@@ -165,27 +165,21 @@ layout2 = html.Div(
             ),
                 
             ]),
-            html.Br(),
-            ###
-            ###
-
-
-
-            
+            html.Br(),            
             html.H5('Filter data by POS tags'),
             html.Br(),
-            html.Div(
-                children=[
-                    # Dash Dropdown component for selecting the tags for filtering the data
-                    dcc.Dropdown(
-                        id='tags-filter',
-                        options = data_parser.get_pos_list(),
-                        value=['NN1'],
-                        multi=True
-                    )
-                ]
+            dcc.Dropdown(
+                id='pos_tm_main',
+                options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories.keys())), 
+                value=['nouns'],
+                multi=True
             ),
-            html.Br(),
+            dcc.Dropdown(
+                id='pos_tm_sub',
+                options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
+                value=list(data_parser.pos_categories['nouns'].keys()),
+                multi=True
+            ), 
             html.Br(),
             html.H5('Filter out stopwords'),
             html.Br(),
