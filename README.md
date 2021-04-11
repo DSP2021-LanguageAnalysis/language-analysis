@@ -85,6 +85,11 @@ Go to http://193.166.25.206:8050/app/postags
 - Option to instruct the algorithm to only consider words of the chosen word type.
 #### Stopwords
 - Option to instruct the algorithm to ignore words given in the list.
+#### Filter Extremes
+#### Filter Below Threshold
+- Option to instruct the algorithm to ignore words appearing in less than the selected number of documents.
+#### Filter Above Threshold
+-Option to instruct the algorithm to ignore words appearing in more than the selected proportion of documents. Input is a decimal, between 0.01 and 1. 
 #### Sex
 - Option to instruct the algorithm to only consider letters of individuals from the chosen sex. 
 #### Rank
