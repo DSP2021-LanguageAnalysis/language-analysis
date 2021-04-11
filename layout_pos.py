@@ -20,6 +20,7 @@ layout1 = html.Div([
     ),
     html.H2('POS tag visualisation'),
     dcc.Link('Topic model', href='/app/topicmodel'),
+    dcc.Link('Add custom groups', href='/app/customize'),
     dcc.Tab(children=[
         dcc.Tabs([
             dcc.Tab(label='Instructions',
@@ -106,28 +107,28 @@ layout1 = html.Div([
                                     "Sender rank",
                                     dcc.Dropdown(
                                         id='line_senderrank_main',
-                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories.keys())), 
-                                        value=['nouns'],
+                                        options=[], 
+                                        value=[],
                                         multi=True
                                     ),
                                     dcc.Dropdown(
                                         id='line_senderrank_sub',
-                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
-                                        value=list(data_parser.pos_categories['nouns'].keys()),
+                                        options=[], 
+                                        value=[],
                                         multi=True
                                     ),   
                                     html.Br(),
                                     "Relationship",
                                     dcc.Dropdown(
                                         id='line_relationship_main',
-                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories.keys())), 
-                                        value=['nouns'],
+                                        options=[], 
+                                        value=[],
                                         multi=True
                                     ),
                                     dcc.Dropdown(
                                         id='line_relationship_sub',
-                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
-                                        value=list(data_parser.pos_categories['nouns'].keys()),
+                                        options=[], 
+                                        value=[],
                                         multi=True
                                     ),   
                                     html.Br(),

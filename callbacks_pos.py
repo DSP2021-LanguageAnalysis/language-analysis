@@ -34,29 +34,46 @@ def set_years(selected_years):
 @app.callback(
     Output('pos_groups_dropdown_1_sub', 'value'),
     Output('pos_groups_dropdown_1_sub', 'options'),
-    [Input('pos_groups_dropdown_1_main', 'value')])
-def line_group_1_options(mains):
+    [Input('pos_groups_dropdown_1_main', 'value')],
+    State('session', 'data'))
+def line_group_1_options(mains, data):
 
     values = []
     options = []
     for main in mains:
-        value = list(data_parser.pos_categories[main].keys())
+        value = list(data_parser.get_pos_categories(data)[main].keys())
         values.extend(value)
         options.extend(data_parser.list_to_dash_option_dict(value))
 
     return values, options
 
-# line graph
 @app.callback(
     Output('pos_groups_dropdown_2_sub', 'value'),
     Output('pos_groups_dropdown_2_sub', 'options'),
-    [Input('pos_groups_dropdown_2_main', 'value')])
-def line_group_2_options(mains):
+    [Input('pos_groups_dropdown_2_main', 'value')],
+    State('session', 'data'))
+def line_group_2_options(mains, data):
 
     values = []
     options = []
     for main in mains:
-        value = list(data_parser.pos_categories[main].keys())
+        value = list(data_parser.get_pos_categories(data)[main].keys())
+        values.extend(value)
+        options.extend(data_parser.list_to_dash_option_dict(value))
+    
+    return values, options
+
+@app.callback(
+    Output('pos_groups_dropdown_3_sub', 'value'),
+    Output('pos_groups_dropdown_3_sub', 'options'),
+    [Input('pos_groups_dropdown_3_main', 'value')],
+    State('session', 'data'))
+def line_group_3_options(mains, data):
+
+    values = []
+    options = []
+    for main in mains:
+        value = list(data_parser.get_pos_categories(data)[main].keys())
         values.extend(value)
         options.extend(data_parser.list_to_dash_option_dict(value))
     
@@ -118,17 +135,30 @@ def display_line_graph(n_clicks, values0, pos_sub_1, values2, pos_sub_2, pos_mai
 
         return fig
 
+@app.callback(
+    Output('pos_groups_dropdown_1_main', 'options'),
+    Output('pos_groups_dropdown_2_main', 'options'),
+    Output('pos_groups_dropdown_3_main', 'options'),
+    #Input('update_customs_button', 'n_clicks'),
+    Input('session', 'data'))
+def update_options(data):
+
+    options = data_parser.list_to_dash_option_dict(list(data_parser.get_pos_categories(data).keys()))
+    return options, options, options
+
+
 # main bar chart
 @app.callback(
     Output('pos_groups_dropdown_bar1_sub', 'value'),
     Output('pos_groups_dropdown_bar1_sub', 'options'),
-    [Input('pos_groups_dropdown_bar1_main', 'value')])
-def bar_tag_options(mains):
+    [Input('pos_groups_dropdown_bar1_main', 'value')],
+    State('session', 'data'))
+def bar_tag_options(mains, data):
 
     values = []
     options = []
     for main in mains:
-        value = list(data_parser.pos_categories[main].keys())
+        value = list(data_parser.get_pos_categories(data)[main].keys())
         values.extend(value)
         options.extend(data_parser.list_to_dash_option_dict(value))
     
