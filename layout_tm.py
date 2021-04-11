@@ -9,37 +9,83 @@ import globals
 data_parser = globals.data_parser
 
 layout2 = html.Div(
-    style={'padding': '20px'},
+    #style={'padding': '20px'},
     children=[
-    html.Nav(
+    dbc.Nav(
         className ='navbar navbar-expand-lg navbar-dark bg-primary', 
         children=[
-            html.H1(className='navbar-brand', children='Data Science Project: Language variation')
-        ]
+            html.H1(className='navbar-brand', children='VARIENG: TCEECE corpus analysis'),
+            dbc.NavItem(dbc.NavLink('POS tag analysis', href='/app/postags')),
+            dbc.NavItem(dbc.NavLink('Topic model', active=True, href='/app/topicmodel')),
+            dbc.NavItem(dbc.NavLink('Add custom groups', href='/app/customize'))
+        ],
+        pills=True
     ),
-    html.H2('Topic modeling'),
-    dcc.Link('POS tag visualisation', href='/app/postags'),
-    dcc.Link('Add custom groups', href='/app/customize'),
-    html.Div(
-        children=[
-            html.Br(),
-            html.H4(children='Create a topic model with LDA'),
-            html.Br(),
-            html.H5(children='Set model parameters'),
-            html.Br(),
-            html.Div(
-                children=[
-                    'Select the ',
-                    html.Span(
-                        'number of topics',
-                        id="tooltip-topics",
-                        style={"textDecoration": "underline", "cursor": "pointer"},
+    dcc.Tabs([
+        dcc.Tab(
+            label='Instructions',
+            children=[
+                html.Div(
+                    style={'padding': '20px'},
+                    children=['Add instructions']
+                )]),
+        dcc.Tab(
+            label='Topic Model',
+            children=[
+                html.Div(
+                    style={'padding': '20px'},
+                    children=[
+                        html.Br(),
+                        html.H4(children='Create a topic model with LDA'),
+                        html.Br(),
+                        html.H5(children='Set model parameters'),
+                        html.Br(),
+                        html.Div(
+                            children=[
+                                'Select the ',
+                                html.Span(
+                                    'number of topics',
+                                    id="tooltip-topics",
+                                    style={"textDecoration": "underline", "cursor": "pointer"},
+                                    ),
+                                    ': ',
+                                    # Tooltip component for providing additional information to the user
+                                    dbc.Tooltip(
+                                        'the number of requested latent topics to be extracted from the training corpus.',
+                                        target="tooltip-topics",
+                                    ),
+                                    # Dash Input component for setting the number of topics
+                                    dcc.Input( 
+                                        id='num-topics',
+                                        type='number',
+                                        value=5,
+                                        min=2
+                                    )
+                            ]
                         ),
-                        ': ',
-                        # Tooltip component for providing additional information to the user
-                        dbc.Tooltip(
-                            'the number of requested latent topics to be extracted from the training corpus.',
-                            target="tooltip-topics",
+                        html.Br(),
+                        html.Div(
+                            children=[
+                                'Select the ',
+                                html.Span(
+                                    'number of iterations',
+                                    id="tooltip-iterations",
+                                    style={"textDecoration": "underline", "cursor": "pointer"},
+                                ),
+                                ': ',
+                                # Tooltip component for providing additional information to the user
+                                dbc.Tooltip(
+                                    'maximum number of iterations through the corpus when inferring the topic distribution of a corpus.',
+                                    target="tooltip-iterations",
+                                ),
+                                # Dash Input component for setting the number of iterations used in the LDA model training
+                                dcc.Input( 
+                                        id='num-iter',
+                                        type='number',
+                                        value=50,
+                                        min=10
+                                )
+                            ]
                         ),
                         # Dash Input component for setting the number of topics
                         dcc.Input( 
@@ -205,44 +251,44 @@ layout2 = html.Div(
                         'number of documents',
                         id="tooltip-extreme-low",
                         style={"textDecoration": "underline", "cursor": "pointer"},
-                        ),
-                        ': ',
-                        # Tooltip component for providing additional information to the user
-                        dbc.Tooltip(
-                            'Tokens that feature in less than the selected number of documents will not be considered in the model',
-                            target="tooltip-extreme-low",
-                        ),
-                        # Dash Input component for setting the number of topics
-                        dcc.Input( 
-                            id='filter-low',
-                            type='number',
-                            value=0,
-                            min=0
-                        )
+                    ),
+                    ': ',
+                    # Tooltip component for providing additional information to the user
+                    dbc.Tooltip(
+                        'Tokens that feature in less than the selected number of documents will not be considered in the model',
+                        target="tooltip-extreme-low",
+                    ),
+                    # Dash Input component for setting the number of topics
+                    dcc.Input( 
+                        id='filter-low',
+                        type='number',
+                        value=0,
+                        min=0
+                    )
                 ]
             ),
             html.Br(),
             html.Div(
                 children=[
-                    'Filter tokens appearing in more than selected ',
-                    html.Span(
-                        'proportion of documents',
-                        id="tooltip-extreme-high",
-                        style={"textDecoration": "underline", "cursor": "pointer"},
-                        ),
-                        ': ',
-                        # Tooltip component for providing additional information to the user
-                        dbc.Tooltip(
-                            'Tokens that feature in more than the selected proportion of documents will not be considered in the model',
-                            target="tooltip-extreme-high",
-                        ),
-                        # Dash Input component for setting the number of topics
-                        dcc.Input( 
-                            id='filter-high',
-                            type='number',
-                            value=1,
-                            min=0.01
-                        )
+                'Filter tokens appearing in more than selected ',
+                html.Span(
+                    'proportion of documents',
+                    id="tooltip-extreme-high",
+                    style={"textDecoration": "underline", "cursor": "pointer"},
+                    ),
+                    ': ',
+                    # Tooltip component for providing additional information to the user
+                    dbc.Tooltip(
+                        'Tokens that feature in more than the selected proportion of documents will not be considered in the model',
+                        target="tooltip-extreme-high",
+                    ),
+                    # Dash Input component for setting the number of topics
+                    dcc.Input( 
+                        id='filter-high',
+                        type='number',
+                        value=1,
+                        min=0.01
+                    )
                 ]
             ),
             html.Br(),
@@ -308,87 +354,95 @@ layout2 = html.Div(
                 ]
             )
         ]
-    ),
-    html.Br(),
-    # Button that initiates model training with the given variables
-    html.Button('Train model', 
-                id='button', 
-                n_clicks = 0),
-    html.Br(),
-    # Loading-element wraps the LDA model visualisations
-    dcc.Loading(
-        id="loading",
-        type="circle",
-        fullscreen = True,
-        style={'paddingTop': '15px'},
-        children=[
-            html.Div(
-                id='tm-results',
-                hidden=True,
+        ),
+        html.Br(),
+        # Button that initiates model training with the given variables
+        html.Div(
+            style={'padding': '20px'},
+            children=[
+                html.Button('Train model', 
+                            id='button', 
+                            n_clicks = 0)
+            ]),
+            html.Br(),
+            # Loading-element wraps the LDA model visualisations
+            dcc.Loading(
+                id="loading",
+                type="circle",
+                fullscreen = True,
+                style={'paddingTop': '15px'},
                 children=[
-                    html.Details(
-                        style={'paddingTop': '15px'},
-                        children=[
-                            html.Summary('20 top words from each topic',
-                                        style={'fontWeight':'bold'}),
-                            # Table-element that shows the top topics from the trained model
-                            dash_table.DataTable(id="top-topics", 
-                                                data=[],
-                                                fixed_rows={'headers': True},
-                                                style_table={'height': 300, 'overflowX': 'auto'}
-                            )
-                    ]),
-                    html.Details(
-                        style={'paddingTop': '15px'},
-                        children=[
-                            html.Summary('Most representative letters for selected topic',
-                                    style={'fontWeight':'bold'}),
-                            dcc.Dropdown(id="topic-selector", 
-                                        persistence=False),
-                            # Table-element that shows the most representative letters for each topic
-                            dash_table.DataTable(id="letter-topics", 
-                                                data=[]
-                            )
-                        ]
-                    ),
-                    html.Details(
-                        style={'paddingTop': '15px'},
-                        children=[
-                            html.Summary('Topic distribution across selected letters',
-                                        style={'fontWeight':'bold'}),
-                            # Table-element that shows the topic distribution across letters
-                            dash_table.DataTable(id="letters-per-topic", 
-                                                data=[],
-                            )
-                    ]),
-                    html.Details(
-                        style={'paddingTop': '15px'},
-                        children=[
-                            html.Summary('Topic distribution in individual letters',
-                                        style={'fontWeight':'bold'}),
-                            dcc.Dropdown(id="letter-list", 
-                                        multi=True,
-                                        persistence=False),
-                            html.Button('Get topics', 
-                                        id='button2', 
-                                        n_clicks = 0), 
-                            dash_table.DataTable(id="letter-scores", 
-                                                data=[]
-                            )
-                    ]),
-                    html.Details(
-                        style={'paddingTop': '15px'},
-                        children=[
-                            html.Summary('Topic model visualisation',
-                                        style={'fontWeight':'bold'}),
-                            # Iframe-element is used to serve the pyLDAvis visualization in html form
-                            html.Iframe(id='pyldavis-vis',
-                                        style=dict(position="absolute", width="100%", height="100%"))
-                        ], 
-                        open='open')
-                ]
-            )
-        ]
-    )
+                        html.Div(
+                            style={'padding': '20px'},
+                            id='tm-results',
+                            hidden=True,
+                            children=[
+                                html.Details(
+                                    style={'paddingTop': '15px'},
+                                    children=[
+                                        html.Summary('20 top words from each topic',
+                                                    style={'fontWeight':'bold'}),
+                                        # Table-element that shows the top topics from the trained model
+                                        dash_table.DataTable(id="top-topics", 
+                                                            data=[],
+                                                            fixed_rows={'headers': True},
+                                                            style_table={'height': 300, 'overflowX': 'auto'}
+                                        )
+                                ]),
+                                html.Details(
+                                    style={'paddingTop': '15px'},
+                                    children=[
+                                        html.Summary('Most representative letters for selected topic',
+                                                style={'fontWeight':'bold'}),
+                                        dcc.Dropdown(id="topic-selector", 
+                                                    persistence=False),
+                                        # Table-element that shows the most representative letters for each topic
+                                        dash_table.DataTable(id="letter-topics", 
+                                                            data=[]
+                                        )
+                                    ]
+                                ),
+                                html.Details(
+                                    style={'paddingTop': '15px'},
+                                    children=[
+                                        html.Summary('Topic distribution across selected letters',
+                                                    style={'fontWeight':'bold'}),
+                                        # Table-element that shows the topic distribution across letters
+                                        dash_table.DataTable(id="letters-per-topic", 
+                                                            data=[],
+                                        )
+                                ]),
+                                html.Details(
+                                    style={'paddingTop': '15px'},
+                                    children=[
+                                        html.Summary('Topic distribution in individual letters',
+                                                    style={'fontWeight':'bold'}),
+                                        dcc.Dropdown(id="letter-list", 
+                                                    multi=True,
+                                                    persistence=False),
+                                        html.Button('Get topics', 
+                                                    id='button2', 
+                                                    n_clicks = 0), 
+                                        dash_table.DataTable(id="letter-scores", 
+                                                            data=[]
+                                        )
+                                ]),
+                                html.Details(
+                                    style={'paddingTop': '15px'},
+                                    children=[
+                                        html.Summary('Topic model visualisation',
+                                                    style={'fontWeight':'bold'}),
+                                        # Iframe-element is used to serve the pyLDAvis visualization in html form
+                                        html.Iframe(id='pyldavis-vis',
+                                                    style=dict(position="absolute", width="100%", height="100%"))
+                                    ], 
+                                    open='open')
+                            ]
+                        )
+                    ]
+                )
+            ]
+        )
+    ])
 ])
     

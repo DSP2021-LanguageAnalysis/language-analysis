@@ -3,6 +3,7 @@ from collections import defaultdict
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
@@ -16,26 +17,41 @@ data_parser = globals.data_parser
 
 
 layout0 = html.Div([
-    html.Nav(
+    dbc.Nav(
         className ='navbar navbar-expand-lg navbar-dark bg-primary', 
         children=[
-            html.H1(className='navbar-brand', children='Data Science Project: Language variation')]
+            html.H1(className='navbar-brand', children='VARIENG: TCEECE corpus analysis'),
+            dbc.NavItem(dbc.NavLink('POS tag analysis', href='/app/postags')),
+            dbc.NavItem(dbc.NavLink('Topic model', href='/app/topicmodel')),
+            dbc.NavItem(dbc.NavLink('Add custom groups', active=True, href='/app/customize'))
+        ],
+        pills=True
     ),
-    html.H2('Create custom groups'),
-    dcc.Link('POS tag visualisation', href='/app/postags'),
-    dcc.Link('Topic model', href='/app/topicmodel'),
-    html.Div(
-        children=[
-            dcc.Input(id="pos_group_name", type="text", placeholder="Name for new group"),
-            dcc.Input(id="pos_group_tags", type="text", placeholder="Tags for new group as ; separated list"),
-            html.Br(), 
-            html.Button('Add group', id='add_pos_group_button', n_clicks = 0),
-            html.Br(),
-            html.Br(), 
-            html.H5('The custom POS groups you have saved for this session:'),
-            html.Br(), 
-            html.Div(id='cust_pos_groups')
+    dcc.Tabs([
+        dcc.Tab(
+            label='POS',
+            children=[
+                html.Div(
+                    style={'padding': '20px'},
+                    children=[
+                        html.H5('Add a new custom POS grouping'),
+                        dcc.Input(id="pos_group_name", type="text", placeholder="Name for new group"),
+                        dcc.Input(id="pos_group_tags", type="text", placeholder="Tags for new group as ; separated list", style={'width': '100%'}),
+                        html.Br(), 
+                        html.Button('Add group', id='add_pos_group_button', n_clicks = 0),
+                        html.Br(),
+                        html.Br(), 
+                        html.P('The custom POS groups you have saved for this session', style={'fontWeight':'bold'}),
+                        html.Div(id='cust_pos_groups')])]),
+        dcc.Tab(
+            label='Other',
+            children=[
+                html.Div(
+                    style={'padding': '20px'},
+                    children=[
+                        html.H5('You can later add other groups as well.')])])
     ])
+
 ])
 
 # line graph
@@ -63,8 +79,6 @@ def view_pos_groups(data):
     if data is not None:
         children = []
         for (n, t) in data.items():
-            children.append(html.P('Name: {}'.format(n)))
-            children.append(html.P('Tags: {}'.format(t)))
-            children.append(html.Hr())
+            children.append(html.P('{}: {}'.format(n, ', '.join(list(t.keys())))))
         
         return children
