@@ -216,7 +216,6 @@ def pos_selection(input1):
         raise PreventUpdate
 
     else:
-        df = data_parser.letters_to_df()
         value, options = pos_tab.selection(df, input1)
 
         return value, options
@@ -229,8 +228,6 @@ def pos_selection(input1):
     State('pos-year-group-number', 'value'))
 def pos_dynamic_attributes(clicks, input1, input2, period_count):
 
-    df = data_parser.letters_to_df()
-    pos_counts = data_parser.get_pos_counts()
     fig = pos_tab.dynamic_attributes(df, pos_counts, input1, input2, period_count)
 
     return fig
