@@ -68,14 +68,11 @@ def set_letter_topics(clicks,indices):
     Output('letter-topics', 'columns'),
     Input('topic-selector', 'value'), prevent_initial_call=True)
 def get_letters_per_topic(topic_id):
-    if topic_id:
-        letters_for_topic = tm.get_topic_letters(topic_id)
-        letters_for_topic = letters_for_topic.drop(columns=['Topic'])
-        cols = [{"name": i, "id": i} for i in letters_for_topic.columns]
+    letters_for_topic = tm.get_topic_letters(topic_id)
+    letters_for_topic = letters_for_topic.drop(columns=['Topic'])
+    cols = [{"name": i, "id": i} for i in letters_for_topic.columns]
 
-        return letters_for_topic.to_dict('records'), cols
-    else:
-        return None, None
+    return letters_for_topic.to_dict('records'), cols
 
 
 # Callback function for the topic model tab
