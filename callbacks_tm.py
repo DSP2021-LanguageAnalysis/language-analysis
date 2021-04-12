@@ -116,8 +116,8 @@ def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, g
         data = df
 
         # Filters the data based on user's choices
-        if tags.sort() != list(data_parser.pos_categories['nouns'].keys()).sort():
-            data = tm.filter_by_tag(df, tags)
+       #if tags.sort() != list(data_parser.pos_categories['nouns'].keys()).sort():
+        data = tm.filter_by_tag(df, tags)
         if gender != 'A':
             data = tm.filter_by_sex(data, gender)
         if len(rank) != len(rank_set):
