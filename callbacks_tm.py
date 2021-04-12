@@ -68,14 +68,11 @@ def set_letter_topics(clicks,indices):
     Output('letter-topics', 'columns'),
     Input('topic-selector', 'value'), prevent_initial_call=True)
 def get_letters_per_topic(topic_id):
-    if topic_id:
-        letters_for_topic = tm.get_topic_letters(topic_id)
-        letters_for_topic = letters_for_topic.drop(columns=['Topic'])
-        cols = [{"name": i, "id": i} for i in letters_for_topic.columns]
+    letters_for_topic = tm.get_topic_letters(topic_id)
+    letters_for_topic = letters_for_topic.drop(columns=['Topic'])
+    cols = [{"name": i, "id": i} for i in letters_for_topic.columns]
 
-        return letters_for_topic.to_dict('records'), cols
-    else:
-        return None, None
+    return letters_for_topic.to_dict('records'), cols
 
 
 # Callback function for the topic model tab
@@ -116,8 +113,8 @@ def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, g
         data = df
 
         # Filters the data based on user's choices
-        if tags.sort() != list(data_parser.pos_categories['nouns'].keys()).sort():
-            data = tm.filter_by_tag(df, tags)
+       #if tags.sort() != list(data_parser.pos_categories['nouns'].keys()).sort():
+        data = tm.filter_by_tag(df, tags)
         if gender != 'A':
             data = tm.filter_by_sex(data, gender)
         if len(rank) != len(rank_set):
