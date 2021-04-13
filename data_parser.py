@@ -7,6 +7,8 @@ from pos_categories import pos_categories
 
 class DataParser():
     df = None
+    db_person = pd.read_csv('TCEECE/metadata/database-person.txt', sep='\t', encoding='iso-8859-1')
+    db_person = db_person.set_index('PersonCode')
     path_to_csv = 'TCEECE/data.csv'
 
     def __init__(self):
@@ -199,3 +201,11 @@ class DataParser():
         except Exception as e:
             print(e)
             return self.pos_categories
+
+    def get_name(self, ids):
+        person = self.db_person
+        senders = ids.to_frame()
+        tmp = person[['FirstName','LastName']]
+        names = senders.join(tmp, on='Sender').reset_index(drop=True)
+
+        return names

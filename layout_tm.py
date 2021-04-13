@@ -365,7 +365,8 @@ layout2 = html.Div(
                                                         persistence=False),
                                             # Table-element that shows the most representative letters for each topic
                                             dash_table.DataTable(id="letter-topics", 
-                                                                data=[]
+                                                                data=[],
+                                                                page_size=10
                                             )
                                         ]
                                     ),
@@ -376,7 +377,8 @@ layout2 = html.Div(
                                                         style={'fontWeight':'bold'}),
                                             # Table-element that shows the topic distribution across letters
                                             dash_table.DataTable(id="letters-per-topic", 
-                                                                data=[],
+                                                                data=[]
+                                                                
                                             )
                                     ]),
                                     html.Details(
