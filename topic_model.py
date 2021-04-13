@@ -6,6 +6,7 @@ from nltk.tokenize import RegexpTokenizer
 from nltk.stem.wordnet import WordNetLemmatizer
 from gensim.corpora import Dictionary
 from gensim.models import LdaModel
+import globals
 
 class TopicModel:
 
@@ -17,12 +18,13 @@ class TopicModel:
     topic_letters = None
 
     def __init__(self):
+        self.data_parser = globals.data_parser
         return
 
     def prepare_data(self, data, userstopwords, min_doc, max_prop):
         
         # Group the data by the letter id and concatenate words from each letter to one string
-        self.strings = data.groupby(['ID', 'Sender','Year']).agg(lambda col: ' '.join(col))
+        self.strings = data.groupby(['ID', 'Sender', 'SenderRank', 'SenderSex','RelCode', 'Year']).agg(lambda col: ' '.join(col))
 
         # Create a list of strings of the letters for Gensim
         docs = list(self.strings['Words'])
@@ -175,15 +177,17 @@ class TopicModel:
             # Get the dominant topic, percentage contribution and keywords for each letter
             for j, (topic_num, prop_topic) in enumerate(row):
                 if j == 0:  # dominant topic
-                    wp = self.model.show_topic(topic_num)
                     topics_df = topics_df.append(pd.Series([int(topic_num), round(prop_topic,4)]), ignore_index=True)
                 else:
                     break
+
         topics_df.columns = ['Dominant topic', 'Contribution of topic to letter']
 
         # Add letter and sender id to the end of the output dataframe
         senders = self.strings.index.to_frame(index=False)
-        topics_df = pd.concat([topics_df, senders], axis=1)
+        names = self.data_parser.get_name(senders["Sender"])
+        senders = senders.drop(columns=['Sender'])
+        topics_df = pd.concat([topics_df, names, senders], axis=1)
 
         return topics_df
 
@@ -195,13 +199,13 @@ class TopicModel:
         topics_out = dominant_topics.groupby('Dominant topic')
 
         for i, grp in topics_out:
-            topics_sorted = pd.concat([topics_sorted, grp.sort_values(['Contribution of topic to letter'], ascending=[0]).head(10)],axis=0)
+            topics_sorted = pd.concat([topics_sorted, grp.sort_values(['Contribution of topic to letter'], ascending=[0]).head(40)],axis=0)
 
         # Reset Index    
         topics_sorted.reset_index(drop=True, inplace=True)
 
         # Format
-        topics_sorted.columns = ['Topic', "Contribution of topic to letter", "Letter id", "Sender", "Year"]
+        topics_sorted.columns = ['Topic', "Contribution of topic to letter", "Sender", "First name", "Last name", "Letter id", 'Rank', 'Gender','Relationship', "Year"]
 
         topics_sorted["Contribution of topic to letter"] = topics_sorted["Contribution of topic to letter"].round(decimals=3)
 
