@@ -59,7 +59,8 @@ layout2 = html.Div(
                                         id='num-topics',
                                         type='number',
                                         value=5,
-                                        min=2
+                                        min=2,
+                                        persistence=True
                                     )
                             ]
                         ),
@@ -83,7 +84,8 @@ layout2 = html.Div(
                                         id='num-iter',
                                         type='number',
                                         value=50,
-                                        min=10
+                                        min=10,
+                                        persistence=True
                                 )
                             ]
                         ),
@@ -111,11 +113,13 @@ layout2 = html.Div(
                                         id='alpha',
                                         type='number',
                                         value=0.5,
-                                        min=0
+                                        min=0,
+                                        persistence=True
                                 ),
                                         daq.BooleanSwitch(
                                         id='alpha_boolean',
                                         on=False,
+                                        persistence=True,
                                         label='auto:' ,
                                         style={'display': 'inline-block'}
                                         ) ,
@@ -132,21 +136,23 @@ layout2 = html.Div(
                                     style={"textDecoration": "underline", "cursor": "pointer"},
                                 ),
                                 ': ',
-                                # Tooltip component, alpha
+                                # Tooltip component, eta
                                 dbc.Tooltip(
                                     'Positive smoothing parameter for prior distribution over word weights in each topic',
                                     target="tooltip-eta",
                                 ),
-                                # Dash Input component for alpha
+                                # Dash Input component for eta
                                 dcc.Input( 
                                         id='eta',
                                         type='number',
                                         value=0.5,
-                                        min=0
+                                        min=0,
+                                        persistence=True
                                 ),
                                 daq.BooleanSwitch(
                                         id='eta_boolean',
                                         on=False,
+                                        persistence=True,
                                         label='auto:' ,
                                         style={'display': 'inline-block'}
                                 ),
@@ -172,7 +178,8 @@ layout2 = html.Div(
                                     id='userseed',
                                     type='number',
                                     value=135,
-                                    min=1
+                                    min=1,
+                                    persistence=True
                                 ),
                             ]
                         ),
@@ -184,7 +191,8 @@ layout2 = html.Div(
                             id='pos_tm_main',
                             options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories.keys())), 
                             value=['nouns'],
-                            multi=True
+                            multi=True,
+                            persistence=True
                         ),
                         dcc.Dropdown(
                             id='pos_tm_sub',
@@ -202,7 +210,8 @@ layout2 = html.Div(
                                     id='stopwords-filter',
                                     options = data_parser.get_word_list(),
                                     value=['letter'],
-                                    multi=True
+                                    multi=True,
+                                    persistence=True
                                 )
                             ]
                         ),
@@ -229,7 +238,8 @@ layout2 = html.Div(
                                     id='filter-low',
                                     type='number',
                                     value=0,
-                                    min=0
+                                    min=0,
+                                    persistence=True
                                 )
                             ]
                         ),
@@ -253,7 +263,8 @@ layout2 = html.Div(
                                     id='filter-high',
                                     type='number',
                                     value=1,
-                                    min=0.01
+                                    min=0.01,
+                                    persistence=True
                                 )
                             ]
                         ),
@@ -272,7 +283,8 @@ layout2 = html.Div(
                                         {'label': 'Women', 'value': 'F'},
                                         {'label': 'Men', 'value': 'M'}
                                     ],
-                                    value='A'
+                                    value='A',
+                                    persistence=True
                                 )
                             ]
                         ),
@@ -285,7 +297,8 @@ layout2 = html.Div(
                                     id = 'rank-filter',
                                     options = data_parser.get_rank()[1],
                                     value = list(data_parser.get_rank()[0]),
-                                    multi = True
+                                    multi = True,
+                                    persistence=True
                                 )
                             ]
                         ),
@@ -298,7 +311,8 @@ layout2 = html.Div(
                                     id = 'rel-filter',
                                     options = data_parser.get_relationship()[1],
                                     value = list(data_parser.get_relationship()[0]),
-                                    multi = True
+                                    multi = True,
+                                    persistence=True
                                 )
                             ]
                         ),
@@ -312,7 +326,8 @@ layout2 = html.Div(
                                     min=min(data_parser.get_years()),
                                     max=max(data_parser.get_years()),
                                     step=1,
-                                    value=[min(data_parser.get_years()), max(data_parser.get_years())]
+                                    value=[min(data_parser.get_years()), max(data_parser.get_years())],
+                                    persistence=True
                                 ),
                                 html.Div(id='slider-output'),
                                 # Hidden div-element 
@@ -339,6 +354,9 @@ layout2 = html.Div(
                     fullscreen = True,
                     style={'paddingTop': '15px'},
                     children=[
+                            html.Div(id='corpus_size_info',
+                                     style={'padding': '20px'}),
+                            html.Br(),
                             html.Div(
                                 style={'padding': '20px'},
                                 id='tm-results',

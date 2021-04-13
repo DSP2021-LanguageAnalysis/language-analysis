@@ -77,6 +77,7 @@ def get_letters_per_topic(topic_id):
 
 # Callback function for the topic model tab
 @app.callback(
+    Output('corpus_size_info', 'children'),
     Output('top-topics', 'data'),
     Output('top-topics', 'columns'),
     Output('topic-selector', 'options'),
@@ -148,7 +149,9 @@ def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, g
         vis_data = pyLDAvis.gensim.prepare(model, corpus, dictionary)
         html_vis = pyLDAvis.prepared_data_to_html(vis_data, template_type='general')
 
-        return topics_df.to_dict('records'), cols, topic_list, letters_per_topic.to_dict('records'), cols2, html_vis, letter_list, False
+        corpus_size_msg = f"Corpus size after filtering: {dictionary.num_docs} letters, {dictionary.num_pos} (non-unique) words processed"
+        
+        return corpus_size_msg, topics_df.to_dict('records'), cols, topic_list, letters_per_topic.to_dict('records'), cols2, html_vis, letter_list, False
 
     else:
         return no_update, no_update, no_update, no_update, no_update, no_update, no_update, True          
