@@ -6,6 +6,7 @@ from dash.exceptions import PreventUpdate
 import plotly.express as px
 import plotly.graph_objs as go
 import pandas as pd
+from pandas.core.common import flatten
 
 from app import app
 from pos_tab import PosTab
@@ -31,105 +32,146 @@ def set_years(selected_years):
     return years, selected_years
 
 
-@app.callback(
-    Output('pos_groups_dropdown_1_sub', 'value'),
-    Output('pos_groups_dropdown_1_sub', 'options'),
-    [Input('pos_groups_dropdown_1_main', 'value')],
-    State('session', 'data'))
-def line_group_1_options(mains, data):
+for i in range (1,4):
+    @app.callback(
+        Output(f'pos_groups_dropdown_{i}_sub', 'value'),
+        Output(f'pos_groups_dropdown_{i}_sub', 'options'),
+        [Input(f'pos_groups_dropdown_{i}_main', 'value')],
+        State('session', 'data'))
+    def line_group_pos_options(mains, data):
 
-    values = []
-    options = []
-    for main in mains:
-        value = list(data_parser.get_pos_categories(data)[main].keys())
-        values.extend(value)
-        options.extend(data_parser.list_to_dash_option_dict(value))
+        values = []
+        options = []
+        for main in mains:
+            value = list(data_parser.get_pos_categories(data)[main].keys())
+            values.extend(value)
+            options.extend(data_parser.list_to_dash_option_dict(value))
+        
+        return values, options
 
-    return values, options
 
-@app.callback(
-    Output('pos_groups_dropdown_2_sub', 'value'),
-    Output('pos_groups_dropdown_2_sub', 'options'),
-    [Input('pos_groups_dropdown_2_main', 'value')],
-    State('session', 'data'))
-def line_group_2_options(mains, data):
+for i in range (1,4):
+    @app.callback(
+        Output(f'line_senderrank_sub_{i}', 'value'),
+        Output(f'line_senderrank_sub_{i}', 'options'),
+        [Input(f'line_senderrank_main_{i}', 'value')],
+        State('session', 'data'))
+    def line_group_rank_options(mains, data):
 
-    values = []
-    options = []
-    for main in mains:
-        value = list(data_parser.get_pos_categories(data)[main].keys())
-        values.extend(value)
-        options.extend(data_parser.list_to_dash_option_dict(value))
-    
-    return values, options
+        values = []
+        options = []
+        for main in mains:
+            value = list(data_parser.rank_categories[main].keys())
+            values.extend(value)
+            options.extend(data_parser.dict_to_dash_options_with_hover(data_parser.rank_categories[main]))
+        
+        return values, options
 
-@app.callback(
-    Output('pos_groups_dropdown_3_sub', 'value'),
-    Output('pos_groups_dropdown_3_sub', 'options'),
-    [Input('pos_groups_dropdown_3_main', 'value')],
-    State('session', 'data'))
-def line_group_3_options(mains, data):
+for i in range (1,4):
+    @app.callback(
+        Output(f'line_relationship_sub_{i}', 'value'),
+        Output(f'line_relationship_sub_{i}', 'options'),
+        [Input(f'line_relationship_main_{i}', 'value')],
+        State('session', 'data'))
+    def line_group_rel_options(mains, data):
 
-    values = []
-    options = []
-    for main in mains:
-        value = list(data_parser.get_pos_categories(data)[main].keys())
-        values.extend(value)
-        options.extend(data_parser.list_to_dash_option_dict(value))
-    
-    return values, options
+        values = []
+        options = []
+        for main in mains:
+            value = list(data_parser.relationship_categories[main].keys())
+            values.extend(value)
+            options.extend(data_parser.dict_to_dash_options_with_hover(data_parser.relationship_categories[main]))
+        
+        return values, options
 
 
 @app.callback(
     Output('line_graph', 'figure'), 
     Input('update_line_button', 'n_clicks'), # Only pressing the button initiates the function
-    [State('pos_groups_dropdown_1_main', 'value')],
+    State('line_name_1', 'value'),
+    State('line_name_2', 'value'),
+    State('line_name_3', 'value'),
     [State('pos_groups_dropdown_1_sub', 'value')],
-    [State('pos_groups_dropdown_2_main', 'value')],
     [State('pos_groups_dropdown_2_sub', 'value')],
-    [State('pos_groups_dropdown_3_main', 'value')],
     [State('pos_groups_dropdown_3_sub', 'value')],
+    [State('line_sex_1', 'value')],
+    [State('line_sex_2', 'value')],
+    [State('line_sex_3', 'value')],
+    [State('line_senderrank_main_1', 'value')],
+    [State('line_senderrank_sub_1', 'value')],
+    [State('line_senderrank_main_2', 'value')],
+    [State('line_senderrank_sub_2', 'value')],
+    [State('line_senderrank_main_3', 'value')],
+    [State('line_senderrank_sub_3', 'value')],
+    [State('line_relationship_main_1', 'value')],
+    [State('line_relationship_sub_1', 'value')],
+    [State('line_relationship_main_2', 'value')],
+    [State('line_relationship_sub_2', 'value')],
+    [State('line_relationship_main_3', 'value')],
+    [State('line_relationship_sub_3', 'value')],
     [State('line_period_length', 'value')],
     [State('line_time_slider', 'value')],
     [State('line_visibility', 'value')])
-def display_line_graph(n_clicks, values0, pos_sub_1, values2, pos_sub_2, pos_main_3, pos_sub_3, periods, years, visibility):
-
-    if n_clicks is not None:
+def display_line_graph(n_clicks, name_1, name_2, name_3, pos_sub_1, pos_sub_2, pos_sub_3, sex_1, sex_2, sex_3, rank_main_1, rank_sub_1, rank_main_2, rank_sub_2, rank_main_3, rank_sub_3, rel_main_1, rel_sub_1, rel_main_2, rel_sub_2, rel_main_3, rel_sub_3, periods, years, visibility):
+    print(name_1)
+    print(type(name_1))
+    if n_clicks >= 0:
         start = years[0]
         end = years[1]
         number_of_periods = (end - start) / periods
-        bins = pd.interval_range(start=start, end=end, periods=number_of_periods, closed='right')
-        labels = list(bins.astype(str))
+        bins = pd.interval_range(start=start, end=end, periods=number_of_periods, closed='left')
+        original_labels = list(bins.astype(str))
+        new_labels = ['{}, {}'.format(b.strip('[)').split(', ')[0], int(b.strip('[)').split(', ')[1])-1) for b in list(bins.astype(str))]
+
+        label_dict = dict(zip(original_labels, new_labels))
 
         df = data_parser.df
         df = df.groupby(['ID', 'SenderSex', 'SenderRank', 'RelCode', 'Tags', 'Year', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
         df['PosCountNorm'] = df['PosCount']/df['WordCount']*100
         
         df['Year'] = df['Year'].astype('int')
-        df['YearGroup'] = pd.cut(df['Year'], bins=bins,include_lowest=True, labels=labels, precision=0)
+        df['YearGroup'] = pd.cut(df['Year'], bins=bins,include_lowest=True, labels=new_labels, precision=0)
         df['YearGroup'] = df['YearGroup'].astype("str")
-        df = df.groupby(['YearGroup', 'Tags']).mean().reset_index()
+        df = df.groupby(['YearGroup', 'Tags', 'SenderSex', 'SenderRank', 'RelCode']).mean().reset_index()
+        df = df.replace(label_dict)
 
         fig = go.Figure()
-        
         if '1' in visibility:
-            mask = df['Tags'].isin(pos_sub_1)
+            helper_dict = {
+                'Tags': pos_sub_1,
+                'SenderSex': sex_1,
+                'SenderRank': list(flatten([[data_parser.rank_categories[rank_main][rank_sub] for rank_sub in rank_sub_1] for rank_main in rank_main_1])),
+                'RelCode': list(flatten([[data_parser.relationship_categories[rel_main][rel_sub] for rel_sub in rel_sub_1] for rel_main in rel_main_1]))
+            }
+            mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
             fig.add_scatter(
                 x=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['YearGroup'], 
                 y=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['PosCountNorm'],
-                name='Line 1')
+                name=name_1)
         if '2' in visibility:
-            mask = df['Tags'].isin(pos_sub_2)
+            helper_dict = {
+                'Tags': pos_sub_2,
+                'SenderSex': sex_2,
+                'SenderRank': list(flatten([[data_parser.rank_categories[rank_main][rank_sub] for rank_sub in rank_sub_2] for rank_main in rank_main_2])),
+                'RelCode': list(flatten([[data_parser.relationship_categories[rel_main][rel_sub] for rel_sub in rel_sub_2] for rel_main in rel_main_2]))
+            }
+            mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
             fig.add_scatter(
                 x=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['YearGroup'], 
                 y=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['PosCountNorm'],
-                name='Line 2')
+                name=name_2)
         if '3' in visibility:
-            mask = df['Tags'].isin(pos_sub_3)
+            helper_dict = {
+                'Tags': pos_sub_3,
+                'SenderSex': sex_3,
+                'SenderRank': list(flatten([[data_parser.rank_categories[rank_main][rank_sub] for rank_sub in rank_sub_3] for rank_main in rank_main_3])),
+                'RelCode': list(flatten([[data_parser.relationship_categories[rel_main][rel_sub] for rel_sub in rel_sub_3] for rel_main in rel_main_3]))
+            }
+            mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
             fig.add_scatter(
                 x=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['YearGroup'], 
                 y=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['PosCountNorm'],
-                name='Line 3')
+                name=name_3)
 
         fig.update_layout(yaxis_range=[0,50])
 
