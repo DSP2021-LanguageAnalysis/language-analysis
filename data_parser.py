@@ -4,6 +4,7 @@ import glob
 import plotly.express as px
 import string
 from pos_categories import pos_categories
+from attribute_categories import rank_categories, relationship_categories
 
 class DataParser():
     df = None
@@ -25,6 +26,8 @@ class DataParser():
         # Delete rows with missing data
         self.df = self.df.dropna(axis='index')
         self.pos_categories = pos_categories
+        self.rank_categories = rank_categories
+        self.relationship_categories = relationship_categories
         return 
         
     # Transforms xml-file into a BeautifulSoup-object
@@ -190,6 +193,10 @@ class DataParser():
 
     def list_to_dash_option_dict(self, l):
         options = [{'label':item, 'value':item} for item in l]
+        return options
+
+    def dict_to_dash_options_with_hover(self, d):
+        options = [{'label':k, 'value':k, 'title':', '.join(v)} for k,v in d.items()]
         return options
 
     def get_pos_categories(self, custom):
