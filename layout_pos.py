@@ -83,8 +83,7 @@ layout1 = html.Div([
                                 placeholder="input period length",
                                 value=20
                             ),
-                            html.Br(),
-                            html.Br(),
+                            html.Hr(),
                             'Which lines are visible:',
                             html.Br(),
                             dcc.Checklist(
@@ -102,9 +101,12 @@ layout1 = html.Div([
                             html.Details([
                                 html.Summary('Line 1', style={'fontWeight':'bold'}),
                                 html.Div(children=[
+                                    "Custom name",
+                                    dcc.Input(id="line_name_1", type="text", placeholder="Custom name for line", value='Line 1'),
+                                    html.Br(),
                                     "Sender sex",
                                     dcc.Dropdown(
-                                        id='line_sex',
+                                        id='line_sex_1',
                                         options=[
                                             {'label': 'M', 'value': 'M'},
                                             {'label': 'F', 'value': 'F'}
@@ -115,29 +117,29 @@ layout1 = html.Div([
                                     html.Br(),
                                     "Sender rank",
                                     dcc.Dropdown(
-                                        id='line_senderrank_main',
-                                        options=[], 
-                                        value=[],
+                                        id='line_senderrank_main_1',
+                                        options=data_parser.list_to_dash_option_dict(list(data_parser.rank_categories.keys())), 
+                                        value=['Bipartite'],
                                         multi=True
                                     ),
                                     dcc.Dropdown(
-                                        id='line_senderrank_sub',
-                                        options=[], 
-                                        value=[],
+                                        id='line_senderrank_sub_1',
+                                        options=data_parser.dict_to_dash_options_with_hover(data_parser.rank_categories['Bipartite']), 
+                                        value=list(data_parser.rank_categories['Bipartite'].keys()),
                                         multi=True
                                     ),   
                                     html.Br(),
                                     "Relationship",
                                     dcc.Dropdown(
-                                        id='line_relationship_main',
-                                        options=[], 
-                                        value=[],
+                                        id='line_relationship_main_1',
+                                        options=data_parser.list_to_dash_option_dict(list(data_parser.relationship_categories.keys())), 
+                                        value=['Fine-grained'],
                                         multi=True
                                     ),
                                     dcc.Dropdown(
-                                        id='line_relationship_sub',
-                                        options=[], 
-                                        value=[],
+                                        id='line_relationship_sub_1',
+                                        options=data_parser.dict_to_dash_options_with_hover(data_parser.relationship_categories['Fine-grained']), 
+                                        value=list(data_parser.relationship_categories['Fine-grained'].keys()),
                                         multi=True
                                     ),   
                                     html.Br(),
@@ -158,9 +160,12 @@ layout1 = html.Div([
                             html.Details([
                                 html.Summary('Line 2', style={'fontWeight':'bold'}),
                                 html.Div(children=[
+                                    "Custom name",
+                                    dcc.Input(id="line_name_2", type="text", placeholder="Custom name for line", value='Line 2'),
+                                    html.Br(),
                                     "Sender sex",
                                     dcc.Dropdown(
-                                        id='line_sex2',
+                                        id='line_sex_2',
                                         options=[
                                             {'label': 'M', 'value': 'M'},
                                             {'label': 'F', 'value': 'F'}
@@ -171,29 +176,29 @@ layout1 = html.Div([
                                     html.Br(),
                                     "Sender rank",
                                     dcc.Dropdown(
-                                        id='line_senderrank_main2',
-                                        options=[], 
-                                        value=[],
+                                        id='line_senderrank_main_2',
+                                        options=data_parser.list_to_dash_option_dict(list(data_parser.rank_categories.keys())), 
+                                        value=['Bipartite'],
                                         multi=True
                                     ),
                                     dcc.Dropdown(
-                                        id='line_senderrank_sub2',
-                                        options=[], 
-                                        value=[],
+                                        id='line_senderrank_sub_2',
+                                        options=data_parser.dict_to_dash_options_with_hover(data_parser.rank_categories['Bipartite']), 
+                                        value=list(data_parser.rank_categories['Bipartite'].keys()),
                                         multi=True
                                     ),   
                                     html.Br(),
                                     "Relationship",
                                     dcc.Dropdown(
-                                        id='line_relationship_main2',
-                                        options=[],
-                                        value=[],
+                                        id='line_relationship_main_2',
+                                        options=data_parser.list_to_dash_option_dict(list(data_parser.relationship_categories.keys())), 
+                                        value=['Fine-grained'],
                                         multi=True
                                     ),
                                     dcc.Dropdown(
-                                        id='line_relationship_sub2',
-                                        options=[], 
-                                        value=[],
+                                        id='line_relationship_sub_2',
+                                        options=data_parser.dict_to_dash_options_with_hover(data_parser.relationship_categories['Fine-grained']), 
+                                        value=list(data_parser.relationship_categories['Fine-grained'].keys()),
                                         multi=True
                                     ),   
                                     html.Br(),
@@ -214,9 +219,12 @@ layout1 = html.Div([
                             html.Details([
                                 html.Summary('Line 3', style={'fontWeight':'bold'}),
                                 html.Div(children=[
+                                    "Custom name",
+                                    dcc.Input(id="line_name_3", type="text", placeholder="Custom name for line", value='Line 3'),
+                                    html.Br(),
                                     "Sender sex",
                                     dcc.Dropdown(
-                                        id='line_sex3',
+                                        id='line_sex_3',
                                         options=[
                                             {'label': 'M', 'value': 'M'},
                                             {'label': 'F', 'value': 'F'}
@@ -227,29 +235,29 @@ layout1 = html.Div([
                                     html.Br(),
                                     "Sender rank",
                                     dcc.Dropdown(
-                                        id='line_senderrank_main3',
-                                        options=[], 
-                                        value=[],
+                                        id='line_senderrank_main_3',
+                                        options=data_parser.list_to_dash_option_dict(list(data_parser.rank_categories.keys())), 
+                                        value=['Bipartite'],
                                         multi=True
                                     ),
                                     dcc.Dropdown(
-                                        id='line_senderrank_sub3',
-                                        options=[], 
-                                        value=[],
+                                        id='line_senderrank_sub_3',
+                                        options=data_parser.dict_to_dash_options_with_hover(data_parser.rank_categories['Bipartite']), 
+                                        value=list(data_parser.rank_categories['Bipartite'].keys()),
                                         multi=True
                                     ),   
                                     html.Br(),
                                     "Relationship",
                                     dcc.Dropdown(
-                                        id='line_relationship_main3',
-                                        options=[],
-                                        value=[],
+                                        id='line_relationship_main_3',
+                                        options=data_parser.list_to_dash_option_dict(list(data_parser.relationship_categories.keys())), 
+                                        value=['Fine-grained'],
                                         multi=True
                                     ),
                                     dcc.Dropdown(
-                                        id='line_relationship_sub3',
-                                        options=[], 
-                                        value=[],
+                                        id='line_relationship_sub_3',
+                                        options=data_parser.dict_to_dash_options_with_hover(data_parser.relationship_categories['Fine-grained']), 
+                                        value=list(data_parser.relationship_categories['Fine-grained'].keys()),
                                         multi=True
                                     ),   
                                     html.Br(),

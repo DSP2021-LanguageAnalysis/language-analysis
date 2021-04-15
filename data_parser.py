@@ -4,9 +4,12 @@ import glob
 import plotly.express as px
 import string
 from pos_categories import pos_categories
+from attribute_categories import rank_categories, relationship_categories
 
 class DataParser():
     df = None
+    db_person = pd.read_csv('TCEECE/metadata/database-person.txt', sep='\t', encoding='iso-8859-1')
+    db_person = db_person.set_index('PersonCode')
     path_to_csv = 'TCEECE/data.csv'
 
     def __init__(self):
@@ -23,6 +26,8 @@ class DataParser():
         # Delete rows with missing data
         self.df = self.df.dropna(axis='index')
         self.pos_categories = pos_categories
+        self.rank_categories = rank_categories
+        self.relationship_categories = relationship_categories
         return 
         
     # Transforms xml-file into a BeautifulSoup-object
@@ -190,6 +195,10 @@ class DataParser():
         options = [{'label':item, 'value':item} for item in l]
         return options
 
+    def dict_to_dash_options_with_hover(self, d):
+        options = [{'label':k, 'value':k, 'title':', '.join(v)} for k,v in d.items()]
+        return options
+
     def get_pos_categories(self, custom):
         try:
             all_pos_categories = dict()
@@ -199,3 +208,11 @@ class DataParser():
         except Exception as e:
             print(e)
             return self.pos_categories
+
+    def get_name(self, ids):
+        person = self.db_person
+        senders = ids.to_frame()
+        tmp = person[['FirstName','LastName']]
+        names = senders.join(tmp, on='Sender').reset_index(drop=True)
+
+        return names
