@@ -27,8 +27,43 @@ layout2 = html.Div(
             children=[
                 html.Div(
                     style={'padding': '20px'},
-                    children=['Add instructions']
-                )]),
+                    children=[
+                        html.H2("User instructions"),
+                        #dcc.Link('link to github with more detailed documentation', href='https://github.com/DSP2021-LanguageAnalysis/language-analysis'),
+                        dcc.Markdown(''' 
+                        - [link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
+                        - Click **POS tag analysis** to move to the POS tab
+                        - Click **Topic Model** next to the instructions tab to view the user-options and create your topic model 
+                        - Select the Model Parameters
+                            - Choose the number of topics to be generated
+                            - Choose the number of iterations to be completed by the model
+                        - Select **advanced parameters** to view more options (detail given in documentation)
+                        - Select filtration parameters - Filter corpus by:
+                            - POS tagged tokens 
+                            - Custom stopword list
+                            - "Extreme" distributed tokens
+                            - Sex of sender
+                            - Rank of sender
+                            - Relationship between sender and reciever
+                            - Time period during which the letter was sent
+                        - Click **train model** to generate results and visualisation
+                            - With default options, algorithm takes approximately 30 seconds to generate results.
+                            - Changes in parameters will alter this waiting time
+                        - Select dropdown menus to reveal different results: 
+                            - View top 20 words from each topic
+                            - Most represented letters from each topic
+                                - Select topic and view the letters which most contribute to it
+                            - View topic distribution over each letter
+                            - View topic distribution in individual letters
+                                - Select letter and view its contribution to each individual topic
+                            - View topic visualisation
+                                - Scroll over topic in intertopic distance map to view its most relevant tokens 
+                                    - **NOTE** - currently topic **n** given by the model corresponds to topic **n-1** in the visualisation.
+                                - Adjust relevance metric with slider (detail in documentation)
+                            ''')
+                        ])
+                ]
+            ),
         dcc.Tab(
             label='Topic Model',
             children=[
