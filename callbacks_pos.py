@@ -156,7 +156,7 @@ def display_bar_chart(n_clicks, values0, values1, periods):
     [State('pos_groups_dropdown_count_sub', 'value')],
     [State('year-group-number-count', 'value')])
 
-def display_bar_chart(n_clicks, values0, values1, periods):
+def display_wordcount_chart(n_clicks, values0, values1, periods):
 
     if n_clicks is not None:
         bins = pd.interval_range(start=1680, end=1800, periods=periods, closed='right')
