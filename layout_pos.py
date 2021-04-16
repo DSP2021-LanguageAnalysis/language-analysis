@@ -316,6 +316,38 @@ layout1 = html.Div([
                             html.Button('Apply selection', id='update_bar_button', n_clicks = 0)
                         ]
                     ),
+                    # count bar chart
+                    html.Div(
+                        style={'padding': '20px'},
+                        children=[
+                            dcc.Graph(id='count_chart'),
+                            "Select the number of year groups",
+                            html.Br(),
+                            dcc.Input(
+                                id="year-group-number-count", 
+                                type="number", 
+                                placeholder="input number of groups",
+                                value=10
+                            ),
+                            html.Hr(),
+                            'Tag selection',
+                            html.Br(),
+                            dcc.Dropdown(
+                                id='pos_groups_dropdown_count_main',
+                                options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories.keys())), 
+                                value=['nouns'],
+                                multi=True
+                            ),
+                            dcc.Dropdown(
+                                id='pos_groups_dropdown_count_sub',
+                                options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
+                                value=list(data_parser.pos_categories['nouns'].keys()),
+                                multi=True
+                            ),
+                            html.Br(), 
+                            html.Button('Apply selection', id='update_count_button', n_clicks = 0)
+                        ]
+                    ),
                     # Dynamic attribute selection
                     html.Div(
                         style={'padding': '20px'},
