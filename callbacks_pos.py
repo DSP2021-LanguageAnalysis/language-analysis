@@ -126,7 +126,7 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
         number_of_periods = (end - start) / periods
         bins = pd.interval_range(start=start, end=end, periods=number_of_periods, closed='left')
         original_labels = list(bins.astype(str))
-        new_labels = ['{}, {}'.format(b.strip('[)').split(' - ')[0], int(b.strip('[)').split(', ')[1])-1) for b in list(bins.astype(str))]
+        new_labels = ['{} - {}'.format(b.strip('[)').split(', ')[0], int(b.strip('[)').split(', ')[1])-1) for b in list(bins.astype(str))]
 
         label_dict = dict(zip(original_labels, new_labels))
 
