@@ -322,7 +322,7 @@ def display_wordcount_chart(n_c1, n_c2, what_count, group_by_what, graph_name, i
                 'RelCode': list(flatten([data_parser.relationship_categories[rel_main_1][rel_sub] for rel_sub in rel_sub_1]))
             }
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
-            temp = df[mask]
+            temp = df[mask].copy()
             temp['Line'] = [name_1] * len(temp.index)
             lines_df = lines_df.append(temp)
 
@@ -334,7 +334,7 @@ def display_wordcount_chart(n_c1, n_c2, what_count, group_by_what, graph_name, i
                 'RelCode': list(flatten([data_parser.relationship_categories[rel_main_2][rel_sub] for rel_sub in rel_sub_2]))
             }
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
-            temp = df[mask]
+            temp = df[mask].copy()
             temp['Line'] = [name_2] * len(temp.index)
             lines_df = lines_df.append(temp)
 
@@ -346,7 +346,7 @@ def display_wordcount_chart(n_c1, n_c2, what_count, group_by_what, graph_name, i
                 'RelCode': list(flatten([data_parser.relationship_categories[rel_main_3][rel_sub] for rel_sub in rel_sub_3]))
             }
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
-            temp = df[mask]
+            temp = df[mask].copy()
             temp['Line'] = [name_3] * len(temp.index)
             lines_df = lines_df.append(temp)
 
