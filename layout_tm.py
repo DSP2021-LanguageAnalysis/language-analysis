@@ -329,12 +329,17 @@ layout2 = html.Div(
                                 'Select letters based on the rank of the sender: ', 
                                 # Dash Dropdown component for selecting the rank of the sender
                                 dcc.Dropdown(
-                                    id = 'rank-filter',
-                                    options = data_parser.get_rank()[1],
-                                    value = list(data_parser.get_rank()[0]),
-                                    multi = True,
-                                    persistence=True
-                                )
+                                    id='rank-main',
+                                    options=data_parser.list_to_dash_option_dict(list(data_parser.rank_categories.keys())), 
+                                    value='Bipartite',
+                                    multi=False
+                                ),
+                                dcc.Dropdown(
+                                    id='rank-sub',
+                                    options=data_parser.dict_to_dash_options_with_hover(data_parser.rank_categories['Bipartite']), 
+                                    value=list(data_parser.rank_categories['Bipartite'].keys()),
+                                    multi=True
+                                ) 
                             ]
                         ),
                         html.Br(),
@@ -343,12 +348,17 @@ layout2 = html.Div(
                                 'Select letters based on the relationship between sender and recipient: ', 
                                 # Dash Dropdown component for selecting the relationship tag for filtering the data
                                 dcc.Dropdown(
-                                    id = 'rel-filter',
-                                    options = data_parser.get_relationship()[1],
-                                    value = list(data_parser.get_relationship()[0]),
-                                    multi = True,
-                                    persistence=True
-                                )
+                                    id='relationship-main',
+                                    options=data_parser.list_to_dash_option_dict(list(data_parser.relationship_categories.keys())), 
+                                    value='Fine-grained',
+                                    multi=False
+                                ),
+                                dcc.Dropdown(
+                                    id='relationship-sub',
+                                    options=data_parser.dict_to_dash_options_with_hover(data_parser.relationship_categories['Fine-grained']), 
+                                    value=list(data_parser.relationship_categories['Fine-grained'].keys()),
+                                    multi=True
+                                ),  
                             ]
                         ),
                         html.Br(),

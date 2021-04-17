@@ -6,6 +6,7 @@ import dash_daq as daq
 from dash import no_update
 from dash.exceptions import PreventUpdate
 import pandas as pd
+from pandas.core.common import flatten
 import pyLDAvis
 import pyLDAvis.gensim
 
@@ -35,6 +36,38 @@ def tm_pos_options(mains, data):
         values.extend(value)
         options.extend(data_parser.list_to_dash_option_dict(value))
 
+    return values, options
+
+# Callback for the rank filter selector
+@app.callback(
+    Output('rank-sub', 'value'),
+    Output('rank-sub', 'options'),
+    Input('rank-main', 'value'),
+    State('session', 'data'))
+def tm_rank_options(main, data):
+
+    values = []
+    options = []
+    value = list(data_parser.rank_categories[main].keys())
+    values.extend(value)
+    options.extend(data_parser.dict_to_dash_options_with_hover(data_parser.rank_categories[main]))
+        
+    return values, options
+
+# Callback for the relationship filter selector
+@app.callback(
+    Output('relationship-sub', 'value'),
+    Output('relationship-sub', 'options'),
+    Input('relationship-main', 'value'),
+    State('session', 'data'))
+def tm_rel_options(main, data):
+
+    values = []
+    options = []
+    value = list(data_parser.relationship_categories[main].keys())
+    values.extend(value)
+    options.extend(data_parser.dict_to_dash_options_with_hover(data_parser.relationship_categories[main]))
+        
     return values, options
 
 # Callback for the slider element
@@ -93,8 +126,10 @@ def get_letters_per_topic(topic_id):
     State('num-iter', 'value'),
     State('pos_tm_sub', 'value'),
     State('gender-filter', 'value'),
-    State('rank-filter', 'value'), 
-    State('rel-filter', 'value'), 
+    State('rank-main', 'value'),
+    State('rank-sub', 'value'), 
+    State('relationship-main', 'value'),
+    State('relationship-sub', 'value'), 
     State('slider-values', 'value'),
     State('stopwords-filter','value'),
     State('alpha','value'),
@@ -102,7 +137,7 @@ def get_letters_per_topic(topic_id):
     State('userseed','value'), 
     State('filter-low','value'),
     State('filter-high','value'), prevent_initial_call=True)
-def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, gender, rank, rel, years, userstopwords, alpha, eta, userseed, min_doc, max_prop):
+def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, gender, rank_main, rank_sub, rel_main, rel_sub, years, userstopwords, alpha, eta, userseed, min_doc, max_prop):
 
     # Lists all triggered callbacks 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
@@ -114,14 +149,19 @@ def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, g
         data = df
 
         # Filters the data based on user's choices
-       #if tags.sort() != list(data_parser.pos_categories['nouns'].keys()).sort():
+
+        # Filtering by selected POS-tags
         data = tm.filter_by_tag(df, tags)
+        # Filtering by selected ranks
+        ranks = list(flatten([data_parser.rank_categories[rank_main][sub] for sub in rank_sub]))
+        data = tm.filter_by_rank(data, ranks)
+        # Filtering by selected relationship tags
+        relationships = list(flatten([data_parser.relationship_categories[rel_main][rel_sub] for rel_sub in rel_sub]))
+        data = tm.filter_by_rel(data, relationships)
+        # Filtering by gender
         if gender != 'A':
             data = tm.filter_by_sex(data, gender)
-        if len(rank) != len(rank_set):
-            data = tm.filter_by_rank(data, rank)
-        if len(rel) != len(rel_set):
-            data = tm.filter_by_rel(data, rel)
+        # Filtering by selected time period
         if years[0] is not min(years_set) or years[1] is not max(years_set):
             data = tm.filter_by_time(data, years)
 
