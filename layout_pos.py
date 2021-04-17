@@ -129,7 +129,9 @@ layout1 = html.Div([
                             ),
                             html.Br(),
                             ## Selections for group 1
-                            html.Details([
+                            html.Details(
+                                open=True,
+                                children=[
                                 html.Summary('Line 1', style={'fontWeight':'bold'}),
                                 html.Div(children=[
                                     "Custom name",
