@@ -317,7 +317,39 @@ layout1 = html.Div([
             dcc.Tab(
                 label='Bar', 
                 children=[
-                    # main bar chart
+                    
+                    # word count bar chart
+                    html.Div(
+                        style={'padding': '20px'},
+                        children=[
+                            dcc.Graph(id='count_bar_chart'),
+                            'Show the number of ',
+                            dcc.RadioItems(
+                                id='bar_what_count',
+                                options=[
+                                    {'label': ' Words', 'value': 'words'}
+                                ],
+                                value='words',
+                                labelStyle={'display': 'inline-block', 'margin-right': '10px'}
+                            ),
+                            'Group the bars by ',
+                            dcc.RadioItems(
+                                id='bar_groub_by',
+                                options=[
+                                    {'label': ' Sender\'s sex', 'value': 'SenderSex'},
+                                    {'label': ' Sender\'s rank,', 'value': 'SenderRank'},
+                                    {'label': ' Sender\'s relationship with resipient', 'value': 'RelCode'},
+                                    {'label': ' Sender', 'value': 'Sender'},
+                                    {'label': ' Letter ID', 'value': 'ID'},
+                                ],
+                                value='SenderSex',
+                                labelStyle={'display': 'inline-block', 'margin-right': '10px'}
+                            )
+                        ]
+                    ),
+
+
+                    # old main bar chart
                     html.Div(
                         style={'padding': '20px'},
                         children=[
@@ -349,37 +381,6 @@ layout1 = html.Div([
                             html.Button('Apply selection', id='update_bar_button', n_clicks = 0)
                         ]
                     ),
-                    # word count bar chart
-                    html.Div(
-                        children=[
-                            dcc.Graph(id='count_bar_chart'),
-                            # "Select the number of year groups",
-                            # html.Br(),
-                            # dcc.Input(
-                            #     id="year-group-number-count", 
-                            #     type="number", 
-                            #     placeholder="input number of groups",
-                            #     value=10
-                            # ),
-                            # html.Hr(),
-                            # 'Tag selection',
-                            # html.Br(),
-                            # dcc.Dropdown(
-                            #     id='pos_groups_dropdown_count_main',
-                            #     options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories.keys())), 
-                            #     value=['nouns'],
-                            #     multi=True
-                            # ),
-                            # dcc.Dropdown(
-                            #     id='pos_groups_dropdown_count_sub',
-                            #     options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
-                            #     value=list(data_parser.pos_categories['nouns'].keys()),
-                            #     multi=True
-                            # ),
-                            # html.Br(), 
-                            # html.Button('Apply selection', id='update_count_button', n_clicks = 0)
-                        ]
-                    )
                 ]
             )
     ])

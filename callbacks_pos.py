@@ -258,6 +258,8 @@ def display_bar_chart(n_clicks, values0, values1, periods):
     Output('count_bar_chart', 'figure'), 
     Input('update_line_button', 'n_clicks'), # Only pressing the button initiates the function
     Input('update_line_button_1', 'n_clicks'), # Only pressing the button initiates the function
+    Input('bar_what_count', 'value'),
+    Input('bar_groub_by', 'value'),
     State('line_graph_name', 'value'),
     [State('inherit_pos', 'value')],
     State('line_name_1', 'value'),
@@ -285,9 +287,9 @@ def display_bar_chart(n_clicks, values0, values1, periods):
     [State('line_period_length', 'value')],
     [State('line_time_slider', 'value')],
     [State('line_visibility', 'value')])
-def display_wordcount_chart(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, name_2, name_3, pos_sub_0, pos_sub_1, pos_sub_2, pos_sub_3, sex_1, sex_2, sex_3, rank_main_1, rank_sub_1, rank_main_2, rank_sub_2, rank_main_3, rank_sub_3, rel_main_1, rel_sub_1, rel_main_2, rel_sub_2, rel_main_3, rel_sub_3, periods, years, visibility):
+def display_wordcount_chart(n_c1, n_c2, what_count, group_by_what, graph_name, inherit_pos, name_1, name_2, name_3, pos_sub_0, pos_sub_1, pos_sub_2, pos_sub_3, sex_1, sex_2, sex_3, rank_main_1, rank_sub_1, rank_main_2, rank_sub_2, rank_main_3, rank_sub_3, rel_main_1, rel_sub_1, rel_main_2, rel_sub_2, rel_main_3, rel_sub_3, periods, years, visibility):
 
-    if n_clicks >= 0 or n_clicks_1 >= 0:
+ 
         start = years[0]
         end = years[1]
         number_of_periods = (end - start) / periods
@@ -298,14 +300,15 @@ def display_wordcount_chart(n_clicks, n_clicks_1, graph_name, inherit_pos, name_
         label_dict = dict(zip(original_labels, new_labels))
 
         df = data_parser.df
-        df = df.groupby(['ID', 'Sender', 'SenderSex', 'SenderRank', 'RelCode', 'Tags', 'Year', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
-        df['PosCountNorm'] = df['PosCount']/df['WordCount']*100
-        
         df['Year'] = df['Year'].astype('int')
         df['YearGroup'] = pd.cut(df['Year'], bins=bins,include_lowest=True, labels=new_labels, precision=0)
         df['YearGroup'] = df['YearGroup'].astype("str")
-        df = df.groupby(['ID', 'Sender', 'YearGroup', 'Tags', 'SenderSex', 'SenderRank', 'RelCode']).mean().reset_index()
         df = df.replace(label_dict)
+
+        initial_groupby = ['YearGroup', 'ID', 'Sender', 'Tags', 'SenderSex', 'SenderRank', 'RelCode']
+        final_groupby = [group_by_what, 'YearGroup', 'Line']
+
+        df = df.groupby(initial_groupby).size().to_frame(name = 'Count').reset_index()
 
         fig = go.Figure()
 
@@ -319,7 +322,7 @@ def display_wordcount_chart(n_clicks, n_clicks_1, graph_name, inherit_pos, name_
                 'RelCode': list(flatten([data_parser.relationship_categories[rel_main_1][rel_sub] for rel_sub in rel_sub_1]))
             }
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
-            temp = df[mask].groupby(['ID', 'Sender',  'Tags', 'YearGroup']).mean().reset_index().groupby(['ID', 'Sender',  'Tags', 'YearGroup']).sum().reset_index()
+            temp = df[mask]
             temp['Line'] = [name_1] * len(temp.index)
             lines_df = lines_df.append(temp)
 
@@ -331,7 +334,7 @@ def display_wordcount_chart(n_clicks, n_clicks_1, graph_name, inherit_pos, name_
                 'RelCode': list(flatten([data_parser.relationship_categories[rel_main_2][rel_sub] for rel_sub in rel_sub_2]))
             }
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
-            temp = df[mask].groupby(['ID', 'Sender',  'Tags', 'YearGroup']).mean().reset_index().groupby(['ID', 'Sender',  'Tags', 'YearGroup']).sum().reset_index()
+            temp = df[mask]
             temp['Line'] = [name_2] * len(temp.index)
             lines_df = lines_df.append(temp)
 
@@ -343,25 +346,22 @@ def display_wordcount_chart(n_clicks, n_clicks_1, graph_name, inherit_pos, name_
                 'RelCode': list(flatten([data_parser.relationship_categories[rel_main_3][rel_sub] for rel_sub in rel_sub_3]))
             }
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
-            temp = df[mask].groupby(['ID', 'Sender',  'Tags', 'YearGroup']).mean().reset_index().groupby(['ID', 'Sender',  'Tags', 'YearGroup']).sum().reset_index()
+            temp = df[mask]
             temp['Line'] = [name_3] * len(temp.index)
             lines_df = lines_df.append(temp)
 
         fig = px.bar(
-            data_frame=lines_df.groupby(['Sender', 'YearGroup', 'Line']).sum().reset_index(),
+            data_frame=lines_df.groupby(final_groupby).sum().reset_index(),
             x='YearGroup', 
-            y='WordCount',
-            #range_y=[0,200],
+            y='Count',
             labels={
                 'YearGroup': 'Period', 
-                'WordCount':'Number of words'},
-            hover_data=['Sender'],
+                'Count':'Number of {}'.format(what_count)},
+            hover_data=[group_by_what],
             color='Line',
             barmode='group',
-            title='Number of words for each Line, grouped by sender')
+            title='Number of {} for each line, grouped by {}'.format(what_count, group_by_what))
 
         fig.update_layout()
 
         return fig
-
-
