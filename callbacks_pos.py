@@ -7,6 +7,8 @@ import plotly.express as px
 import plotly.graph_objs as go
 import pandas as pd
 from pandas.core.common import flatten
+import math
+import numpy as np
 
 from app import app
 import globals
@@ -121,11 +123,23 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
 
         start = years[0]
         end = years[1]
-        number_of_periods = (end - start) / periods
-        bins = pd.interval_range(start=start, end=end, periods=number_of_periods, closed='left')
+        full_period = end - start
+        modulo = full_period % periods
+        number_of_periods = math.floor(full_period / periods)
+
+        if modulo == 0:
+            bins = pd.interval_range(start=start, end=end, periods=number_of_periods, closed='left')
+        else:
+            end = end - modulo
+            starts = np.arange(start, end, periods).tolist()
+
+            tuples = [(start, start+periods) for start in starts]
+            tuples.append(tuple([end, end+modulo]))
+
+            bins = pd.IntervalIndex.from_tuples(tuples, closed='left')
+        
         original_labels = list(bins.astype(str))
         new_labels = ['{} - {}'.format(b.strip('[)').split(', ')[0], int(b.strip('[)').split(', ')[1])-1) for b in list(bins.astype(str))]
-
         label_dict = dict(zip(original_labels, new_labels))
 
         df = data_parser.df
@@ -292,11 +306,23 @@ def display_wordcount_chart(n_c1, n_c2, what_count, group_by_what, graph_name, i
  
         start = years[0]
         end = years[1]
-        number_of_periods = (end - start) / periods
-        bins = pd.interval_range(start=start, end=end, periods=number_of_periods, closed='left')
+        full_period = end - start
+        modulo = full_period % periods
+        number_of_periods = math.floor(full_period / periods)
+
+        if modulo == 0:
+            bins = pd.interval_range(start=start, end=end, periods=number_of_periods, closed='left')
+        else:
+            end = end - modulo
+            starts = np.arange(start, end, periods).tolist()
+
+            tuples = [(start, start+periods) for start in starts]
+            tuples.append(tuple([end, end+modulo]))
+
+            bins = pd.IntervalIndex.from_tuples(tuples, closed='left')
+        
         original_labels = list(bins.astype(str))
         new_labels = ['{} - {}'.format(b.strip('[)').split(', ')[0], int(b.strip('[)').split(', ')[1])-1) for b in list(bins.astype(str))]
-
         label_dict = dict(zip(original_labels, new_labels))
 
         df = data_parser.df
