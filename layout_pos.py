@@ -317,7 +317,39 @@ layout1 = html.Div([
             dcc.Tab(
                 label='Bar', 
                 children=[
-                    # main bar chart
+                    
+                    # word count bar chart
+                    html.Div(
+                        style={'padding': '20px'},
+                        children=[
+                            dcc.Graph(id='count_bar_chart'),
+                            'Show the number of ',
+                            dcc.RadioItems(
+                                id='bar_what_count',
+                                options=[
+                                    {'label': ' Words', 'value': 'words'}
+                                ],
+                                value='words',
+                                labelStyle={'display': 'inline-block', 'margin-right': '10px'}
+                            ),
+                            'Group the bars by ',
+                            dcc.RadioItems(
+                                id='bar_groub_by',
+                                options=[
+                                    {'label': ' Sender\'s sex', 'value': 'SenderSex'},
+                                    {'label': ' Sender\'s rank,', 'value': 'SenderRank'},
+                                    {'label': ' Sender\'s relationship with resipient', 'value': 'RelCode'},
+                                    {'label': ' Sender', 'value': 'Sender'},
+                                    {'label': ' Letter ID', 'value': 'ID'},
+                                ],
+                                value='SenderSex',
+                                labelStyle={'display': 'inline-block', 'margin-right': '10px'}
+                            )
+                        ]
+                    ),
+
+
+                    # old main bar chart
                     html.Div(
                         style={'padding': '20px'},
                         children=[
@@ -349,41 +381,6 @@ layout1 = html.Div([
                             html.Button('Apply selection', id='update_bar_button', n_clicks = 0)
                         ]
                     ),
-                    # Dynamic attribute selection
-                    html.Div(
-                        style={'padding': '20px'},
-                        children=[
-                            dcc.Graph(id='dynamic-attribute-bar'),
-                            "Select the number of year groups",
-                            html.Br(),
-                            dcc.Input(
-                                id="pos-year-group-number", 
-                                type="number", 
-                                placeholder="input number of groups",
-                                value=10
-                            ),
-                            html.Br(), 
-                            "Select an attribute",
-                            dcc.Dropdown(
-                                id='dynamic-attribute-selection',
-                                options=[
-                                    {'label': 'SenderSex', 'value': 'SenderSex'},
-                                    {'label': 'SenderRank', 'value': 'SenderRank'}
-                                ],
-                                value='SenderSex',
-                                multi=False
-                            ),
-                            dcc.Dropdown(
-                                id='dynamic-subattribute-selection',
-                                options=[
-                                    {'label': 'M', 'value': 'M'},
-                                    {'label': 'F', 'value': 'F'}
-                                ],
-                                value=['M', 'F'],
-                                multi=True
-                            ),
-                            html.Br(), 
-                            html.Button('Apply selection', id='pos_button', n_clicks = 0)])
                 ]
             )
     ])
