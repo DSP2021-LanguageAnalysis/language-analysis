@@ -9,12 +9,10 @@ import pandas as pd
 from pandas.core.common import flatten
 
 from app import app
-from pos_tab import PosTab
 import globals
 
 data_parser = globals.data_parser
 
-pos_tab = PosTab()
 df = data_parser.df
 pos_counts = data_parser.get_pos_counts()
 nn1_MF = data_parser.get_mfn_ratio()
@@ -366,29 +364,4 @@ def display_wordcount_chart(n_clicks, n_clicks_1, graph_name, inherit_pos, name_
 
         return fig
 
-# Dynamic grouping bar chart
-@app.callback(
-    Output('dynamic-subattribute-selection', 'value'),
-    Output('dynamic-subattribute-selection', 'options'),
-    Input('dynamic-attribute-selection', 'value'))
-def pos_selection(input1):
 
-    if input1 is None:
-        raise PreventUpdate
-
-    else:
-        value, options = pos_tab.selection(df, input1)
-
-        return value, options
-
-@app.callback(
-    Output('dynamic-attribute-bar', 'figure'), 
-    Input('pos_button', 'n_clicks'), # Only pressing the button initiates the function
-    State('dynamic-attribute-selection', 'value'),
-    State('dynamic-subattribute-selection', 'value'),
-    State('pos-year-group-number', 'value'))
-def pos_dynamic_attributes(clicks, input1, input2, period_count):
-
-    fig = pos_tab.dynamic_attributes(df, pos_counts, input1, input2, period_count)
-
-    return fig

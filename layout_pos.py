@@ -379,42 +379,7 @@ layout1 = html.Div([
                             # html.Br(), 
                             # html.Button('Apply selection', id='update_count_button', n_clicks = 0)
                         ]
-                    ),
-                    # Dynamic attribute selection
-                    html.Div(
-                        style={'padding': '20px'},
-                        children=[
-                            dcc.Graph(id='dynamic-attribute-bar'),
-                            "Select the number of year groups",
-                            html.Br(),
-                            dcc.Input(
-                                id="pos-year-group-number", 
-                                type="number", 
-                                placeholder="input number of groups",
-                                value=10
-                            ),
-                            html.Br(), 
-                            "Select an attribute",
-                            dcc.Dropdown(
-                                id='dynamic-attribute-selection',
-                                options=[
-                                    {'label': 'SenderSex', 'value': 'SenderSex'},
-                                    {'label': 'SenderRank', 'value': 'SenderRank'}
-                                ],
-                                value='SenderSex',
-                                multi=False
-                            ),
-                            dcc.Dropdown(
-                                id='dynamic-subattribute-selection',
-                                options=[
-                                    {'label': 'M', 'value': 'M'},
-                                    {'label': 'F', 'value': 'F'}
-                                ],
-                                value=['M', 'F'],
-                                multi=True
-                            ),
-                            html.Br(), 
-                            html.Button('Apply selection', id='pos_button', n_clicks = 0)])
+                    )
                 ]
             )
     ])
