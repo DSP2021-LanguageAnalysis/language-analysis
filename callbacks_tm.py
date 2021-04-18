@@ -186,7 +186,7 @@ def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, g
         cols2 = [{"name": i, "id": i} for i in letters_per_topic.columns]
 
         # Creates the pyLDAvis visualisation of the LDA model
-        vis_data = pyLDAvis.gensim.prepare(model, corpus, dictionary)
+        vis_data = pyLDAvis.gensim.prepare(model, corpus, dictionary, sort_topics=False)
         html_vis = pyLDAvis.prepared_data_to_html(vis_data, template_type='general')
 
         corpus_size_msg = f"Corpus size after filtering: {dictionary.num_docs} letters, {dictionary.num_pos} (non-unique) words processed"
