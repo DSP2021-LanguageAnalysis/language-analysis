@@ -74,15 +74,46 @@ layout1 = html.Div([
                             html.Div(id='line_slider_output'),
                             # Hidden div-element 
                             html.Div(id='line_slider_values', hidden=True),
-                            html.Br(),
-                            "Select period length for grouping:",
-                            html.Br(),
+                            html.Div([
+                            "Select period length for grouping",
                             dcc.Input(
                                 id="line_period_length", 
                                 type="number", 
                                 placeholder="input period length",
                                 value=20
-                            ),
+                            )]),
+                            html.Div([
+                            "Set name for the graph",
+                            dcc.Input(
+                                id="line_graph_name", 
+                                type="text", 
+                                value=""
+                            )]),
+                            html.Button('Apply selection', id='update_line_button_1', n_clicks = 0),
+                            html.Hr(),
+                            html.Details([
+                                html.Summary('Apply same selections for all lines', style={'fontWeight':'bold'}),
+                                html.Div(children=[
+                                    dcc.Checklist(
+                                        id='inherit_pos',
+                                        options=[
+                                            {'label': ' Use this selection for all lines', 'value': '1'},
+                                        ],
+                                        value=[],
+                                        labelStyle={'display': 'inline-block', 'margin-right': '10px'}
+                                    ),
+                                    dcc.Dropdown(
+                                        id='pos_groups_dropdown_0_main',
+                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories.keys())), 
+                                        value=['nouns'],
+                                        multi=True
+                                    ),
+                                    dcc.Dropdown(
+                                        id='pos_groups_dropdown_0_sub',
+                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
+                                        value=list(data_parser.pos_categories['nouns'].keys()),
+                                        multi=True
+                                    )])]),
                             html.Hr(),
                             'Which lines are visible:',
                             html.Br(),
@@ -98,7 +129,9 @@ layout1 = html.Div([
                             ),
                             html.Br(),
                             ## Selections for group 1
-                            html.Details([
+                            html.Details(
+                                open=True,
+                                children=[
                                 html.Summary('Line 1', style={'fontWeight':'bold'}),
                                 html.Div(children=[
                                     "Custom name",
@@ -119,8 +152,8 @@ layout1 = html.Div([
                                     dcc.Dropdown(
                                         id='line_senderrank_main_1',
                                         options=data_parser.list_to_dash_option_dict(list(data_parser.rank_categories.keys())), 
-                                        value=['Bipartite'],
-                                        multi=True
+                                        value='Bipartite',
+                                        multi=False
                                     ),
                                     dcc.Dropdown(
                                         id='line_senderrank_sub_1',
@@ -133,8 +166,8 @@ layout1 = html.Div([
                                     dcc.Dropdown(
                                         id='line_relationship_main_1',
                                         options=data_parser.list_to_dash_option_dict(list(data_parser.relationship_categories.keys())), 
-                                        value=['Fine-grained'],
-                                        multi=True
+                                        value='Fine-grained',
+                                        multi=False
                                     ),
                                     dcc.Dropdown(
                                         id='line_relationship_sub_1',
@@ -178,8 +211,8 @@ layout1 = html.Div([
                                     dcc.Dropdown(
                                         id='line_senderrank_main_2',
                                         options=data_parser.list_to_dash_option_dict(list(data_parser.rank_categories.keys())), 
-                                        value=['Bipartite'],
-                                        multi=True
+                                        value='Bipartite',
+                                        multi=False
                                     ),
                                     dcc.Dropdown(
                                         id='line_senderrank_sub_2',
@@ -192,8 +225,8 @@ layout1 = html.Div([
                                     dcc.Dropdown(
                                         id='line_relationship_main_2',
                                         options=data_parser.list_to_dash_option_dict(list(data_parser.relationship_categories.keys())), 
-                                        value=['Fine-grained'],
-                                        multi=True
+                                        value='Fine-grained',
+                                        multi=False
                                     ),
                                     dcc.Dropdown(
                                         id='line_relationship_sub_2',
@@ -237,8 +270,8 @@ layout1 = html.Div([
                                     dcc.Dropdown(
                                         id='line_senderrank_main_3',
                                         options=data_parser.list_to_dash_option_dict(list(data_parser.rank_categories.keys())), 
-                                        value=['Bipartite'],
-                                        multi=True
+                                        value='Bipartite',
+                                        multi=False
                                     ),
                                     dcc.Dropdown(
                                         id='line_senderrank_sub_3',
@@ -251,8 +284,8 @@ layout1 = html.Div([
                                     dcc.Dropdown(
                                         id='line_relationship_main_3',
                                         options=data_parser.list_to_dash_option_dict(list(data_parser.relationship_categories.keys())), 
-                                        value=['Fine-grained'],
-                                        multi=True
+                                        value='Fine-grained',
+                                        multi=False
                                     ),
                                     dcc.Dropdown(
                                         id='line_relationship_sub_3',
@@ -284,7 +317,39 @@ layout1 = html.Div([
             dcc.Tab(
                 label='Bar', 
                 children=[
-                    # main bar chart
+                    
+                    # word count bar chart
+                    html.Div(
+                        style={'padding': '20px'},
+                        children=[
+                            dcc.Graph(id='count_bar_chart'),
+                            'Show the number of ',
+                            dcc.RadioItems(
+                                id='bar_what_count',
+                                options=[
+                                    {'label': ' Words', 'value': 'words'}
+                                ],
+                                value='words',
+                                labelStyle={'display': 'inline-block', 'margin-right': '10px'}
+                            ),
+                            'Group the bars by ',
+                            dcc.RadioItems(
+                                id='bar_groub_by',
+                                options=[
+                                    {'label': ' Sender\'s sex', 'value': 'SenderSex'},
+                                    {'label': ' Sender\'s rank,', 'value': 'SenderRank'},
+                                    {'label': ' Sender\'s relationship with resipient', 'value': 'RelCode'},
+                                    {'label': ' Sender', 'value': 'Sender'},
+                                    {'label': ' Letter ID', 'value': 'ID'},
+                                ],
+                                value='SenderSex',
+                                labelStyle={'display': 'inline-block', 'margin-right': '10px'}
+                            )
+                        ]
+                    ),
+
+
+                    # old main bar chart
                     html.Div(
                         style={'padding': '20px'},
                         children=[
@@ -316,41 +381,6 @@ layout1 = html.Div([
                             html.Button('Apply selection', id='update_bar_button', n_clicks = 0)
                         ]
                     ),
-                    # Dynamic attribute selection
-                    html.Div(
-                        style={'padding': '20px'},
-                        children=[
-                            dcc.Graph(id='dynamic-attribute-bar'),
-                            "Select the number of year groups",
-                            html.Br(),
-                            dcc.Input(
-                                id="pos-year-group-number", 
-                                type="number", 
-                                placeholder="input number of groups",
-                                value=10
-                            ),
-                            html.Br(), 
-                            "Select an attribute",
-                            dcc.Dropdown(
-                                id='dynamic-attribute-selection',
-                                options=[
-                                    {'label': 'SenderSex', 'value': 'SenderSex'},
-                                    {'label': 'SenderRank', 'value': 'SenderRank'}
-                                ],
-                                value='SenderSex',
-                                multi=False
-                            ),
-                            dcc.Dropdown(
-                                id='dynamic-subattribute-selection',
-                                options=[
-                                    {'label': 'M', 'value': 'M'},
-                                    {'label': 'F', 'value': 'F'}
-                                ],
-                                value=['M', 'F'],
-                                multi=True
-                            ),
-                            html.Br(), 
-                            html.Button('Apply selection', id='pos_button', n_clicks = 0)])
                 ]
             )
     ])

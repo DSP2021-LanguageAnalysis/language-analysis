@@ -121,12 +121,18 @@ In brief, the algorithm works by iterating over documents. Firstly each word w i
 
 #### Iterations
 Controls how many times the algorithm repeats a certain process, called the E-step, on each document. The E-step is a process during which the optimal values of the “variational parameters” are found for a document. The variational parameters are used to compute a lower bound for the log likelihood of the data, and when optimised will produce the tightest possible lower bound. Then inferences can be made about the log likelihood of the entire data, which is necessary for predicting which words belong to which topics.
+
 #### Hyperparameters - Alpha and Eta
 #### Alpha - Interpretation
 Low alpha means each document is likely to consist of a few, or even one dominant topic. High alpha means each document is likely to consist of a mix of most of the topics. 
 #### Eta - Interpretation
 Low eta means each topic is likely to be composed of only a few dominant words. High eta means each topic is likely to consist of a mixture of many words. 
 
-Ideally, we would like our documents to consist of only a few topics, and the words within those topics to belong to only one or a few of those topics. As such, alpha and eta can be adjusted to suit these purposes. 
+Ideally, we would like our documents to consist of only a few topics, and the words within those topics to belong to only one or a few of those topics. As such, alpha and eta can be adjusted to suit these purposes.
+
+### Useful Links
+#### CLAWS7 Tagset
+http://ucrel.lancs.ac.uk/claws7tags.html
+
 ### Credits and Licence
 

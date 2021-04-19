@@ -29,6 +29,30 @@ layout0 = html.Div([
     ),
     dcc.Tabs([
         dcc.Tab(
+            label='Instructions',
+            children=[
+                html.Div(
+                    style={'padding': '20px'},
+                    children=[
+                        html.H2("User instructions"),
+                        #dcc.Link('link to github with more detailed documentation', href='https://github.com/DSP2021-LanguageAnalysis/language-analysis'),
+                        dcc.Markdown(''' 
+                        - [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
+                        - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
+                        - Select attribute that you want to create a custom grouping for with the tabs
+                        - **POS tag tab**
+                            - Type name for new custom grouping
+                            - Write POS tags to be included in your group, separated by the ";" symbol
+                            - Example: N;NN;NN1
+                            - Click **Add Group** to save the group for the current app session
+                            - Now the custom group is included as an option in the POS tag filtration options for both the POS analysis and Topic modelling tabs
+                        - **Other tab**
+                            - Coming soon
+                            ''')
+                        ])
+                ]
+            ),
+        dcc.Tab(
             label='POS',
             children=[
                 html.Div(

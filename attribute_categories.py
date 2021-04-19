@@ -32,10 +32,15 @@ rank_categories = {
 
 relationship_categories = {
     'Fine-grained': {
-        'T': ['T'], 
-        'FN': ['FN'], 
-        'FO': ['FO'], 
-        'TC': ['TC'], 
-        'FS': ['FS']
+        'Nuclear family': ['FN'], 
+        'Other family': ['FO'], 
+        'Family servant': ['FS'],
+        'Close friend': ['TC'], 
+        'Other acquaintance': ['T']
+    },
+    'Grouped': {
+        'Family': ['FN', 'FO', 'FS'], 
+        'Friends': ['TC'], 
+        'Other relationships': ['T']
     }
 }

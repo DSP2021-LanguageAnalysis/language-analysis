@@ -141,8 +141,8 @@ class TopicModel:
         d = {}
         topic_ids = []
         for idx, topic in self.model.print_topics(num_topics=-1, num_words=20):
-            d['Topic {}'.format(idx)] = topic.replace("*", ", ").split("+")
-            topic_ids.append(idx)
+            d['Topic {}'.format(idx+1)] = topic.replace("*", ", ").split("+")
+            topic_ids.append(idx+1)
     
         df = pd.DataFrame(d)
         topic_list = [{'label':"Topic {}".format(id), 'value':id} for id in set(topic_ids)]
@@ -157,11 +157,11 @@ class TopicModel:
         d["Letter"] = [', '.join(map(str, self.strings.index[ind])) for ind in indices]
         
         for n in range(num_topics):
-            d["Topic {}".format(n)] = [0]*len(indices)
+            d["Topic {}".format(n+1)] = [0]*len(indices)
         
         for i, index in enumerate(indices):
             for ind, score in self.model[self.corpus[index]]:
-                topic = "Topic {}".format(ind)
+                topic = "Topic {}".format(ind+1)
                 d[topic][i] = round(float(score), 3)
 
         df = pd.DataFrame(d)
@@ -179,7 +179,7 @@ class TopicModel:
             # Get the dominant topic, percentage contribution and keywords for each letter
             for j, (topic_num, prop_topic) in enumerate(row):
                 if j == 0:  # dominant topic
-                    topics_df = topics_df.append(pd.Series([int(topic_num), round(prop_topic,4)]), ignore_index=True)
+                    topics_df = topics_df.append(pd.Series([int(topic_num)+1, round(prop_topic,4)]), ignore_index=True)
                 else:
                     break
 
