@@ -192,7 +192,9 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
         print(graph_name)
         fig.update_layout(
             title=graph_name,
-            yaxis_range=[0,50]
+            yaxis_range=[0,50],
+            xaxis_title="Period",
+            yaxis_title="%"
         )
 
         return fig
