@@ -337,8 +337,8 @@ layout1 = html.Div([
                                 id='bar_groub_by',
                                 options=[
                                     {'label': ' Sender\'s sex', 'value': 'SenderSex'},
-                                    {'label': ' Sender\'s rank,', 'value': 'SenderRank'},
-                                    {'label': ' Sender\'s relationship with resipient', 'value': 'RelCode'},
+                                    {'label': ' Sender\'s rank', 'value': 'SenderRank'},
+                                    {'label': ' Sender\'s relationship with recipient', 'value': 'RelCode'},
                                     {'label': ' Sender', 'value': 'Sender'},
                                     {'label': ' Letter ID', 'value': 'ID'},
                                 ],
