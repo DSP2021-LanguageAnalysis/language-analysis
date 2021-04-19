@@ -58,7 +58,6 @@ layout2 = html.Div(
                                 - Select letter and view its contribution to each individual topic
                             - View topic visualisation
                                 - Scroll over topic in intertopic distance map to view its most relevant tokens 
-                                    - **NOTE** - currently topic **n** given by the model corresponds to topic **n-1** in the visualisation.
                                 - Adjust relevance metric with slider (detail in documentation)
                             ''')
                         ])
