@@ -32,18 +32,34 @@ layout1 = html.Div([
                     html.Div(
                         style={'padding': '20px'},
                         children=[
-                            html.H2("User instructions"),
+                            #html.H2("User instructions"),
                             #dcc.Link('link to github with more detailed documentation', href='https://github.com/DSP2021-LanguageAnalysis/language-analysis'),
                             dcc.Markdown(''' 
+                            ##### General
+                            - This part of the application is developed to help answer question about how usage of POS tags varies over time. 
+                            - You can select sender attributes to narrow down the set of people. 
+                            You might for instance want to see if there is a difference in the development of pronoun usage between men and women.
                             - [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
+
+                            ##### Line graph
+                            - In line graph view, you can see how the amount of selected POS tags changes over time.
+
+                            ##### Bar graph
+                            - The bar graph shows metadata for lines drawn in the line graph view.
+                            
+                            ##### POS tags
                             - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
-                            - Click **topic model** beside **POS tag Visualisation** to move to topic model view
-                            - Click either **line** or **bar** to find different graphs
+                            - The ditto tags that are present in the corpus are included when the main tag is selected. 
+                            I.e. if user selects to see tag NN1 then ditto tags NN121, NN122, NN131, NN132, NN133 are also included.
+
+                            ##### Attributes
                             - Pre-Made Class Grouping Classifications
                                 - **Fine grained** - Royalty (R) , Nobility (N) , Gentry Upper (GU), Gentry Lower (GL, G), Clergy Upper (CU), Clergy Lower (CL), Professional (P), Merchant (M), Other (O)
                                 - **Regular** - Royalty (R) , Nobility (N) , Gentry (GU, GL, G), Clergy (CU, CL), Professional (P), Merchant (M), Other (O)
                                 - **Tripartite** - Upper (R, N, GU, GL, G, CU), Middle (CL, P, M), Lower (O)
                                 - **Bipartite** - Gentry (R, N, GU, GL, G, CU), Non-Gentry (CL, P, M, O)
+                            
+                            ##### Tips
                             - Hover mouse over chart to find more options
                                 - Download plot as a png
                                 - Zoom
