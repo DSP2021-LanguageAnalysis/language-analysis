@@ -34,7 +34,8 @@ layout1 = html.Div([
                             html.H2("User instructions"),
                             #dcc.Link('link to github with more detailed documentation', href='https://github.com/DSP2021-LanguageAnalysis/language-analysis'),
                             dcc.Markdown(''' 
-                            - [link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
+                            - [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
+                            - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
                             - Click **topic model** under **POS tag Visualisation** to move to topic model view
                             - Click either **line** or **bar** to find different graphs
                             - Hover mouse over chart to find more options
