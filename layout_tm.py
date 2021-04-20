@@ -29,7 +29,7 @@ layout2 = html.Div(
                     style={'padding': '20px'},
                     children=[
                         html.H2("User instructions"),
-                        #dcc.Link('link to github with more detailed documentation', href='https://github.com/DSP2021-LanguageAnalysis/language-analysis'),
+                        #dcc.Link('Link to github with more detailed documentation', href='https://github.com/DSP2021-LanguageAnalysis/language-analysis'),
                         dcc.Markdown(''' 
                         - [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
                         - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
@@ -76,7 +76,7 @@ layout2 = html.Div(
                     style={'padding': '20px'},
                     children=[
                         html.Br(),
-                        html.H4(children='Create a topic model with LDA'),
+                        html.H4(children='Create a topic model with Latent Dirichlet Allocation (LDA)'),
                         html.Br(),
                         html.H5(children='Set model parameters'),
                         html.Br(),
@@ -304,6 +304,8 @@ layout2 = html.Div(
                                     type='number',
                                     value=1,
                                     min=0.01,
+                                    max=1,
+                                    step=0.01,
                                     persistence=True
                                 )
                             ]
@@ -324,6 +326,7 @@ layout2 = html.Div(
                                         {'label': 'Men', 'value': 'M'}
                                     ],
                                     value='A',
+                                    labelStyle={'display': 'inline-block'},
                                     persistence=True
                                 )
                             ]
@@ -377,7 +380,8 @@ layout2 = html.Div(
                                     max=max(data_parser.get_years()),
                                     step=1,
                                     value=[min(data_parser.get_years()), max(data_parser.get_years())],
-                                    persistence=True
+                                    persistence=True,
+                                    updatemode='drag'
                                 ),
                                 html.Div(id='slider-output'),
                                 # Hidden div-element 
