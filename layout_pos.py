@@ -36,8 +36,13 @@ layout1 = html.Div([
                             dcc.Markdown(''' 
                             - [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
                             - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
-                            - Click **topic model** under **POS tag Visualisation** to move to topic model view
+                            - Click **topic model** beside **POS tag Visualisation** to move to topic model view
                             - Click either **line** or **bar** to find different graphs
+                            - Pre-Made Class Grouping Classifications
+                                - **Fine grained** - Royalty (R) , Nobility (N) , Gentry Upper (GU), Gentry Lower (GL, G), Clergy Upper (CU), Clergy Lower (CL), Professional (P), Merchant (M), Other (O)
+                                - **Regular** - Royalty (R) , Nobility (N) , Gentry (GU, GL, G), Clergy (CU, CL), Professional (P), Merchant (M), Other (O)
+                                - **Tripartite** - Upper (R, N, GU, GL, G, CU), Middle (CL, P, M), Lower (O)
+                                - **Bipartite** - Gentry (R, N, GU, GL, G, CU), Non-Gentry (CL, P, M, O)
                             - Hover mouse over chart to find more options
                                 - Download plot as a png
                                 - Zoom
