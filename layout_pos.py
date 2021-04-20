@@ -75,7 +75,8 @@ layout1 = html.Div([
                                 min=min(data_parser.get_years()),
                                 max=max(data_parser.get_years()),
                                 step=1,
-                                value=[1680, 1800]
+                                value=[1680, 1800],
+                                updatemode='drag'
                             ),
                             html.Div(id='line_slider_output'),
                             # Hidden div-element 
