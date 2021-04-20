@@ -21,6 +21,7 @@ layout0 = html.Div([
         className ='navbar navbar-expand-lg navbar-dark bg-primary', 
         children=[
             html.H1(className='navbar-brand', children='VARIENG: TCEECE corpus analysis'),
+            dbc.NavItem(dbc.NavLink('Overview', href='/app/overview')),
             dbc.NavItem(dbc.NavLink('POS tag analysis', href='/app/postags')),
             dbc.NavItem(dbc.NavLink('Topic model', href='/app/topicmodel')),
             dbc.NavItem(dbc.NavLink('Add custom groups', active=True, href='/app/customize'))
