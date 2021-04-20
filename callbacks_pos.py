@@ -43,9 +43,9 @@ for i in range (0,4):
         values = []
         options = []
         for main in mains:
-            value = list(data_parser.get_pos_categories(data)[main].keys())
+            value = data_parser.get_pos_categories(data)[main]
             values.extend(value)
-            options.extend(data_parser.list_to_dash_option_dict(value))
+            options.extend(data_parser.pos_options_with_hover(data, main))
         
         return values, options
 
@@ -60,7 +60,7 @@ for i in range (1,4):
 
         values = []
         options = []
-        value = list(data_parser.rank_categories[main].keys())
+        value = data_parser.rank_categories[main]
         values.extend(value)
         options.extend(data_parser.dict_to_dash_options_with_hover(data_parser.rank_categories[main]))
         
@@ -76,7 +76,7 @@ for i in range (1,4):
 
         values = []
         options = []
-        value = list(data_parser.relationship_categories[main].keys())
+        value = data_parser.relationship_categories[main]
         values.extend(value)
         options.extend(data_parser.dict_to_dash_options_with_hover(data_parser.relationship_categories[main]))
         
@@ -92,6 +92,10 @@ for i in range (1,4):
     State('line_name_1', 'value'),
     State('line_name_2', 'value'),
     State('line_name_3', 'value'),
+    [State('pos_groups_dropdown_0_main', 'value')],
+    [State('pos_groups_dropdown_1_main', 'value')],
+    [State('pos_groups_dropdown_2_main', 'value')],
+    [State('pos_groups_dropdown_3_main', 'value')],
     [State('pos_groups_dropdown_0_sub', 'value')],
     [State('pos_groups_dropdown_1_sub', 'value')],
     [State('pos_groups_dropdown_2_sub', 'value')],
@@ -113,13 +117,20 @@ for i in range (1,4):
     [State('line_relationship_sub_3', 'value')],
     [State('line_period_length', 'value')],
     [State('line_time_slider', 'value')],
-    [State('line_visibility', 'value')])
-def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, name_2, name_3, pos_sub_0, pos_sub_1, pos_sub_2, pos_sub_3, sex_1, sex_2, sex_3, rank_main_1, rank_sub_1, rank_main_2, rank_sub_2, rank_main_3, rank_sub_3, rel_main_1, rel_sub_1, rel_main_2, rel_sub_2, rel_main_3, rel_sub_3, periods, years, visibility):
+    [State('line_visibility', 'value')],
+    State('session', 'data'))
+def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, name_2, name_3, pos_main_0, pos_main_1, pos_main_2, pos_main_3, pos_sub_0, pos_sub_1, pos_sub_2, pos_sub_3, sex_1, sex_2, sex_3, rank_main_1, rank_sub_1, rank_main_2, rank_sub_2, rank_main_3, rank_sub_3, rel_main_1, rel_sub_1, rel_main_2, rel_sub_2, rel_main_3, rel_sub_3, periods, years, visibility, data):
 
     if n_clicks >= 0 or n_clicks_1 >= 0:
 
+
         if '1' in inherit_pos:
+            pos_sub_0 = data_parser.include_ditto_tags_to_pos_list(pos_sub_0)
             pos_sub_1, pos_sub_2, pos_sub_3 = pos_sub_0, pos_sub_0, pos_sub_0
+        else:
+            pos_sub_1 = data_parser.include_ditto_tags_to_pos_list(pos_sub_1)
+            pos_sub_2 = data_parser.include_ditto_tags_to_pos_list(pos_sub_2)
+            pos_sub_3 = data_parser.include_ditto_tags_to_pos_list(pos_sub_3)
 
         start = years[0]
         end = years[1]
@@ -222,7 +233,7 @@ def bar_tag_options(mains, data):
     values = []
     options = []
     for main in mains:
-        value = list(data_parser.get_pos_categories(data)[main].keys())
+        value = data_parser.get_pos_categories(data)[main]
         values.extend(value)
         options.extend(data_parser.list_to_dash_option_dict(value))
     

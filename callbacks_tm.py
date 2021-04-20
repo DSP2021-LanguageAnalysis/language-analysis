@@ -32,7 +32,7 @@ def tm_pos_options(mains, data):
     values = []
     options = []
     for main in mains:
-        value = list(data_parser.get_pos_categories(data)[main].keys())
+        value = data_parser.get_pos_categories(data)[main]
         values.extend(value)
         options.extend(data_parser.list_to_dash_option_dict(value))
 

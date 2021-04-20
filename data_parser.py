@@ -3,7 +3,7 @@ import pandas as pd
 import glob
 import plotly.express as px
 import string
-from pos_categories import pos_categories
+from pos_categories import pos_categories, pos_labels, pos_dittos
 from attribute_categories import rank_categories, relationship_categories
 
 class DataParser():
@@ -27,6 +27,8 @@ class DataParser():
         self.df = self.df.dropna(axis='index')
         self.pos_categories = pos_categories
         self.rank_categories = rank_categories
+        self.pos_labels = pos_labels
+        self.pos_dittos = pos_dittos
         self.relationship_categories = relationship_categories
         return 
         
@@ -199,6 +201,11 @@ class DataParser():
         options = [{'label':k, 'value':k, 'title':', '.join(v)} for k,v in d.items()]
         return options
 
+    def pos_options_with_hover(self, custom, main):
+        l = self.get_pos_categories(custom)[main]
+        options = [{'label':tag, 'value':tag, 'title':self.pos_labels[tag] + '\n' + ', '.join(self.pos_dittos[tag])} for tag in l]
+        return options
+
     def get_pos_categories(self, custom):
         try:
             all_pos_categories = dict()
@@ -208,6 +215,12 @@ class DataParser():
         except Exception as e:
             print(e)
             return self.pos_categories
+
+    def include_ditto_tags_to_pos_list(self, pos_list):
+        final_list = []
+        for tag in pos_list:
+            final_list.extend(self.pos_dittos[tag])
+        return final_list
 
     def get_name(self, ids):
         person = self.db_person

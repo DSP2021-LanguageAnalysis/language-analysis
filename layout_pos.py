@@ -118,8 +118,8 @@ layout1 = html.Div([
                                     ),
                                     dcc.Dropdown(
                                         id='pos_groups_dropdown_0_sub',
-                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
-                                        value=list(data_parser.pos_categories['nouns'].keys()),
+                                        options=data_parser.list_to_dash_option_dict(data_parser.pos_categories['nouns']), 
+                                        value=data_parser.pos_categories['nouns'],
                                         multi=True
                                     )])]),
                             html.Hr(),
@@ -193,8 +193,8 @@ layout1 = html.Div([
                                     ),
                                     dcc.Dropdown(
                                         id='pos_groups_dropdown_1_sub',
-                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
-                                        value=list(data_parser.pos_categories['nouns'].keys()),
+                                        options=data_parser.list_to_dash_option_dict(data_parser.pos_categories['nouns']), 
+                                        value=data_parser.pos_categories['nouns'],
                                         multi=True
                                     ) 
                             ])]),
@@ -252,8 +252,8 @@ layout1 = html.Div([
                                     ),
                                     dcc.Dropdown(
                                         id='pos_groups_dropdown_2_sub',
-                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['pronouns'].keys())), 
-                                        value=list(data_parser.pos_categories['pronouns'].keys()),
+                                        options=data_parser.list_to_dash_option_dict(data_parser.pos_categories['pronouns']), 
+                                        value=data_parser.pos_categories['pronouns'],
                                         multi=True
                                     ) 
                             ])]),
@@ -311,8 +311,8 @@ layout1 = html.Div([
                                     ),
                                     dcc.Dropdown(
                                         id='pos_groups_dropdown_3_sub',
-                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['verbs'].keys())), 
-                                        value=list(data_parser.pos_categories['verbs'].keys()),
+                                        options=data_parser.list_to_dash_option_dict(data_parser.pos_categories['verbs']), 
+                                        value=data_parser.pos_categories['verbs'],
                                         multi=True
                                     ) 
                             ])]),
@@ -381,8 +381,8 @@ layout1 = html.Div([
                             ),
                             dcc.Dropdown(
                                 id='pos_groups_dropdown_bar1_sub',
-                                options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
-                                value=list(data_parser.pos_categories['nouns'].keys()),
+                                options=data_parser.list_to_dash_option_dict(data_parser.pos_categories['nouns']), 
+                                value=data_parser.pos_categories['nouns'],
                                 multi=True
                             ),
                             html.Br(), 
