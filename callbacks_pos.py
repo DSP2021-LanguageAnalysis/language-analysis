@@ -160,8 +160,13 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
         df['Year'] = df['Year'].astype('int')
         df['YearGroup'] = pd.cut(df['Year'], bins=bins,include_lowest=True, labels=new_labels, precision=0)
         df['YearGroup'] = df['YearGroup'].astype("str")
-        df = df.groupby(['YearGroup', 'Tags', 'SenderSex', 'SenderRank', 'RelCode']).mean().reset_index()
+        #df = df.groupby(['YearGroup', 'Tags', 'SenderSex', 'SenderRank', 'RelCode']).mean().reset_index()
         df = df.replace(label_dict)
+
+        # x = df['YearGroup'].dropna().unique()
+        # x.sort(axis=0)
+        # print(x)
+        # print(new_labels)
 
         fig = go.Figure()
         if '1' in visibility:
@@ -173,7 +178,7 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
             }
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
             fig.add_scatter(
-                x=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['YearGroup'], 
+                x=new_labels, 
                 y=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['PosCountNorm'],
                 name=name_1)
         if '2' in visibility:
@@ -185,7 +190,7 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
             }
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
             fig.add_scatter(
-                x=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['YearGroup'], 
+                x=new_labels, 
                 y=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['PosCountNorm'],
                 name=name_2)
         if '3' in visibility:
@@ -197,10 +202,10 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
             }
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
             fig.add_scatter(
-                x=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['YearGroup'], 
+                x=new_labels, 
                 y=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['PosCountNorm'],
                 name=name_3)
-        print(graph_name)
+
         fig.update_layout(
             title=graph_name,
             yaxis_range=[0,50],
