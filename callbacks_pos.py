@@ -16,9 +16,9 @@ import globals
 data_parser = globals.data_parser
 
 df = data_parser.df
-pos_counts = data_parser.get_pos_counts()
-nn1_MF = data_parser.get_mfn_ratio()
-tag_MF = data_parser.get_mfn_tag()
+# pos_counts = data_parser.get_pos_counts()
+# nn1_MF = data_parser.get_mfn_ratio()
+# tag_MF = data_parser.get_mfn_tag()
 
 
 # Callback for the slider element
@@ -153,20 +153,16 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
         new_labels = ['{} - {}'.format(b.strip('[)').split(', ')[0], int(b.strip('[)').split(', ')[1])-1) for b in list(bins.astype(str))]
         label_dict = dict(zip(original_labels, new_labels))
 
-        df = data_parser.df
-        df = df.groupby(['ID', 'SenderSex', 'SenderRank', 'RelCode', 'Tags', 'Year', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
-        df['PosCountNorm'] = df['PosCount']/df['WordCount']*100
+        df = data_parser.df.copy()
         
+        # Assign each row to a period
         df['Year'] = df['Year'].astype('int')
         df['YearGroup'] = pd.cut(df['Year'], bins=bins,include_lowest=True, labels=new_labels, precision=0)
         df['YearGroup'] = df['YearGroup'].astype("str")
-        #df = df.groupby(['YearGroup', 'Tags', 'SenderSex', 'SenderRank', 'RelCode']).mean().reset_index()
         df = df.replace(label_dict)
 
-        # x = df['YearGroup'].dropna().unique()
-        # x.sort(axis=0)
-        # print(x)
-        # print(new_labels)
+        # Group the data to get count of each POS tag in the data
+        df = df.groupby(['YearGroup', 'ID', 'SenderSex', 'SenderRank', 'RelCode', 'Tags', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
 
         fig = go.Figure()
         if '1' in visibility:
@@ -177,9 +173,11 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
                 'RelCode': list(flatten([data_parser.relationship_categories[rel_main_1][rel_sub] for rel_sub in rel_sub_1]))
             }
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
+            word_counts = df[mask].groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
+            pos_counts = df[mask].groupby(['YearGroup']).sum().reset_index()['PosCount']
             fig.add_scatter(
                 x=new_labels, 
-                y=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['PosCountNorm'],
+                y=pos_counts/word_counts*100,
                 name=name_1)
         if '2' in visibility:
             helper_dict = {
@@ -189,9 +187,11 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
                 'RelCode': list(flatten([data_parser.relationship_categories[rel_main_2][rel_sub] for rel_sub in rel_sub_2]))
             }
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
+            word_counts = df[mask].groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
+            pos_counts = df[mask].groupby(['YearGroup']).sum().reset_index()['PosCount']
             fig.add_scatter(
                 x=new_labels, 
-                y=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['PosCountNorm'],
+                y=pos_counts/word_counts*100,
                 name=name_2)
         if '3' in visibility:
             helper_dict = {
@@ -201,14 +201,16 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
                 'RelCode': list(flatten([data_parser.relationship_categories[rel_main_3][rel_sub] for rel_sub in rel_sub_3]))
             }
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
+            word_counts = df[mask].groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
+            pos_counts = df[mask].groupby(['YearGroup']).sum().reset_index()['PosCount']
             fig.add_scatter(
                 x=new_labels, 
-                y=df[mask].groupby(['Tags', 'YearGroup']).mean().reset_index().groupby(['YearGroup']).sum().reset_index()['PosCountNorm'],
+                y=pos_counts/word_counts*100,
                 name=name_3)
 
         fig.update_layout(
             title=graph_name,
-            yaxis_range=[0,50],
+            yaxis_range=[0,105],
             xaxis_title="Period",
             yaxis_title="%"
         )
