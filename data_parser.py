@@ -77,7 +77,7 @@ class DataParser():
                 'SenderRank': [self.db_letter.loc[id, 'SenderRank']] * len(pos),
                 'SenderSex': [self.db_person.loc[sender, 'Sex']] *len(pos),
                 'RelCode': [self.db_letter.loc[id, 'RelCode']] * len(pos),
-                'WordCount': [len(words)] * len(words)
+                'WordCount': [self.db_letter.loc[id, 'WordCount']] * len(pos)
                 }
         
         # Creates a Pandas Dataframe from the dict
