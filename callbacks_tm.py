@@ -16,7 +16,6 @@ import globals
 tm = globals.topic_model
 data_parser = globals.data_parser
 df = data_parser.df
-pos_counts = data_parser.get_pos_counts()
 rank_set, rank_list = data_parser.get_rank()
 rel_set, rel_list = data_parser.get_relationship()
 years_set = data_parser.get_years()
