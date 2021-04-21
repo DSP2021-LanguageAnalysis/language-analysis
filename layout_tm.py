@@ -237,8 +237,8 @@ layout2 = html.Div(
                         ),
                         dcc.Dropdown(
                             id='pos_tm_sub',
-                            options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
-                            value=list(data_parser.pos_categories['nouns'].keys()),
+                            options=data_parser.list_to_dash_option_dict(data_parser.pos_categories['nouns']), 
+                            value=data_parser.pos_categories['nouns'],
                             multi=True
                         ), 
                         html.Br(),

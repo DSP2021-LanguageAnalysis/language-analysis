@@ -98,7 +98,7 @@ def add_pos_group(n_clicks, name, tags, data):
         if data is None:
             data = dict()
         tags = tags.split(';')
-        data[name] = dict(zip(tags, tags))
+        data[name] = tags
     
     return data
 
@@ -110,6 +110,6 @@ def view_pos_groups(data):
     if data is not None:
         children = []
         for (n, t) in data.items():
-            children.append(html.P('{}: {}'.format(n, ', '.join(list(t.keys())))))
+            children.append(html.P('{}: {}'.format(n, ', '.join(list(t)))))
         
         return children
