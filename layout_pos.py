@@ -346,12 +346,15 @@ layout1 = html.Div([
                     html.Div(
                         style={'padding': '20px'},
                         children=[
+                            html.Div(id='bar_df', style={'display': 'none'}),
                             dcc.Graph(id='count_bar_chart'),
                             'Show the number of ',
                             dcc.RadioItems(
                                 id='bar_what_count',
                                 options=[
-                                    {'label': ' Words', 'value': 'words'}
+                                    {'label': ' Words', 'value': 'words'},
+                                    {'label': ' Letters', 'value': 'letters'},
+                                    {'label': ' People', 'value': 'people'}
                                 ],
                                 value='words',
                                 labelStyle={'display': 'inline-block', 'margin-right': '10px'}
@@ -362,9 +365,7 @@ layout1 = html.Div([
                                 options=[
                                     {'label': ' Sender\'s sex', 'value': 'SenderSex'},
                                     {'label': ' Sender\'s rank', 'value': 'SenderRank'},
-                                    {'label': ' Sender\'s relationship with recipient', 'value': 'RelCode'},
-                                    {'label': ' Sender', 'value': 'Sender'},
-                                    {'label': ' Letter ID', 'value': 'ID'},
+                                    {'label': ' Sender\'s relationship with recipient', 'value': 'RelCode'}
                                 ],
                                 value='SenderSex',
                                 labelStyle={'display': 'inline-block', 'margin-right': '10px'}
