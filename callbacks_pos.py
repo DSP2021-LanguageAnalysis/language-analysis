@@ -16,10 +16,6 @@ import globals
 data_parser = globals.data_parser
 
 df = data_parser.df
-# pos_counts = data_parser.get_pos_counts()
-# nn1_MF = data_parser.get_mfn_ratio()
-# tag_MF = data_parser.get_mfn_tag()
-
 
 # Callback for the slider element
 @app.callback(
@@ -85,6 +81,7 @@ for i in range (1,4):
 
 @app.callback(
     Output('line_graph', 'figure'), 
+    Output('bar_df', 'children'),
     Input('update_line_button', 'n_clicks'), # Only pressing the button initiates the function
     Input('update_line_button_1', 'n_clicks'), # Only pressing the button initiates the function
     State('line_graph_name', 'value'),
@@ -92,10 +89,6 @@ for i in range (1,4):
     State('line_name_1', 'value'),
     State('line_name_2', 'value'),
     State('line_name_3', 'value'),
-    [State('pos_groups_dropdown_0_main', 'value')],
-    [State('pos_groups_dropdown_1_main', 'value')],
-    [State('pos_groups_dropdown_2_main', 'value')],
-    [State('pos_groups_dropdown_3_main', 'value')],
     [State('pos_groups_dropdown_0_sub', 'value')],
     [State('pos_groups_dropdown_1_sub', 'value')],
     [State('pos_groups_dropdown_2_sub', 'value')],
@@ -119,7 +112,7 @@ for i in range (1,4):
     [State('line_time_slider', 'value')],
     [State('line_visibility', 'value')],
     State('session', 'data'))
-def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, name_2, name_3, pos_main_0, pos_main_1, pos_main_2, pos_main_3, pos_sub_0, pos_sub_1, pos_sub_2, pos_sub_3, sex_1, sex_2, sex_3, rank_main_1, rank_sub_1, rank_main_2, rank_sub_2, rank_main_3, rank_sub_3, rel_main_1, rel_sub_1, rel_main_2, rel_sub_2, rel_main_3, rel_sub_3, periods, years, visibility, data):
+def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, name_2, name_3, pos_sub_0, pos_sub_1, pos_sub_2, pos_sub_3, sex_1, sex_2, sex_3, rank_main_1, rank_sub_1, rank_main_2, rank_sub_2, rank_main_3, rank_sub_3, rel_main_1, rel_sub_1, rel_main_2, rel_sub_2, rel_main_3, rel_sub_3, periods, years, visibility, data):
 
     if n_clicks >= 0 or n_clicks_1 >= 0:
 
@@ -162,133 +155,9 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
         df = df.replace(label_dict)
 
         # Group the data to get count of each POS tag in the data
-        df = df.groupby(['YearGroup', 'ID', 'SenderSex', 'SenderRank', 'RelCode', 'Tags', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
+        df = df.groupby(['YearGroup', 'ID', 'Sender', 'SenderSex', 'SenderRank', 'RelCode', 'Tags', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
 
         fig = go.Figure()
-        if '1' in visibility:
-            helper_dict = {
-                'Tags': pos_sub_1,
-                'SenderSex': sex_1,
-                'SenderRank': list(flatten([data_parser.rank_categories[rank_main_1][rank_sub] for rank_sub in rank_sub_1])),
-                'RelCode': list(flatten([data_parser.relationship_categories[rel_main_1][rel_sub] for rel_sub in rel_sub_1]))
-            }
-            mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
-            word_counts = df[mask].groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
-            pos_counts = df[mask].groupby(['YearGroup']).sum().reset_index()['PosCount']
-            fig.add_scatter(
-                x=new_labels, 
-                y=pos_counts/word_counts*100,
-                name=name_1)
-        if '2' in visibility:
-            helper_dict = {
-                'Tags': pos_sub_2,
-                'SenderSex': sex_2,
-                'SenderRank': list(flatten([data_parser.rank_categories[rank_main_2][rank_sub] for rank_sub in rank_sub_2])),
-                'RelCode': list(flatten([data_parser.relationship_categories[rel_main_2][rel_sub] for rel_sub in rel_sub_2]))
-            }
-            mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
-            word_counts = df[mask].groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
-            pos_counts = df[mask].groupby(['YearGroup']).sum().reset_index()['PosCount']
-            fig.add_scatter(
-                x=new_labels, 
-                y=pos_counts/word_counts*100,
-                name=name_2)
-        if '3' in visibility:
-            helper_dict = {
-                'Tags': pos_sub_3,
-                'SenderSex': sex_3,
-                'SenderRank': list(flatten([data_parser.rank_categories[rank_main_3][rank_sub] for rank_sub in rank_sub_3])),
-                'RelCode': list(flatten([data_parser.relationship_categories[rel_main_3][rel_sub] for rel_sub in rel_sub_3]))
-            }
-            mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
-            word_counts = df[mask].groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
-            pos_counts = df[mask].groupby(['YearGroup']).sum().reset_index()['PosCount']
-            fig.add_scatter(
-                x=new_labels, 
-                y=pos_counts/word_counts*100,
-                name=name_3)
-
-        fig.update_layout(
-            title=graph_name,
-            yaxis_range=[0,105],
-            xaxis_title="Period",
-            yaxis_title="%"
-        )
-
-        return fig
-
-
-# TEsting wordcount bar chart
-@app.callback(
-    Output('count_bar_chart', 'figure'), 
-    Input('update_line_button', 'n_clicks'), # Only pressing the button initiates the function
-    Input('update_line_button_1', 'n_clicks'), # Only pressing the button initiates the function
-    Input('bar_what_count', 'value'),
-    Input('bar_groub_by', 'value'),
-    State('line_graph_name', 'value'),
-    [State('inherit_pos', 'value')],
-    State('line_name_1', 'value'),
-    State('line_name_2', 'value'),
-    State('line_name_3', 'value'),
-    [State('pos_groups_dropdown_0_sub', 'value')],
-    [State('pos_groups_dropdown_1_sub', 'value')],
-    [State('pos_groups_dropdown_2_sub', 'value')],
-    [State('pos_groups_dropdown_3_sub', 'value')],
-    [State('line_sex_1', 'value')],
-    [State('line_sex_2', 'value')],
-    [State('line_sex_3', 'value')],
-    State('line_senderrank_main_1', 'value'),
-    [State('line_senderrank_sub_1', 'value')],
-    State('line_senderrank_main_2', 'value'),
-    [State('line_senderrank_sub_2', 'value')],
-    State('line_senderrank_main_3', 'value'),
-    [State('line_senderrank_sub_3', 'value')],
-    State('line_relationship_main_1', 'value'),
-    [State('line_relationship_sub_1', 'value')],
-    State('line_relationship_main_2', 'value'),
-    [State('line_relationship_sub_2', 'value')],
-    State('line_relationship_main_3', 'value'),
-    [State('line_relationship_sub_3', 'value')],
-    [State('line_period_length', 'value')],
-    [State('line_time_slider', 'value')],
-    [State('line_visibility', 'value')])
-def display_wordcount_chart(n_c1, n_c2, what_count, group_by_what, graph_name, inherit_pos, name_1, name_2, name_3, pos_sub_0, pos_sub_1, pos_sub_2, pos_sub_3, sex_1, sex_2, sex_3, rank_main_1, rank_sub_1, rank_main_2, rank_sub_2, rank_main_3, rank_sub_3, rel_main_1, rel_sub_1, rel_main_2, rel_sub_2, rel_main_3, rel_sub_3, periods, years, visibility):
-
- 
-        start = years[0]
-        end = years[1]
-        full_period = end - start
-        modulo = full_period % periods
-        number_of_periods = math.floor(full_period / periods)
-
-        if modulo == 0:
-            bins = pd.interval_range(start=start, end=end, periods=number_of_periods, closed='left')
-        else:
-            end = end - modulo
-            starts = np.arange(start, end, periods).tolist()
-
-            tuples = [(start, start+periods) for start in starts]
-            tuples.append(tuple([end, end+modulo]))
-
-            bins = pd.IntervalIndex.from_tuples(tuples, closed='left')
-        
-        original_labels = list(bins.astype(str))
-        new_labels = ['{} - {}'.format(b.strip('[)').split(', ')[0], int(b.strip('[)').split(', ')[1])-1) for b in list(bins.astype(str))]
-        label_dict = dict(zip(original_labels, new_labels))
-
-        df = data_parser.df
-        df['Year'] = df['Year'].astype('int')
-        df['YearGroup'] = pd.cut(df['Year'], bins=bins,include_lowest=True, labels=new_labels, precision=0)
-        df['YearGroup'] = df['YearGroup'].astype("str")
-        df = df.replace(label_dict)
-
-        initial_groupby = ['YearGroup', 'ID', 'Sender', 'Tags', 'SenderSex', 'SenderRank', 'RelCode']
-        final_groupby = [group_by_what, 'YearGroup', 'Line']
-
-        df = df.groupby(initial_groupby).size().to_frame(name = 'Count').reset_index()
-
-        fig = go.Figure()
-
         lines_df = pd.DataFrame()
 
         if '1' in visibility:
@@ -298,8 +167,16 @@ def display_wordcount_chart(n_c1, n_c2, what_count, group_by_what, graph_name, i
                 'SenderRank': list(flatten([data_parser.rank_categories[rank_main_1][rank_sub] for rank_sub in rank_sub_1])),
                 'RelCode': list(flatten([data_parser.relationship_categories[rel_main_1][rel_sub] for rel_sub in rel_sub_1]))
             }
+            # mask 1
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
             temp = df[mask].copy()
+            word_counts = temp.groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
+            pos_counts = temp.groupby(['YearGroup']).sum().reset_index()['PosCount']
+            fig.add_scatter(
+                x=new_labels, 
+                y=pos_counts/word_counts*100,
+                name=name_1)
+            # Append to DF for bar chart
             temp['Line'] = [name_1] * len(temp.index)
             lines_df = lines_df.append(temp)
 
@@ -312,6 +189,13 @@ def display_wordcount_chart(n_c1, n_c2, what_count, group_by_what, graph_name, i
             }
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
             temp = df[mask].copy()
+            word_counts = temp.groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
+            pos_counts = temp.groupby(['YearGroup']).sum().reset_index()['PosCount']
+            fig.add_scatter(
+                x=new_labels, 
+                y=pos_counts/word_counts*100,
+                name=name_2)
+            # Append to DF for bar chart
             temp['Line'] = [name_2] * len(temp.index)
             lines_df = lines_df.append(temp)
 
@@ -324,16 +208,58 @@ def display_wordcount_chart(n_c1, n_c2, what_count, group_by_what, graph_name, i
             }
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
             temp = df[mask].copy()
+            word_counts = temp.groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
+            pos_counts = temp.groupby(['YearGroup']).sum().reset_index()['PosCount']
+            fig.add_scatter(
+                x=new_labels, 
+                y=pos_counts/word_counts*100,
+                name=name_3)
+            # Append to DF for bar chart
             temp['Line'] = [name_3] * len(temp.index)
             lines_df = lines_df.append(temp)
 
+        fig.update_layout(
+            title=graph_name,
+            yaxis_range=[0,105],
+            xaxis_title="Period",
+            yaxis_title="%"
+        )
+
+        return fig, lines_df.to_json()
+
+
+# TEsting wordcount bar chart
+@app.callback(
+    Output('count_bar_chart', 'figure'), 
+    [Input('bar_df', 'children')],
+    Input('bar_what_count', 'value'),
+    Input('bar_groub_by', 'value'))
+def display_wordcount_chart(json, what_count, group_by_what):
+
+        lines_df = pd.read_json(json)
+ 
+        final_groupby = [group_by_what, 'YearGroup', 'Line']
+
+        lines_df['PeopleCount'] = [1] * len(lines_df['WordCount'])
+        lines_df['LetterCount'] = [1] * len(lines_df['WordCount'])
+
+        if what_count == 'words':
+            y = 'WordCount'
+            lines_df = lines_df.groupby(['ID', 'Line']).min().reset_index().groupby(final_groupby).sum().reset_index()
+        elif what_count == 'letters':
+            y = 'LetterCount'
+            lines_df = lines_df.groupby(['ID', 'Line']).min().reset_index().groupby(final_groupby).sum().reset_index()
+        elif what_count == 'people':
+            y = 'PeopleCount'
+            lines_df = lines_df.groupby(['Sender', 'Line']).min().reset_index().groupby(final_groupby).sum().reset_index()
+
         fig = px.bar(
-            data_frame=lines_df.groupby(final_groupby).sum().reset_index(),
+            data_frame=lines_df,
             x='YearGroup', 
-            y='Count',
+            y=y,
             labels={
                 'YearGroup': 'Period', 
-                'Count':'Number of {}'.format(what_count)},
+                y:'Number of {}'.format(what_count)},
             hover_data=[group_by_what],
             color='Line',
             barmode='group',
