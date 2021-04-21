@@ -212,10 +212,10 @@ pos_dittos = {
         'TO': ['TO'],
         'UH': ['UH'],
         'XX': ['XX'],
-        'ZZ1': ['ZZ1',
+        'ZZ1': ['ZZ1'],
+        'ZZ2': ['ZZ2',
             'ZZ221',
-            'ZZ222'],
-        'ZZ2': ['ZZ2']
+            'ZZ222']
 }
 
 pos_labels = {
