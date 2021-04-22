@@ -41,7 +41,11 @@ layout2 = html.Div(
                             - Choose the number of iterations to be completed by the model
                         - Select **advanced parameters** to view more options (detail given in documentation)
                         - Select filtration parameters - Filter corpus by:
-                            - POS tagged tokens 
+                            - POS tagged tokens
+                                - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
+                                - The ditto tags that are present in the corpus are included when the main tag is selected. 
+                                  I.e. if user selects to see tag NN1 then ditto tags NN121, NN122, NN131, NN132, NN133 are also included.
+                                - Note: The tags NPM2 (plural month noun) and MCGE (genitive cardinal number, neutral for number) have been removed from selection, as they are not featured in this particular corpus.       
                             - Custom stopword list
                             - "Extreme" distributed tokens
                             - Sex of sender
