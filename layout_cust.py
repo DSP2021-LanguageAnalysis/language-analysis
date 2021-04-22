@@ -91,14 +91,14 @@ layout0 = html.Div([
                     style={'padding': '20px'},
                     children=[
                         html.H5('Add a new custom relationship grouping'),
-                        dcc.Input(id="rel_group_name", type="text", placeholder="Name for new group"),
-                        dcc.Input(id="rel_group_tags", type="text", placeholder="Tags for new group as ; separated list", style={'width': '100%'}),
+                        dcc.Input(id="relationship_group_name", type="text", placeholder="Name for new group"),
+                        dcc.Input(id="relationship_group_tags", type="text", placeholder="Tags for new group as ; separated list", style={'width': '100%'}),
                         html.Br(), 
-                        html.Button('Add group', id='add_rel_group_button', n_clicks = 0),
+                        html.Button('Add group', id='add_relationship_group_button', n_clicks = 0),
                         html.Br(),
                         html.Br(), 
                         html.P('The custom relationship groups you have saved for this session', style={'fontWeight':'bold'}),
-                        html.Div(id='cust_rel_groups')])])
+                        html.Div(id='cust_relationship_groups')])])
     ])
 
 ])
