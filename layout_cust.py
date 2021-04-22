@@ -131,3 +131,30 @@ def view_pos_groups(data):
             children.append(html.P('{}: {}'.format(n, ', '.join(list(t)))))
         
         return children
+    
+@app.callback(
+    Output('session', 'data'),
+    Input('add_relationship_group_button', 'n_clicks'),
+    [State('relationship_group_name', 'value')],
+    [State('relationship_group_tags', 'value')],
+    State('session', 'data'))
+def add_relationship_group(n_clicks, name, tags, data):
+    
+    if n_clicks > 0:
+        if data is None:
+            data = dict()
+        tags = tags.split(';')
+        data[name] = tags
+    
+    return data
+
+@app.callback(
+    Output('cust_relationship_groups', 'children'),
+    Input('session', 'data'))
+def view_relationship_groups(data):
+    if data is not None:
+        children = []
+        for (n, t) in data.items():
+            children.append(html.P('{}: {}'.format(n, ', '.join(list(t)))))
+        
+        return children
