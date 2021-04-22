@@ -3,7 +3,7 @@ import pandas as pd
 import glob
 import plotly.express as px
 import string
-from pos_categories import pos_categories
+from pos_categories import pos_categories, pos_labels, pos_dittos
 from attribute_categories import rank_categories, relationship_categories
 
 class DataParser():
@@ -27,6 +27,8 @@ class DataParser():
         self.df = self.df.dropna(axis='index')
         self.pos_categories = pos_categories
         self.rank_categories = rank_categories
+        self.pos_labels = pos_labels
+        self.pos_dittos = pos_dittos
         self.relationship_categories = relationship_categories
         return 
         
@@ -75,7 +77,7 @@ class DataParser():
                 'SenderRank': [self.db_letter.loc[id, 'SenderRank']] * len(pos),
                 'SenderSex': [self.db_person.loc[sender, 'Sex']] *len(pos),
                 'RelCode': [self.db_letter.loc[id, 'RelCode']] * len(pos),
-                'WordCount': [len(words)] * len(words)
+                'WordCount': [self.db_letter.loc[id, 'WordCount']] * len(pos)
                 }
         
         # Creates a Pandas Dataframe from the dict
@@ -102,48 +104,6 @@ class DataParser():
 
         return frame
 
-    def get_pos_counts(self):
-
-        df = self.df
-        # POS counts for each letter
-        pos_counts = df.groupby(['ID', 'Tags', 'Year', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
-        pos_counts['PosCountNorm'] = pos_counts['PosCount']/pos_counts['WordCount']*100
-
-        return pos_counts
-
-    def get_mfn_ratio(self):
-
-        df = self.df
-        pos_counts = self.get_pos_counts()
-        # Male/female noun ratio per year group
-        nn1_MF = df.groupby(['ID', 'Tags', 'Year', 'WordCount', 'SenderSex']).size().to_frame(name = 'SenderSexCount').reset_index()
-        nn1_MF['PosCountNorm'] = pos_counts['PosCount']/pos_counts['WordCount']
-        nn1_MF = nn1_MF[nn1_MF['Tags'] == 'NN1']
-        nn1_MF = nn1_MF.groupby(['Year', 'SenderSex']).mean().reset_index()
-        nn1_MF = nn1_MF.drop(['WordCount','SenderSexCount'], axis=1)
-        #app.logger.info(nn1_MF)
-
-        return nn1_MF
-        
-    def get_mfn_tag(self):
-
-        df = self.df
-        pos_counts = self.get_pos_counts()
-        # Male/female noun ratio per tag
-        tag_MF = df.groupby(['ID', 'Tags', 'Year', 'WordCount', 'SenderSex']).size().to_frame(name = 'SenderSexCount').reset_index()
-        tag_MF['PosCountNorm'] = pos_counts['PosCount']/pos_counts['WordCount']*100
-
-        return tag_MF
-
-    def get_nn1_count(self):
-
-        pos_counts = self.get_pos_counts()
-        # NN1 tag count per year
-        nn1_counts = pos_counts[pos_counts['Tags'] == 'NN1']
-        nn1_counts = nn1_counts.groupby(['Year']).mean().reset_index()
-
-        return nn1_counts
-
     def get_pos_list(self):
 
         df = self.df
@@ -157,7 +117,7 @@ class DataParser():
         df = self.df
         word_set = set(df['Words'].str.lower())
         word_list = [{'label':word, 'value':word} for word in word_set]
-        print(word_list[0])
+
         return word_list
 
     def get_rank(self):
@@ -192,24 +152,45 @@ class DataParser():
         return fm_fig
 
     def list_to_dash_option_dict(self, l):
+        
         options = [{'label':item, 'value':item} for item in l]
+        
         return options
 
     def dict_to_dash_options_with_hover(self, d):
+        
         options = [{'label':k, 'value':k, 'title':', '.join(v)} for k,v in d.items()]
+        
+        return options
+
+    def pos_options_with_hover(self, custom, main):
+
+        l = self.get_pos_categories(custom)[main]
+        options = [{'label':tag, 'value':tag, 'title':self.pos_labels[tag] + '\n' + ', '.join(self.pos_dittos[tag])} for tag in l]
+        
         return options
 
     def get_pos_categories(self, custom):
+
         try:
             all_pos_categories = dict()
             all_pos_categories.update(self.pos_categories)
             all_pos_categories.update(custom)
             return all_pos_categories
         except Exception as e:
-            print(e)
+
             return self.pos_categories
 
+    def include_ditto_tags_to_pos_list(self, pos_list):
+
+        final_list = []
+        for tag in pos_list:
+            final_list.extend(self.pos_dittos[tag])
+
+        return final_list
+
     def get_name(self, ids):
+
         person = self.db_person
         senders = ids.to_frame()
         tmp = person[['FirstName','LastName']]

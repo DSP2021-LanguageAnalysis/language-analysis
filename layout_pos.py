@@ -18,6 +18,7 @@ layout1 = html.Div([
         className ='navbar navbar-expand-lg navbar-dark bg-primary', 
         children=[
             html.H1(className='navbar-brand', children='VARIENG: TCEECE corpus analysis'),
+            dbc.NavItem(dbc.NavLink('Overview', href='/app/overview')),
             dbc.NavItem(dbc.NavLink('POS tag analysis', active=True, href='/app/postags')),
             dbc.NavItem(dbc.NavLink('Topic model', href='/app/topicmodel')),
             dbc.NavItem(dbc.NavLink('Add custom groups', href='/app/customize'))
@@ -31,12 +32,34 @@ layout1 = html.Div([
                     html.Div(
                         style={'padding': '20px'},
                         children=[
-                            html.H2("User instructions"),
+                            #html.H2("User instructions"),
                             #dcc.Link('link to github with more detailed documentation', href='https://github.com/DSP2021-LanguageAnalysis/language-analysis'),
                             dcc.Markdown(''' 
-                            - [link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
-                            - Click **topic model** under **POS tag Visualisation** to move to topic model view
-                            - Click either **line** or **bar** to find different graphs
+                            ##### General
+                            - This part of the application is developed to help answer question about how usage of POS tags varies over time. 
+                            - You can select sender attributes to narrow down the set of people. 
+                            You might for instance want to see if there is a difference in the development of pronoun usage between men and women.
+                            - [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
+
+                            ##### Line graph
+                            - In line graph view, you can see how the amount of selected POS tags changes over time.
+
+                            ##### Bar graph
+                            - The bar graph shows metadata for lines drawn in the line graph view.
+                            
+                            ##### POS tags
+                            - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
+                            - The ditto tags that are present in the corpus are included when the main tag is selected. 
+                            I.e. if user selects to see tag NN1 then ditto tags NN121, NN122, NN131, NN132, NN133 are also included.
+
+                            ##### Attributes
+                            - Pre-Made Class Grouping Classifications
+                                - **Fine grained** - Royalty (R) , Nobility (N) , Gentry Upper (GU), Gentry Lower (GL, G), Clergy Upper (CU), Clergy Lower (CL), Professional (P), Merchant (M), Other (O)
+                                - **Regular** - Royalty (R) , Nobility (N) , Gentry (GU, GL, G), Clergy (CU, CL), Professional (P), Merchant (M), Other (O)
+                                - **Tripartite** - Upper (R, N, GU, GL, G, CU), Middle (CL, P, M), Lower (O)
+                                - **Bipartite** - Gentry (R, N, GU, GL, G, CU), Non-Gentry (CL, P, M, O)
+                            
+                            ##### Tips
                             - Hover mouse over chart to find more options
                                 - Download plot as a png
                                 - Zoom
@@ -69,7 +92,8 @@ layout1 = html.Div([
                                 min=min(data_parser.get_years()),
                                 max=max(data_parser.get_years()),
                                 step=1,
-                                value=[1680, 1800]
+                                value=[1680, 1800],
+                                updatemode='drag'
                             ),
                             html.Div(id='line_slider_output'),
                             # Hidden div-element 
@@ -110,8 +134,8 @@ layout1 = html.Div([
                                     ),
                                     dcc.Dropdown(
                                         id='pos_groups_dropdown_0_sub',
-                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
-                                        value=list(data_parser.pos_categories['nouns'].keys()),
+                                        options=data_parser.list_to_dash_option_dict(data_parser.pos_categories['nouns']), 
+                                        value=data_parser.pos_categories['nouns'],
                                         multi=True
                                     )])]),
                             html.Hr(),
@@ -185,8 +209,8 @@ layout1 = html.Div([
                                     ),
                                     dcc.Dropdown(
                                         id='pos_groups_dropdown_1_sub',
-                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
-                                        value=list(data_parser.pos_categories['nouns'].keys()),
+                                        options=data_parser.list_to_dash_option_dict(data_parser.pos_categories['nouns']), 
+                                        value=data_parser.pos_categories['nouns'],
                                         multi=True
                                     ) 
                             ])]),
@@ -244,8 +268,8 @@ layout1 = html.Div([
                                     ),
                                     dcc.Dropdown(
                                         id='pos_groups_dropdown_2_sub',
-                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['pronouns'].keys())), 
-                                        value=list(data_parser.pos_categories['pronouns'].keys()),
+                                        options=data_parser.list_to_dash_option_dict(data_parser.pos_categories['pronouns']), 
+                                        value=data_parser.pos_categories['pronouns'],
                                         multi=True
                                     ) 
                             ])]),
@@ -303,8 +327,8 @@ layout1 = html.Div([
                                     ),
                                     dcc.Dropdown(
                                         id='pos_groups_dropdown_3_sub',
-                                        options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['verbs'].keys())), 
-                                        value=list(data_parser.pos_categories['verbs'].keys()),
+                                        options=data_parser.list_to_dash_option_dict(data_parser.pos_categories['verbs']), 
+                                        value=data_parser.pos_categories['verbs'],
                                         multi=True
                                     ) 
                             ])]),
@@ -322,12 +346,15 @@ layout1 = html.Div([
                     html.Div(
                         style={'padding': '20px'},
                         children=[
+                            html.Div(id='bar_df', style={'display': 'none'}),
                             dcc.Graph(id='count_bar_chart'),
                             'Show the number of ',
                             dcc.RadioItems(
                                 id='bar_what_count',
                                 options=[
-                                    {'label': ' Words', 'value': 'words'}
+                                    {'label': ' Words', 'value': 'words'},
+                                    {'label': ' Letters', 'value': 'letters'},
+                                    {'label': ' People', 'value': 'people'}
                                 ],
                                 value='words',
                                 labelStyle={'display': 'inline-block', 'margin-right': '10px'}
@@ -337,48 +364,12 @@ layout1 = html.Div([
                                 id='bar_groub_by',
                                 options=[
                                     {'label': ' Sender\'s sex', 'value': 'SenderSex'},
-                                    {'label': ' Sender\'s rank,', 'value': 'SenderRank'},
-                                    {'label': ' Sender\'s relationship with resipient', 'value': 'RelCode'},
-                                    {'label': ' Sender', 'value': 'Sender'},
-                                    {'label': ' Letter ID', 'value': 'ID'},
+                                    {'label': ' Sender\'s rank', 'value': 'SenderRank'},
+                                    {'label': ' Sender\'s relationship with recipient', 'value': 'RelCode'}
                                 ],
                                 value='SenderSex',
                                 labelStyle={'display': 'inline-block', 'margin-right': '10px'}
                             )
-                        ]
-                    ),
-
-
-                    # old main bar chart
-                    html.Div(
-                        style={'padding': '20px'},
-                        children=[
-                            dcc.Graph(id='bar_chart'),
-                            "Select the number of year groups",
-                            html.Br(),
-                            dcc.Input(
-                                id="year-group-number-bar", 
-                                type="number", 
-                                placeholder="input number of groups",
-                                value=10
-                            ),
-                            html.Hr(),
-                            'Tag selection',
-                            html.Br(),
-                            dcc.Dropdown(
-                                id='pos_groups_dropdown_bar1_main',
-                                options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories.keys())), 
-                                value=['nouns'],
-                                multi=True
-                            ),
-                            dcc.Dropdown(
-                                id='pos_groups_dropdown_bar1_sub',
-                                options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
-                                value=list(data_parser.pos_categories['nouns'].keys()),
-                                multi=True
-                            ),
-                            html.Br(), 
-                            html.Button('Apply selection', id='update_bar_button', n_clicks = 0)
                         ]
                     ),
                 ]

@@ -15,6 +15,7 @@ layout2 = html.Div(
         className ='navbar navbar-expand-lg navbar-dark bg-primary', 
         children=[
             html.H1(className='navbar-brand', children='VARIENG: TCEECE corpus analysis'),
+            dbc.NavItem(dbc.NavLink('Overview', href='/app/overview')),
             dbc.NavItem(dbc.NavLink('POS tag analysis', href='/app/postags')),
             dbc.NavItem(dbc.NavLink('Topic model', active=True, href='/app/topicmodel')),
             dbc.NavItem(dbc.NavLink('Add custom groups', href='/app/customize'))
@@ -29,9 +30,10 @@ layout2 = html.Div(
                     style={'padding': '20px'},
                     children=[
                         html.H2("User instructions"),
-                        #dcc.Link('link to github with more detailed documentation', href='https://github.com/DSP2021-LanguageAnalysis/language-analysis'),
+                        #dcc.Link('Link to github with more detailed documentation', href='https://github.com/DSP2021-LanguageAnalysis/language-analysis'),
                         dcc.Markdown(''' 
-                        - [link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
+                        - [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
+                        - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
                         - Click **POS tag analysis** to move to the POS tab
                         - Click **Topic Model** next to the instructions tab to view the user-options and create your topic model 
                         - Select the Model Parameters
@@ -44,6 +46,11 @@ layout2 = html.Div(
                             - "Extreme" distributed tokens
                             - Sex of sender
                             - Rank of sender
+                                - Pre-Made Class Grouping Classifications
+                                - **Fine grained** - Royalty (R) , Nobility (N) , Gentry Upper (GU), Gentry Lower (GL, G), Clergy Upper (CU), Clergy Lower (CL), Professional (P), Merchant (M), Other (O)
+                                - **Regular** - Royalty (R) , Nobility (N) , Gentry (GU, GL, G), Clergy (CU, CL), Professional (P), Merchant (M), Other (O)
+                                - **Tripartite** - Upper (R, N, GU, GL, G, CU), Middle (CL, P, M), Lower (O)
+                                - **Bipartite** - Gentry (R, N, GU, GL, G, CU), Non-Gentry (CL, P, M, O)
                             - Relationship between sender and reciever
                             - Time period during which the letter was sent
                         - Click **train model** to generate results and visualisation
@@ -58,7 +65,6 @@ layout2 = html.Div(
                                 - Select letter and view its contribution to each individual topic
                             - View topic visualisation
                                 - Scroll over topic in intertopic distance map to view its most relevant tokens 
-                                    - **NOTE** - currently topic **n** given by the model corresponds to topic **n-1** in the visualisation.
                                 - Adjust relevance metric with slider (detail in documentation)
                             ''')
                         ])
@@ -71,7 +77,7 @@ layout2 = html.Div(
                     style={'padding': '20px'},
                     children=[
                         html.Br(),
-                        html.H4(children='Create a topic model with LDA'),
+                        html.H4(children='Create a topic model with Latent Dirichlet Allocation (LDA)'),
                         html.Br(),
                         html.H5(children='Set model parameters'),
                         html.Br(),
@@ -231,8 +237,8 @@ layout2 = html.Div(
                         ),
                         dcc.Dropdown(
                             id='pos_tm_sub',
-                            options=data_parser.list_to_dash_option_dict(list(data_parser.pos_categories['nouns'].keys())), 
-                            value=list(data_parser.pos_categories['nouns'].keys()),
+                            options=data_parser.list_to_dash_option_dict(data_parser.pos_categories['nouns']), 
+                            value=data_parser.pos_categories['nouns'],
                             multi=True
                         ), 
                         html.Br(),
@@ -299,6 +305,8 @@ layout2 = html.Div(
                                     type='number',
                                     value=1,
                                     min=0.01,
+                                    max=1,
+                                    step=0.01,
                                     persistence=True
                                 )
                             ]
@@ -319,6 +327,7 @@ layout2 = html.Div(
                                         {'label': 'Men', 'value': 'M'}
                                     ],
                                     value='A',
+                                    labelStyle={'display': 'inline-block'},
                                     persistence=True
                                 )
                             ]
@@ -372,7 +381,8 @@ layout2 = html.Div(
                                     max=max(data_parser.get_years()),
                                     step=1,
                                     value=[min(data_parser.get_years()), max(data_parser.get_years())],
-                                    persistence=True
+                                    persistence=True,
+                                    updatemode='drag'
                                 ),
                                 html.Div(id='slider-output'),
                                 # Hidden div-element 

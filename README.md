@@ -3,16 +3,13 @@
 Data Science Master's Programme, University of Helsinki
 
 ### Table of Contents
-- Backlog
 - Description
+- Links
 - Installation
 - Usage
 - Theory
 - Credits and Licence
-
-### Backlog
-
-https://github.com/orgs/DSP2021-LanguageAnalysis/projects/1
+- Backlog
 
 ### Description
 This app allows for the exploration of a corpus of historical letters using data science methods. The app has two sections. 
@@ -21,8 +18,11 @@ The first is the part of speech, or POS tag, visualisation section. Here there a
 
 The second part of the app is the topic model section. This allows the user to generate, using the latent dirichlet allocation algorithm, a chosen number of “topics” from the data set. When properly filtered and parameterized, this allows the user to see which topics dominated the discussion in the letters. The app gives a wide array of options, so that the user can adjust based on their own questions of interest. 
 
-### Newest online version
+### Links
+#### App (should be updated when we have the new landing page)
 Go to http://193.166.25.206:8050/app/postags
+#### CLAWS7 Tagset
+http://ucrel.lancs.ac.uk/claws7tags.html
 
 ### Installation / How to get the app working locally
 
@@ -32,36 +32,35 @@ Go to http://193.166.25.206:8050/app/postags
 4. Run `pip install -r requirements.txt`
 5. Add data folder `TCEECE` to local project root, this is ignored by GIT to avoid spreading the data (see `.gitignore` file)
 6. Start app with `python index.py`
-7. Visit `http://127.0.0.1:8050/app/postags` or `http://127.0.0.1:8050/app/topicmodel` in your browser
+7. Visit `http://127.0.0.1:8050/app/overview`
 
 ## Usage
 ### POS Visualisation
-#### Scatter:
-- Scatterplot with wordcount of each letter on corpus
-  -	Each dot represents one letter
-  -	y-axis shows how many words that letter have
-  -	x-axis year the letter was written
-#### Bar:
-- Compare male and female tags
-  -	X-axis: year of letter with both female and male writers if any
-  -	Y-axis: percentage of the POS-tag(s) chosen
-- Dynamically grouping years
-  - **values incorrect**
-  -	X-axis: YearGroup based of chosen number of groups
-  -	Y-axis: percentage of NN1-tagged words
-- Compare selected attributes
-  - **values incorrect**
-  -	Select number of year groups
-  -	Select an attribute (SenderSex or SenderRank)
-  -	X-axis: year groups
-  -	Y-axis: percentage of NN1-tags
 #### Line:
-- Percentage of POS
-  -	X-axis: time in years
-  -	Y-axis: Percentage of chosen tag(s)
-- Groups and compare
-  -	Build two groups of tags and compare
-  -	X-axis: Percentage of chosen groups of tags
+- Shows the percentage of chosen categories
+- User can select:
+  - Year range
+  - period lenght (10 years, 20 years ...)
+- User can choose up to three lines to compare and options for each line are:
+  - Sender Sex (M,F)
+  - Sender Rank
+    - Bipartite: Gentry, Non-Gentry
+    - Tripartite: Upper, Middle, Lower
+    - Regular: Royalty, Nobility, Gentry, Clergy, Professional, Merchant, Other
+    - Fine graned: Royalty, Nobility, Gentry;upper, Gentry;lower, Clergy;upper, Clergy;lower, Professional, Merchant, Other
+  - Relationship (between sender and resipient)
+    - Grouped: Family, Friends, Other relationships
+    - Fine graned: Nuclier family, Other family, Family servant, Close friend, Other acquaitance
+  - POS-tags
+- User can set custom name for the graph and each line
+#### Bar:
+- Shows number of (**running?**) words in period with each bar corresponding to line in line chart
+- Bars can be divided by:
+  - Sender's sex
+  - Sender's rank
+  - Sender's relationship with resipient
+  - Sender (last name?)
+  - Letter ID
 
 ### Topic model
 #### BASIC PARAMETERS
@@ -101,15 +100,10 @@ Go to http://193.166.25.206:8050/app/postags
 
 ## Theory
 ### POS Visualisation
-#### Scatter:
-•	Word count of each letter
-#### Bar:
-•	Word count / time / senderSex
-•	Year grouped
-•	Selected attribute
 #### Line:
-•	Percentage of POS
-•	Groups and compare
+
+#### Bar:
+
 
 ### Topic model
 #### Latent Dirichlet Allocation
@@ -130,9 +124,7 @@ Low eta means each topic is likely to be composed of only a few dominant words. 
 
 Ideally, we would like our documents to consist of only a few topics, and the words within those topics to belong to only one or a few of those topics. As such, alpha and eta can be adjusted to suit these purposes.
 
-### Useful Links
-#### CLAWS7 Tagset
-http://ucrel.lancs.ac.uk/claws7tags.html
-
 ### Credits and Licence
+### Backlog
+https://github.com/orgs/DSP2021-LanguageAnalysis/projects/1
 

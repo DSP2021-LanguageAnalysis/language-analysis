@@ -10,6 +10,7 @@ from app import app
 from layout_cust import layout0
 from layout_pos import layout1
 from layout_tm import layout2
+from layout_overview import layout3
 import callbacks_pos, callbacks_tm
 
 app.layout = html.Div([
@@ -29,6 +30,8 @@ def display_page(pathname, data):
         return layout1
     elif pathname == '/app/topicmodel':
         return layout2
+    elif pathname == '/app/overview':
+        return layout3
     else:
         return '404'
 

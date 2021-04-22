@@ -21,6 +21,7 @@ layout0 = html.Div([
         className ='navbar navbar-expand-lg navbar-dark bg-primary', 
         children=[
             html.H1(className='navbar-brand', children='VARIENG: TCEECE corpus analysis'),
+            dbc.NavItem(dbc.NavLink('Overview', href='/app/overview')),
             dbc.NavItem(dbc.NavLink('POS tag analysis', href='/app/postags')),
             dbc.NavItem(dbc.NavLink('Topic model', href='/app/topicmodel')),
             dbc.NavItem(dbc.NavLink('Add custom groups', active=True, href='/app/customize'))
@@ -40,6 +41,12 @@ layout0 = html.Div([
                         - [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
                         - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
                         - Select attribute that you want to create a custom grouping for with the tabs
+                        - Note: There are already some premade groupings for convenience 
+                        - **Pre-Made Class Grouping Classifications**
+                                - **Fine grained** - Royalty (R) , Nobility (N) , Gentry Upper (GU), Gentry Lower (GL, G), Clergy Upper (CU), Clergy Lower (CL), Professional (P), Merchant (M), Other (O)
+                                - **Regular** - Royalty (R) , Nobility (N) , Gentry (GU, GL, G), Clergy (CU, CL), Professional (P), Merchant (M), Other (O)
+                                - **Tripartite** - Upper (R, N, GU, GL, G, CU), Middle (CL, P, M), Lower (O)
+                                - **Bipartite** - Gentry (R, N, GU, GL, G, CU), Non-Gentry (CL, P, M, O)
                         - **POS tag tab**
                             - Type name for new custom grouping
                             - Write POS tags to be included in your group, separated by the ";" symbol
@@ -91,7 +98,7 @@ def add_pos_group(n_clicks, name, tags, data):
         if data is None:
             data = dict()
         tags = tags.split(';')
-        data[name] = dict(zip(tags, tags))
+        data[name] = tags
     
     return data
 
@@ -103,6 +110,6 @@ def view_pos_groups(data):
     if data is not None:
         children = []
         for (n, t) in data.items():
-            children.append(html.P('{}: {}'.format(n, ', '.join(list(t.keys())))))
+            children.append(html.P('{}: {}'.format(n, ', '.join(list(t)))))
         
         return children
