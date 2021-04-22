@@ -31,11 +31,13 @@ layout2 = html.Div(
                     children=[
                         html.H2("User instructions"),
                         #dcc.Link('Link to github with more detailed documentation', href='https://github.com/DSP2021-LanguageAnalysis/language-analysis'),
-                        dcc.Markdown(''' 
+                        dcc.Markdown('''
+                        ##### General
+                        - This part of the application is for exploring the dominant topics in the corpus. 
                         - [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
                         - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
-                        - Click **POS tag analysis** to move to the POS tab
-                        - Click **Topic Model** next to the instructions tab to view the user-options and create your topic model 
+                        
+                        #### Parametrisation and Filtration
                         - Select the Model Parameters
                             - Choose the number of topics to be generated
                             - Choose the number of iterations to be completed by the model
@@ -57,9 +59,13 @@ layout2 = html.Div(
                                 - **Bipartite** - Gentry (R, N, GU, GL, G, CU), Non-Gentry (CL, P, M, O)
                             - Relationship between sender and reciever
                             - Time period during which the letter was sent
+                            
+                        #### Create Model
                         - Click **train model** to generate results and visualisation
                             - With default options, algorithm takes approximately 30 seconds to generate results.
                             - Changes in parameters will alter this waiting time
+                            
+                        #### Results
                         - Select dropdown menus to reveal different results: 
                             - View top 20 words from each topic
                             - Most represented letters from each topic
