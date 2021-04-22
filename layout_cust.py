@@ -39,7 +39,6 @@ layout0 = html.Div([
                         #dcc.Link('link to github with more detailed documentation', href='https://github.com/DSP2021-LanguageAnalysis/language-analysis'),
                         dcc.Markdown(''' 
                         - [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
-                        - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
                         - Select attribute that you want to create a custom grouping for with the tabs
                         - Note: There are already some premade groupings for convenience 
                         - **Pre-Made Class Grouping Classifications**
@@ -47,6 +46,12 @@ layout0 = html.Div([
                                 - **Regular** - Royalty (R) , Nobility (N) , Gentry (GU, GL, G), Clergy (CU, CL), Professional (P), Merchant (M), Other (O)
                                 - **Tripartite** - Upper (R, N, GU, GL, G, CU), Middle (CL, P, M), Lower (O)
                                 - **Bipartite** - Gentry (R, N, GU, GL, G, CU), Non-Gentry (CL, P, M, O)
+                        - **POS tags**
+                            - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
+                            - The ditto tags that are present in the corpus are included when the main tag is selected. 
+                            I.e. if user selects to see tag NN1 then ditto tags NN121, NN122, NN131, NN132, NN133 are also included.
+                            - Note: The tags NPM2 (plural month noun) and MCGE (genitive cardinal number, neutral for number) have been removed from selection, 
+                            as they are not featured in this particular corpus.
                         - **POS tag tab**
                             - Type name for new custom grouping
                             - Write POS tags to be included in your group, separated by the ";" symbol
