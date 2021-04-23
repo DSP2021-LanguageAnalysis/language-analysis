@@ -348,7 +348,16 @@ layout1 = html.Div([
                         style={'padding': '20px'},
                         children=[
                             html.Div(id='bar_df', style={'display': 'none'}),
-                            dcc.Graph(id='count_bar_chart'),
+                            dcc.Graph(id='count_bar_chart',
+                                      config = {
+                                        'toImageButtonOptions': {
+                                        'format': 'png', # one of png, svg, jpeg, webp
+                                        'filename': 'custom_image',
+                                        'height': 500,
+                                        'width': 700,
+                                        'scale': 3 # Multiply title/legend/axis/canvas sizes by this factor
+                                        }
+                                    }),
                             'Show the number of ',
                             dcc.RadioItems(
                                 id='bar_what_count',
