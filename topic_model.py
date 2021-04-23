@@ -5,7 +5,7 @@ from nltk.corpus import wordnet
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem.wordnet import WordNetLemmatizer
 from gensim.corpora import Dictionary
-from gensim.models import LdaModel
+from gensim.models.ldamulticore import LdaMulticore
 import globals
 
 class TopicModel:
@@ -114,12 +114,12 @@ class TopicModel:
         state = np.random.RandomState(random_seed)
 
         if alpha_boolean == True:
-            man_alpha = 'auto'
+            man_alpha = 'asymmetric'
         if eta_boolean == True:
             man_eta = 'auto'    
 
         # Train LDA model.
-        self.model = LdaModel(
+        self.model = LdaMulticore(
             corpus=data,
             id2word=dictionary,
             chunksize=chunksize,

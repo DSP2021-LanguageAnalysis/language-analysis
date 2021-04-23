@@ -11,6 +11,10 @@ data_parser = globals.data_parser
 layout2 = html.Div(
     #style={'padding': '20px'},
     children=[
+    dcc.ConfirmDialog(
+        id='confirm',
+        message='Topic model received no data for training. Please try other filtering options.',
+    ),
     dbc.Nav(
         className ='navbar navbar-expand-lg navbar-dark bg-primary', 
         children=[
