@@ -13,8 +13,6 @@ import pandas as pd
 import globals
 from app import app
 
-data_parser = globals.data_parser
-
 
 layout0 = html.Div([
     dbc.Nav(
@@ -95,31 +93,3 @@ layout0 = html.Div([
 
 ])
 
-# line graph
-@app.callback(
-    Output('session', 'data'),
-    Input('add_pos_group_button', 'n_clicks'),
-    [State('pos_group_name', 'value')],
-    [State('pos_group_tags', 'value')],
-    State('session', 'data'))
-def add_pos_group(n_clicks, name, tags, data):
-    
-    if n_clicks > 0:
-        if data is None:
-            data = dict()
-        tags = tags.split(';')
-        data[name] = tags
-    
-    return data
-
-# line graph
-@app.callback(
-    Output('cust_pos_groups', 'children'),
-    Input('session', 'data'))
-def view_pos_groups(data):
-    if data is not None:
-        children = []
-        for (n, t) in data.items():
-            children.append(html.P('{}: {}'.format(n, ', '.join(list(t)))))
-        
-        return children

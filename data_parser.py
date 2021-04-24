@@ -143,14 +143,6 @@ class DataParser():
 
         return year_set
 
-    def get_fm_fig(self):
-
-        nn1_MF = self.get_mfn_ratio()
-        fm_fig = px.bar(nn1_MF, x="Year", y="PosCountNorm", color='SenderSex', barmode='group')
-        #pc_fig = px.line(nn1_counts, x="Year", y="PosCountNorm")
-
-        return fm_fig
-
     def list_to_dash_option_dict(self, l):
         
         options = [{'label':item, 'value':item} for item in l]
@@ -177,8 +169,7 @@ class DataParser():
             all_pos_categories.update(self.pos_categories)
             all_pos_categories.update(custom)
             return all_pos_categories
-        except Exception as e:
-
+        except:
             return self.pos_categories
 
     def include_ditto_tags_to_pos_list(self, pos_list):
