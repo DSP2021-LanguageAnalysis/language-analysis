@@ -9,6 +9,7 @@ import pandas as pd
 from pandas.core.common import flatten
 import math
 import numpy as np
+from multiprocessing import  Pool
 
 from app import app
 import globals
@@ -16,6 +17,20 @@ import globals
 data_parser = globals.data_parser
 
 df = data_parser.df
+
+
+def parallelize_dataframe(df, func, n_cores=4):
+    df_split = np.array_split(df, n_cores)
+    pool = Pool(n_cores)
+    df = pd.concat(pool.map(func, df_split))
+    pool.close()
+    pool.join()
+    return df
+
+
+def poscount_groupby(df):
+    return df.groupby(['YearGroup', 'ID', 'Sender', 'SenderSex', 'SenderRank', 'RelCode', 'Tags', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
+
 
 # Callback for the slider element
 @app.callback(
@@ -155,7 +170,8 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
         df = df.replace(label_dict)
 
         # Group the data to get count of each POS tag in the data
-        df = df.groupby(['YearGroup', 'ID', 'Sender', 'SenderSex', 'SenderRank', 'RelCode', 'Tags', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
+        # df = poscount_groupby(df)
+        df = parallelize_dataframe(df, poscount_groupby)
 
         fig = go.Figure()
         lines_df = pd.DataFrame()
