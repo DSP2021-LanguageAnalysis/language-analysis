@@ -281,10 +281,13 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
 
         fig.update_layout(
             title=graph_name,
-            yaxis_range=[0,105],
             xaxis_title="Period",
             yaxis_title="%"
         )
+
+        # Figure shows as autoscaled from the beginning, as values are not set
+        # tozero mode forces y axis to start from zero to avoid misleading visualizations
+        fig.update_yaxes(rangemode='tozero')
 
         # Different lines having same POS messes up the dataframe index 
         # which then messes up json converting, creating new index solves this
@@ -325,7 +328,6 @@ def display_wordcount_chart(json, what_count, group_by_what):
             lines_df = lines_df.groupby(['Sender', 'Line']).min().reset_index().groupby(final_groupby).sum().reset_index()
         
         selection_info = f"Number of non-unique words: {words}, number of letters: {letters}, number of senders: {people}"
-        print(lines_df)
 
         fig = px.bar(
             data_frame=lines_df,
