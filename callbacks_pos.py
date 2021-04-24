@@ -239,10 +239,10 @@ def display_wordcount_chart(json, what_count, group_by_what):
 
         lines_df = pd.read_json(json)
 
-        grouped = lines_df.groupby('ID').sum()
+        grouped = lines_df.groupby('ID').min()
         words = grouped['WordCount'].sum()
-        letters = grouped.shape[0]
-        people = lines_df.groupby('Sender').sum().shape[0]
+        letters = len(lines_df['ID'].unique())
+        people = len(lines_df['Sender'].unique())
         
         final_groupby = [group_by_what, 'YearGroup', 'Line']
 
@@ -260,9 +260,8 @@ def display_wordcount_chart(json, what_count, group_by_what):
             lines_df = lines_df.groupby(['Sender', 'Line']).min().reset_index().groupby(final_groupby).sum().reset_index()
         
         selection_info = f"Number of non-unique words: {words}, number of letters: {letters}, number of senders: {people}"
+        print(lines_df)
 
-        print(grouped)
-        
         fig = px.bar(
             data_frame=lines_df,
             x='YearGroup', 
