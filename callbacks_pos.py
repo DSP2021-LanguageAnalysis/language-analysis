@@ -170,12 +170,33 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
             # mask 1
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
             temp = df[mask].copy()
+            
+            # Grouping by desired attributes may lead to loss of some periods
+            # Here we add mock data for those periods so the graph is shown correctly
+            for p in new_labels:
+                if p not in list(temp['YearGroup'].unique()):
+                    temp = temp.append(
+                        {
+                            'YearGroup': p,
+                            'ID': 'Not found',
+                            'Sender': 'Not found',
+                            'SenderSex': 'Not found',
+                            'SenderRank': 'Not found',
+                            'RelCode': 'Not found',
+                            'Tags': 'Not found',
+                            'WordCount': 0,
+                            'PosCount': 0
+                        }, ignore_index=True
+                    )
+
             word_counts = temp.groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
             pos_counts = temp.groupby(['YearGroup']).sum().reset_index()['PosCount']
+
             fig.add_scatter(
                 x=new_labels, 
-                y=pos_counts/word_counts*100,
-                name=name_1)
+                y=(pos_counts/word_counts).fillna(0)*100,
+                name=name_1,
+                connectgaps=True)
             # Append to DF for bar chart
             temp['Line'] = [name_1] * len(temp.index)
             lines_df = lines_df.append(temp)
@@ -189,12 +210,32 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
             }
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
             temp = df[mask].copy()
+
+            # Grouping by desired attributes may lead to loss of some periods
+            # Here we add mock data for those periods so the graph is shown correctly
+            for p in new_labels:
+                if p not in list(temp['YearGroup'].unique()):
+                    temp = temp.append(
+                        {
+                            'YearGroup': p,
+                            'ID': 'Not found',
+                            'Sender': 'Not found',
+                            'SenderSex': 'Not found',
+                            'SenderRank': 'Not found',
+                            'RelCode': 'Not found',
+                            'Tags': 'Not found',
+                            'WordCount': 0,
+                            'PosCount': 0
+                        }, ignore_index=True
+                    )
+
             word_counts = temp.groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
             pos_counts = temp.groupby(['YearGroup']).sum().reset_index()['PosCount']
             fig.add_scatter(
                 x=new_labels, 
-                y=pos_counts/word_counts*100,
-                name=name_2)
+                y=(pos_counts/word_counts).fillna(0)*100,
+                name=name_2,
+                connectgaps=True)
             # Append to DF for bar chart
             temp['Line'] = [name_2] * len(temp.index)
             lines_df = lines_df.append(temp)
@@ -208,22 +249,49 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
             }
             mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
             temp = df[mask].copy()
+
+            # Grouping by desired attributes may lead to loss of some periods
+            # Here we add mock data for those periods so the graph is shown correctly
+            for p in new_labels:
+                if p not in list(temp['YearGroup'].unique()):
+                    temp = temp.append(
+                        {
+                            'YearGroup': p,
+                            'ID': 'Not found',
+                            'Sender': 'Not found',
+                            'SenderSex': 'Not found',
+                            'SenderRank': 'Not found',
+                            'RelCode': 'Not found',
+                            'Tags': 'Not found',
+                            'WordCount': 0,
+                            'PosCount': 0
+                        }, ignore_index=True
+                    )
+
             word_counts = temp.groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
             pos_counts = temp.groupby(['YearGroup']).sum().reset_index()['PosCount']
             fig.add_scatter(
                 x=new_labels, 
-                y=pos_counts/word_counts*100,
-                name=name_3)
+                y=(pos_counts/word_counts).fillna(0)*100,
+                name=name_3,
+                connectgaps=True)
             # Append to DF for bar chart
             temp['Line'] = [name_3] * len(temp.index)
             lines_df = lines_df.append(temp)
 
         fig.update_layout(
             title=graph_name,
-            yaxis_range=[0,105],
             xaxis_title="Period",
             yaxis_title="%"
         )
+
+        # Figure shows as autoscaled from the beginning, as values are not set
+        # tozero mode forces y axis to start from zero to avoid misleading visualizations
+        fig.update_yaxes(rangemode='tozero')
+
+        # Different lines having same POS messes up the dataframe index 
+        # which then messes up json converting, creating new index solves this
+        lines_df.reset_index(drop=True, inplace=True)
 
         return fig, lines_df.to_json()
 
@@ -231,13 +299,19 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
 # TEsting wordcount bar chart
 @app.callback(
     Output('count_bar_chart', 'figure'), 
+    Output('size_info', 'children'),
     [Input('bar_df', 'children')],
     Input('bar_what_count', 'value'),
     Input('bar_groub_by', 'value'))
 def display_wordcount_chart(json, what_count, group_by_what):
 
         lines_df = pd.read_json(json)
- 
+
+        grouped = lines_df.groupby('ID').min()
+        words = grouped['WordCount'].sum()
+        letters = len(lines_df['ID'].unique())
+        people = len(lines_df['Sender'].unique())
+        
         final_groupby = [group_by_what, 'YearGroup', 'Line']
 
         lines_df['PeopleCount'] = [1] * len(lines_df['WordCount'])
@@ -252,6 +326,8 @@ def display_wordcount_chart(json, what_count, group_by_what):
         elif what_count == 'people':
             y = 'PeopleCount'
             lines_df = lines_df.groupby(['Sender', 'Line']).min().reset_index().groupby(final_groupby).sum().reset_index()
+        
+        selection_info = f"Number of non-unique words: {words}, number of letters: {letters}, number of senders: {people}"
 
         fig = px.bar(
             data_frame=lines_df,
@@ -264,7 +340,9 @@ def display_wordcount_chart(json, what_count, group_by_what):
             color='Line',
             barmode='group',
             title='Number of {} for each line, grouped by {}'.format(what_count, group_by_what))
+        
+        fig.update_xaxes(categoryorder='category ascending')
 
         fig.update_layout()
 
-        return fig
+        return fig, selection_info

@@ -19,8 +19,8 @@ The first is the part of speech, or POS tag, visualisation section. Here there a
 The second part of the app is the topic model section. This allows the user to generate, using the latent dirichlet allocation algorithm, a chosen number of “topics” from the data set. When properly filtered and parameterized, this allows the user to see which topics dominated the discussion in the letters. The app gives a wide array of options, so that the user can adjust based on their own questions of interest. 
 
 ### Links
-#### App (should be updated when we have the new landing page)
-Go to http://193.166.25.206:8050/app/postags
+#### App
+Go to http://193.166.25.206:8050/app/overview
 #### CLAWS7 Tagset
 http://ucrel.lancs.ac.uk/claws7tags.html
 
@@ -40,17 +40,17 @@ http://ucrel.lancs.ac.uk/claws7tags.html
 - Shows the percentage of chosen categories
 - User can select:
   - Year range
-  - period lenght (10 years, 20 years ...)
+  - period length (10 years, 20 years ...)
 - User can choose up to three lines to compare and options for each line are:
   - Sender Sex (M,F)
-  - Sender Rank
-    - Bipartite: Gentry, Non-Gentry
-    - Tripartite: Upper, Middle, Lower
-    - Regular: Royalty, Nobility, Gentry, Clergy, Professional, Merchant, Other
-    - Fine graned: Royalty, Nobility, Gentry;upper, Gentry;lower, Clergy;upper, Clergy;lower, Professional, Merchant, Other
-  - Relationship (between sender and resipient)
+  - Pre-Made Class Grouping Classifications
+    - **Fine grained** - Royalty (R) , Nobility (N) , Gentry Upper (GU), Gentry Lower (GL, G), Clergy Upper (CU), Clergy Lower (CL), Professional (P), Merchant (M), Other (O)
+    - **Regular** - Royalty (R) , Nobility (N) , Gentry (GU, GL, G), Clergy (CU, CL), Professional (P), Merchant (M), Other (O)
+    - **Tripartite** - Upper (R, N, GU, GL, G, CU), Middle (CL, P, M), Lower (O)
+    - **Bipartite** - Gentry (R, N, GU, GL, G, CU), Non-Gentry (CL, P, M, O)
+  - Relationship (between sender and recipient)
     - Grouped: Family, Friends, Other relationships
-    - Fine graned: Nuclier family, Other family, Family servant, Close friend, Other acquaitance
+    - Fine grained: Nuclear family, Other family, Family servant, Close friend, Other acquaintance
   - POS-tags
 - User can set custom name for the graph and each line
 #### Bar:
@@ -58,7 +58,7 @@ http://ucrel.lancs.ac.uk/claws7tags.html
 - Bars can be divided by:
   - Sender's sex
   - Sender's rank
-  - Sender's relationship with resipient
+  - Sender's relationship with recipient
   - Sender (last name?)
   - Letter ID
 

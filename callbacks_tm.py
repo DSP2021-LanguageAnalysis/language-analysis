@@ -118,6 +118,7 @@ def get_letters_per_topic(topic_id):
     Output('pyldavis-vis', 'srcDoc'),
     Output('letter-list','options'),
     Output('tm-results','hidden'),
+    Output('confirm', 'displayed'),
     Input('button', 'n_clicks'), # Only pressing the button initiates the function
     State('alpha_boolean', 'on'),
     State('eta_boolean', 'on'),
@@ -164,6 +165,10 @@ def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, g
         if years[0] is not min(years_set) or years[1] is not max(years_set):
             data = tm.filter_by_time(data, years)
 
+        # Gives a message to user if the dataframe is empty after filtering
+        if(data.empty):
+            return no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update, True, True 
+
         # Data preprocessing for the LDA model 
         corpus, dictionary, docs, strings = tm.prepare_data(data, userstopwords, min_doc, max_prop)
    
@@ -190,7 +195,7 @@ def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, g
 
         corpus_size_msg = f"Corpus size after filtering: {dictionary.num_docs} letters, {dictionary.num_pos} (non-unique) words processed"
         
-        return corpus_size_msg, topics_df.to_dict('records'), cols, topic_list, letters_per_topic.to_dict('records'), cols2, html_vis, letter_list, False
+        return corpus_size_msg, topics_df.to_dict('records'), cols, topic_list, letters_per_topic.to_dict('records'), cols2, html_vis, letter_list, False, False
 
     else:
-        return no_update, no_update, no_update, no_update, no_update, no_update, no_update, True          
+        return no_update, no_update, no_update, no_update, no_update, no_update, no_update, no_update, True, False          

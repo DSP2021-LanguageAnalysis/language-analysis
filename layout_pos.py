@@ -51,6 +51,7 @@ layout1 = html.Div([
                             - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
                             - The ditto tags that are present in the corpus are included when the main tag is selected. 
                             I.e. if user selects to see tag NN1 then ditto tags NN121, NN122, NN131, NN132, NN133 are also included.
+                            - Note: The tags NPM2 (plural month noun) and MCGE (genitive cardinal number, neutral for number) have been removed from selection, as they are not featured in this particular corpus. 
 
                             ##### Attributes
                             - Pre-Made Class Grouping Classifications
@@ -63,12 +64,12 @@ layout1 = html.Div([
                             - Hover mouse over chart to find more options
                                 - Download plot as a png
                                 - Zoom
-                                    - undo by douple clicking graph
+                                    - undo by double clicking graph
                                 - Pan
                                 - Box select
-                                    - undo by douple clicking graph
+                                    - undo by double clicking graph
                                 - Lasso select
-                                    - undo by douple clicking graph
+                                    - undo by double clicking graph
                                 - Zoom in
                                 - Zoom out
                                 - **Autoscale**
@@ -348,6 +349,8 @@ layout1 = html.Div([
                         children=[
                             html.Div(id='bar_df', style={'display': 'none'}),
                             dcc.Graph(id='count_bar_chart'),
+                            html.Div(id='size_info',
+                                     style={'paddingBottom': '20px'}),
                             'Show the number of ',
                             dcc.RadioItems(
                                 id='bar_what_count',
