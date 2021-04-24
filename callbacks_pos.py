@@ -225,6 +225,10 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
             yaxis_title="%"
         )
 
+        # Different lines having same POS messes up the dataframe index 
+        # which then messes up json converting, creating new index solves this
+        lines_df.reset_index(drop=True, inplace=True)
+
         return fig, lines_df.to_json()
 
 
