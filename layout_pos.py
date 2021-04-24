@@ -349,6 +349,8 @@ layout1 = html.Div([
                         children=[
                             html.Div(id='bar_df', style={'display': 'none'}),
                             dcc.Graph(id='count_bar_chart'),
+                            html.Div(id='size_info',
+                                     style={'paddingBottom': '20px'}),
                             'Show the number of ',
                             dcc.RadioItems(
                                 id='bar_what_count',

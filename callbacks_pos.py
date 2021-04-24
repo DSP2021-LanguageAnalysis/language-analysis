@@ -231,13 +231,19 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
 # TEsting wordcount bar chart
 @app.callback(
     Output('count_bar_chart', 'figure'), 
+    Output('size_info', 'children'),
     [Input('bar_df', 'children')],
     Input('bar_what_count', 'value'),
     Input('bar_groub_by', 'value'))
 def display_wordcount_chart(json, what_count, group_by_what):
 
         lines_df = pd.read_json(json)
- 
+
+        grouped = lines_df.groupby('ID').sum()
+        words = grouped['WordCount'].sum()
+        letters = grouped.shape[0]
+        people = lines_df.groupby('Sender').sum().shape[0]
+        
         final_groupby = [group_by_what, 'YearGroup', 'Line']
 
         lines_df['PeopleCount'] = [1] * len(lines_df['WordCount'])
@@ -252,7 +258,11 @@ def display_wordcount_chart(json, what_count, group_by_what):
         elif what_count == 'people':
             y = 'PeopleCount'
             lines_df = lines_df.groupby(['Sender', 'Line']).min().reset_index().groupby(final_groupby).sum().reset_index()
+        
+        selection_info = f"Number of non-unique words: {words}, number of letters: {letters}, number of senders: {people}"
 
+        print(grouped)
+        
         fig = px.bar(
             data_frame=lines_df,
             x='YearGroup', 
@@ -264,7 +274,9 @@ def display_wordcount_chart(json, what_count, group_by_what):
             color='Line',
             barmode='group',
             title='Number of {} for each line, grouped by {}'.format(what_count, group_by_what))
+        
+        fig.update_xaxes(categoryorder='category ascending')
 
         fig.update_layout()
 
-        return fig
+        return fig, selection_info
