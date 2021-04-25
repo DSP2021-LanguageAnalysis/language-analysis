@@ -26,7 +26,7 @@ pos_tags = data_parser.get_pos_list()
     Output('pos_tm_sub', 'value'),
     Output('pos_tm_sub', 'options'),
     [Input('pos_tm_main', 'value')],
-    State('session', 'data'))
+    State('user-browser-store', 'data'))
 def tm_pos_options(mains, data):
     values = []
     options = []
@@ -42,7 +42,7 @@ def tm_pos_options(mains, data):
     Output('rank-sub', 'value'),
     Output('rank-sub', 'options'),
     Input('rank-main', 'value'),
-    State('session', 'data'))
+    State('user-browser-store', 'data'))
 def tm_rank_options(main, data):
 
     values = []
@@ -58,7 +58,7 @@ def tm_rank_options(main, data):
     Output('relationship-sub', 'value'),
     Output('relationship-sub', 'options'),
     Input('relationship-main', 'value'),
-    State('session', 'data'))
+    State('user-browser-store', 'data'))
 def tm_rel_options(main, data):
 
     values = []

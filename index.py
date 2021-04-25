@@ -14,14 +14,14 @@ from layout_overview import layout3
 import callbacks_pos, callbacks_tm, callbacks_cust
 
 app.layout = html.Div([
-    dcc.Store(id='session', storage_type='session'),
+    dcc.Store(id='user-browser-store', storage_type='local'),
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content')
 ])
 
 @app.callback(Output('page-content', 'children'),
               Input('url', 'pathname'),
-              State('session', 'data'))
+              State('user-browser-store', 'data'))
 def display_page(pathname, data):
     # Parse letters to a Pandas DataFrame
     if pathname == '/app/customize':

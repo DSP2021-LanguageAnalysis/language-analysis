@@ -53,7 +53,7 @@ for i in range (0,4):
         Output(f'pos_groups_dropdown_{i}_sub', 'value'),
         Output(f'pos_groups_dropdown_{i}_sub', 'options'),
         [Input(f'pos_groups_dropdown_{i}_main', 'value')],
-        State('session', 'data'))
+        State('user-browser-store', 'data'))
     def line_group_pos_options(mains, data):
 
         values = []
@@ -71,7 +71,7 @@ for i in range (0,4):
         Output(f'line_senderrank_sub_{i}', 'value'),
         Output(f'line_senderrank_sub_{i}', 'options'),
         Input(f'line_senderrank_main_{i}', 'value'),
-        State('session', 'data'))
+        State('user-browser-store', 'data'))
     def line_group_rank_options(main, data):
 
         values = []
@@ -87,7 +87,7 @@ for i in range (0,4):
         Output(f'line_relationship_sub_{i}', 'value'),
         Output(f'line_relationship_sub_{i}', 'options'),
         Input(f'line_relationship_main_{i}', 'value'),
-        State('session', 'data'))
+        State('user-browser-store', 'data'))
     def line_group_rel_options(main, data):
 
         values = []
@@ -137,7 +137,7 @@ for i in range (0,4):
     [State('line_period_length', 'value')],
     [State('line_time_slider', 'value')],
     [State('line_visibility', 'value')],
-    State('session', 'data'))
+    State('user-browser-store', 'data'))
 def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, inherit_attributes, name_1, name_2, name_3, pos_sub_0, pos_sub_1, pos_sub_2, pos_sub_3, sex_0, sex_1, sex_2, sex_3, rank_main_0, rank_sub_0, rank_main_1, rank_sub_1, rank_main_2, rank_sub_2, rank_main_3, rank_sub_3, rel_main_0, rel_sub_0, rel_main_1, rel_sub_1, rel_main_2, rel_sub_2, rel_main_3, rel_sub_3, periods, years, visibility, data):
 
     if n_clicks >= 0 or n_clicks_1 >= 0:

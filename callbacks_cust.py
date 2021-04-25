@@ -11,11 +11,11 @@ data_parser = globals.data_parser
 
 
 @app.callback(
-    Output('session', 'data'),
+    Output('user-browser-store', 'data'),
     Input('add_pos_group_button', 'n_clicks'),
     [State('pos_group_name', 'value')],
     [State('pos_group_tags', 'value')],
-    State('session', 'data'))
+    State('user-browser-store', 'data'))
 def add_pos_group(n_clicks, name, tags, data):
     
     if n_clicks > 0:
@@ -29,7 +29,7 @@ def add_pos_group(n_clicks, name, tags, data):
 
 @app.callback(
     Output('cust_pos_groups', 'children'),
-    Input('session', 'data'))
+    Input('user-browser-store', 'data'))
 def view_pos_groups(data):
 
     if data is not None:
@@ -43,7 +43,7 @@ def view_pos_groups(data):
 for i in range (0,4):
     @app.callback(
         Output(f'pos_groups_dropdown_{i}_main', 'options'),
-        Input('session', 'data'))
+        Input('user-browser-store', 'data'))
     def include_pos_groups_line(data):
 
         if data is not None:
@@ -52,7 +52,7 @@ for i in range (0,4):
 
 @app.callback(
     Output('pos_tm_main', 'options'),
-    Input('session', 'data'))
+    Input('user-browser-store', 'data'))
 def include_pos_groups_topicmodel(data):
 
     if data is not None:
