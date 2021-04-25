@@ -46,10 +46,10 @@ relationship_categories = {
 }
 
 relationship_labels = {
-    'FN' : 'Nuclear Family Members'
-    'FO' : 'Other Family Member'
-    'FS' : 'Family Servant'
-    'TC' : 'Close Friend'
+    'FN' : 'Nuclear Family Members',
+    'FO' : 'Other Family Member',
+    'FS' : 'Family Servant',
+    'TC' : 'Close Friend',
     'T'  : 'Other Acquaintance'
 }
     
