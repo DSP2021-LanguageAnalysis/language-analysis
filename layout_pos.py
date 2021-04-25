@@ -122,10 +122,23 @@ layout1 = html.Div([
                                 type="text", 
                                 value=""
                             )]),
+                            html.Div([
+                                'Which lines are visible:',
+                                dcc.Checklist(
+                                    id='line_visibility',
+                                    options=[
+                                        {'label': ' Line 1', 'value': '1'},
+                                        {'label': ' Line 2', 'value': '2'},
+                                        {'label': ' Line 3', 'value': '3'}
+                                    ],
+                                    value=['1'],
+                                    labelStyle={'display': 'inline-block', 'margin-right': '10px'}
+                            )]),
+                            html.Br(),
                             html.Button('Apply selection', id='update_line_button_1', n_clicks = 0),
                             html.Hr(),
                             html.Details([
-                                html.Summary('Apply same selections for all lines', style={'fontWeight':'bold'}),
+                                html.Summary('Apply same POS tag selections for all lines', style={'fontWeight':'bold'}),
                                 html.Div(children=[
                                     dcc.Checklist(
                                         id='inherit_pos',
@@ -148,25 +161,64 @@ layout1 = html.Div([
                                         multi=True
                                     )])]),
                             html.Hr(),
-                            'Which lines are visible:',
-                            html.Br(),
-                            dcc.Checklist(
-                                id='line_visibility',
-                                options=[
-                                    {'label': ' Line 1', 'value': '1'},
-                                    {'label': ' Line 2', 'value': '2'},
-                                    {'label': ' Line 3', 'value': '3'}
-                                ],
-                                value=['1'],
-                                labelStyle={'display': 'inline-block', 'margin-right': '10px'}
-                            ),
-                            html.Br(),
+                            html.Details([
+                                html.Summary('Apply same attribute selections for all lines', style={'fontWeight':'bold'}),
+                                html.Div(children=[
+                                    dcc.Checklist(
+                                        id='inherit_attributes',
+                                        options=[
+                                            {'label': ' Use this selection for all lines', 'value': '1'},
+                                        ],
+                                        value=[],
+                                        labelStyle={'display': 'inline-block', 'margin-right': '10px'}
+                                    ),
+                                    "Sender sex",
+                                    dcc.Dropdown(
+                                        id='line_sex_0',
+                                        options=[
+                                            {'label': 'M', 'value': 'M'},
+                                            {'label': 'F', 'value': 'F'}
+                                        ], 
+                                        value=['M', 'F'],
+                                        multi=True
+                                    ),   
+                                    html.Br(),
+                                    "Sender rank",
+                                    dcc.Dropdown(
+                                        id='line_senderrank_main_0',
+                                        options=data_parser.list_to_dash_option_dict(list(data_parser.rank_categories.keys())), 
+                                        value='Bipartite',
+                                        multi=False
+                                    ),
+                                    dcc.Dropdown(
+                                        id='line_senderrank_sub_0',
+                                        options=data_parser.dict_to_dash_options_with_hover(data_parser.rank_categories['Bipartite']), 
+                                        value=list(data_parser.rank_categories['Bipartite'].keys()),
+                                        multi=True
+                                    ),   
+                                    html.Br(),
+                                    "Relationship",
+                                    dcc.Dropdown(
+                                        id='line_relationship_main_0',
+                                        options=data_parser.list_to_dash_option_dict(list(data_parser.relationship_categories.keys())), 
+                                        value='Fine-grained',
+                                        multi=False
+                                    ),
+                                    dcc.Dropdown(
+                                        id='line_relationship_sub_0',
+                                        options=data_parser.dict_to_dash_options_with_hover(data_parser.relationship_categories['Fine-grained']), 
+                                        value=list(data_parser.relationship_categories['Fine-grained'].keys()),
+                                        multi=True
+                                    )])]),
+                            html.Hr(),
                             ## Selections for group 1
                             html.Details(
                                 open=True,
                                 children=[
                                 html.Summary('Line 1', style={'fontWeight':'bold'}),
-                                html.Div(children=[
+                                html.Div(
+                                    style={'padding': '20px'},
+                                    children=[
                                     "Custom name",
                                     dcc.Input(id="line_name_1", type="text", placeholder="Custom name for line", value='Line 1'),
                                     html.Br(),
@@ -225,7 +277,9 @@ layout1 = html.Div([
                             ])]),
                             html.Details([
                                 html.Summary('Line 2', style={'fontWeight':'bold'}),
-                                html.Div(children=[
+                                html.Div(
+                                    style={'padding': '20px'},
+                                    children=[
                                     "Custom name",
                                     dcc.Input(id="line_name_2", type="text", placeholder="Custom name for line", value='Line 2'),
                                     html.Br(),
@@ -284,7 +338,9 @@ layout1 = html.Div([
                             ])]),
                             html.Details([
                                 html.Summary('Line 3', style={'fontWeight':'bold'}),
-                                html.Div(children=[
+                                html.Div(
+                                    style={'padding': '20px'},
+                                    children=[
                                     "Custom name",
                                     dcc.Input(id="line_name_3", type="text", placeholder="Custom name for line", value='Line 3'),
                                     html.Br(),

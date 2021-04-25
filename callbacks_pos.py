@@ -66,7 +66,7 @@ for i in range (0,4):
         return values, options
 
 
-for i in range (1,4):
+for i in range (0,4):
     @app.callback(
         Output(f'line_senderrank_sub_{i}', 'value'),
         Output(f'line_senderrank_sub_{i}', 'options'),
@@ -82,7 +82,7 @@ for i in range (1,4):
         
         return values, options
 
-for i in range (1,4):
+for i in range (0,4):
     @app.callback(
         Output(f'line_relationship_sub_{i}', 'value'),
         Output(f'line_relationship_sub_{i}', 'options'),
@@ -106,6 +106,7 @@ for i in range (1,4):
     Input('update_line_button_1', 'n_clicks'), # Only pressing the button initiates the function
     State('line_graph_name', 'value'),
     [State('inherit_pos', 'value')],
+    [State('inherit_attributes', 'value')],
     State('line_name_1', 'value'),
     State('line_name_2', 'value'),
     State('line_name_3', 'value'),
@@ -113,15 +114,20 @@ for i in range (1,4):
     [State('pos_groups_dropdown_1_sub', 'value')],
     [State('pos_groups_dropdown_2_sub', 'value')],
     [State('pos_groups_dropdown_3_sub', 'value')],
+    [State('line_sex_0', 'value')],
     [State('line_sex_1', 'value')],
     [State('line_sex_2', 'value')],
     [State('line_sex_3', 'value')],
+    State('line_senderrank_main_0', 'value'),
+    [State('line_senderrank_sub_0', 'value')],
     State('line_senderrank_main_1', 'value'),
     [State('line_senderrank_sub_1', 'value')],
     State('line_senderrank_main_2', 'value'),
     [State('line_senderrank_sub_2', 'value')],
     State('line_senderrank_main_3', 'value'),
     [State('line_senderrank_sub_3', 'value')],
+    State('line_relationship_main_0', 'value'),
+    [State('line_relationship_sub_0', 'value')],
     State('line_relationship_main_1', 'value'),
     [State('line_relationship_sub_1', 'value')],
     State('line_relationship_main_2', 'value'),
@@ -132,11 +138,11 @@ for i in range (1,4):
     [State('line_time_slider', 'value')],
     [State('line_visibility', 'value')],
     State('session', 'data'))
-def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, name_2, name_3, pos_sub_0, pos_sub_1, pos_sub_2, pos_sub_3, sex_1, sex_2, sex_3, rank_main_1, rank_sub_1, rank_main_2, rank_sub_2, rank_main_3, rank_sub_3, rel_main_1, rel_sub_1, rel_main_2, rel_sub_2, rel_main_3, rel_sub_3, periods, years, visibility, data):
+def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, inherit_attributes, name_1, name_2, name_3, pos_sub_0, pos_sub_1, pos_sub_2, pos_sub_3, sex_0, sex_1, sex_2, sex_3, rank_main_0, rank_sub_0, rank_main_1, rank_sub_1, rank_main_2, rank_sub_2, rank_main_3, rank_sub_3, rel_main_0, rel_sub_0, rel_main_1, rel_sub_1, rel_main_2, rel_sub_2, rel_main_3, rel_sub_3, periods, years, visibility, data):
 
     if n_clicks >= 0 or n_clicks_1 >= 0:
 
-
+        # If user has selected to use same POS tag selection for all lines
         if '1' in inherit_pos:
             pos_sub_0 = data_parser.include_ditto_tags_to_pos_list(pos_sub_0)
             pos_sub_1, pos_sub_2, pos_sub_3 = pos_sub_0, pos_sub_0, pos_sub_0
@@ -144,6 +150,14 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
             pos_sub_1 = data_parser.include_ditto_tags_to_pos_list(pos_sub_1)
             pos_sub_2 = data_parser.include_ditto_tags_to_pos_list(pos_sub_2)
             pos_sub_3 = data_parser.include_ditto_tags_to_pos_list(pos_sub_3)
+        
+        # If user has selected to use same attribute selection for all lines
+        if '1' in inherit_attributes:
+            sex_1, sex_2, sex_3 = sex_0, sex_0, sex_0
+            rank_main_1, rank_main_2, rank_main_3 = rank_main_0, rank_main_0, rank_main_0
+            rank_sub_1, rank_sub_2, rank_sub_3 = rank_sub_0, rank_sub_0, rank_sub_0
+            rel_main_1, rel_main_2, rel_main_3 = rel_main_0, rel_main_0, rel_main_0
+            rel_sub_1, rel_sub_2, rel_sub_3 = rel_sub_0, rel_sub_0, rel_sub_0
 
         start = years[0]
         end = years[1]
