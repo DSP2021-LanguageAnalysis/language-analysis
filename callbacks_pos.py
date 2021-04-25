@@ -178,6 +178,8 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, inherit_at
         
         original_labels = list(bins.astype(str))
         new_labels = ['{} - {}'.format(b.strip('[)').split(', ')[0], int(b.strip('[)').split(', ')[1])-1) for b in list(bins.astype(str))]
+        last = new_labels[-1].split(' ')
+        new_labels[-1] = ' '.join([last[0], last[1], str(int(last[2])+1)])
         label_dict = dict(zip(original_labels, new_labels))
 
         df = data_parser.df.copy()
