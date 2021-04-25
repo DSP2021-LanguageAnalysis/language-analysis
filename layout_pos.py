@@ -36,13 +36,12 @@ layout1 = html.Div([
                             #dcc.Link('link to github with more detailed documentation', href='https://github.com/DSP2021-LanguageAnalysis/language-analysis'),
                             dcc.Markdown(''' 
                             ##### General
-                            - This part of the application is developed to help answer question about how usage of POS tags varies over time. 
-                            - You can select sender attributes to narrow down the set of people. 
-                            You might for instance want to see if there is a difference in the development of pronoun usage between men and women.
+                            - This part of the application is developed to help answer questions about how the proportion of different parts of speech varies over time. 
+                            - You can select sender attributes to narrow down the set of people. You might for instance want to see if there is a difference in the development of pronoun usage between men and women.
                             - [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
 
                             ##### Line graph
-                            - In line graph view, you can see how the amount of selected POS tags changes over time.
+                            - In line graph view, you can see how the proportion of selected POS tags changes over time.
 
                             ##### Bar graph
                             - The bar graph shows metadata for lines drawn in the line graph view.
@@ -52,9 +51,10 @@ layout1 = html.Div([
                             - The ditto tags that are present in the corpus are included when the main tag is selected. 
                             I.e. if user selects to see tag NN1 then ditto tags NN121, NN122, NN131, NN132, NN133 are also included.
                             - Note: The tags NPM2 (plural month noun) and MCGE (genitive cardinal number, neutral for number) have been removed from selection, as they are not featured in this particular corpus. 
+                            - Punctuation tags have been excluded from the analysis.
 
                             ##### Attributes
-                            - Pre-Made Class Grouping Classifications
+                            - Pre-made groupings of social ranks
                                 - **Fine grained** - Royalty (R) , Nobility (N) , Gentry Upper (GU), Gentry Lower (GL, G), Clergy Upper (CU), Clergy Lower (CL), Professional (P), Merchant (M), Other (O)
                                 - **Regular** - Royalty (R) , Nobility (N) , Gentry (GU, GL, G), Clergy (CU, CL), Professional (P), Merchant (M), Other (O)
                                 - **Tripartite** - Upper (R, N, GU, GL, G, CU), Middle (CL, P, M), Lower (O)
