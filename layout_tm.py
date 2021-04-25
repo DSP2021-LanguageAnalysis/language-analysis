@@ -76,7 +76,7 @@ layout2 = html.Div(
                                 - Select topic and view the letters which most contribute to it
                             - View topic distribution over each letter
                             - View topic distribution in individual letters
-                                - Select letter and view its contribution to each individual topic
+                                - Select letter and view the distribution of the different topics in it
                             - View topic visualisation
                                 - Scroll over topic in intertopic distance map to view its most relevant tokens 
                                 - Adjust relevance metric with slider (detail in documentation)
