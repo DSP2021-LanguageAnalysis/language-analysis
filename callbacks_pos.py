@@ -10,6 +10,7 @@ from pandas.core.common import flatten
 import math
 import numpy as np
 from multiprocessing import  Pool
+import time
 
 from app import app
 import globals
@@ -48,7 +49,7 @@ def set_years(selected_years):
     return years, selected_years
 
 
-for i in range (0,4):
+for i in range (0,11):
     @app.callback(
         Output(f'pos_groups_dropdown_{i}_sub', 'value'),
         Output(f'pos_groups_dropdown_{i}_sub', 'options'),
@@ -66,7 +67,7 @@ for i in range (0,4):
         return values, options
 
 
-for i in range (0,4):
+for i in range (0,11):
     @app.callback(
         Output(f'line_senderrank_sub_{i}', 'value'),
         Output(f'line_senderrank_sub_{i}', 'options'),
@@ -82,7 +83,7 @@ for i in range (0,4):
         
         return values, options
 
-for i in range (0,4):
+for i in range (0,11):
     @app.callback(
         Output(f'line_relationship_sub_{i}', 'value'),
         Output(f'line_relationship_sub_{i}', 'options'),
@@ -98,6 +99,30 @@ for i in range (0,4):
         
         return values, options
 
+for i in range(1,11):
+    @app.callback(
+        Output(f'line_store_{i}', 'data'),
+        Input('update_line_button', 'n_clicks'), # Only pressing the button initiates the function
+        Input('update_line_button_1', 'n_clicks'), # Only pressing the button initiates the function
+        Input('dummy_div', 'children'),
+        Input(f'line_name_{i}', 'value'),
+        [Input(f'pos_groups_dropdown_{i}_sub', 'value')],
+        [Input(f'line_sex_{i}', 'value')],
+        Input(f'line_senderrank_main_{i}', 'value'),
+        [Input(f'line_senderrank_sub_{i}', 'value')],
+        Input(f'line_relationship_main_{i}', 'value'),
+        [Input(f'line_relationship_sub_{i}', 'value')])
+    def save_selection(clicks1, clicks2, aux, name, pos_sub, sex, rank_main, rank_sub, rel_main, rel_sub):
+        return {
+            'name': name,
+            'pos_sub': pos_sub,
+            'sex': sex,
+            'rank_main': rank_main,
+            'rank_sub': rank_sub,
+            'rel_main': rel_main,
+            'rel_sub': rel_sub
+        }
+
 
 @app.callback(
     Output('line_graph', 'figure'), 
@@ -107,233 +132,145 @@ for i in range (0,4):
     State('line_graph_name', 'value'),
     [State('inherit_pos', 'value')],
     [State('inherit_attributes', 'value')],
-    State('line_name_1', 'value'),
-    State('line_name_2', 'value'),
-    State('line_name_3', 'value'),
     [State('pos_groups_dropdown_0_sub', 'value')],
-    [State('pos_groups_dropdown_1_sub', 'value')],
-    [State('pos_groups_dropdown_2_sub', 'value')],
-    [State('pos_groups_dropdown_3_sub', 'value')],
     [State('line_sex_0', 'value')],
-    [State('line_sex_1', 'value')],
-    [State('line_sex_2', 'value')],
-    [State('line_sex_3', 'value')],
     State('line_senderrank_main_0', 'value'),
     [State('line_senderrank_sub_0', 'value')],
-    State('line_senderrank_main_1', 'value'),
-    [State('line_senderrank_sub_1', 'value')],
-    State('line_senderrank_main_2', 'value'),
-    [State('line_senderrank_sub_2', 'value')],
-    State('line_senderrank_main_3', 'value'),
-    [State('line_senderrank_sub_3', 'value')],
     State('line_relationship_main_0', 'value'),
     [State('line_relationship_sub_0', 'value')],
-    State('line_relationship_main_1', 'value'),
-    [State('line_relationship_sub_1', 'value')],
-    State('line_relationship_main_2', 'value'),
-    [State('line_relationship_sub_2', 'value')],
-    State('line_relationship_main_3', 'value'),
-    [State('line_relationship_sub_3', 'value')],
+    [State(f'line_store_{i}', 'data') for i in range(1,11)],
     [State('line_period_length', 'value')],
     [State('line_time_slider', 'value')],
     [State('line_visibility', 'value')],
     State('user-browser-store', 'data'))
-def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, inherit_attributes, name_1, name_2, name_3, pos_sub_0, pos_sub_1, pos_sub_2, pos_sub_3, sex_0, sex_1, sex_2, sex_3, rank_main_0, rank_sub_0, rank_main_1, rank_sub_1, rank_main_2, rank_sub_2, rank_main_3, rank_sub_3, rel_main_0, rel_sub_0, rel_main_1, rel_sub_1, rel_main_2, rel_sub_2, rel_main_3, rel_sub_3, periods, years, visibility, data):
+def display_line_graph(
+    n_clicks, n_clicks_1, graph_name, inherit_pos, inherit_attributes, 
+    pos_sub_0, sex_0, rank_main_0, rank_sub_0, rel_main_0, rel_sub_0, 
+    line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, 
+    periods, years, visibility, data):
+     
+    if n_clicks == 0 and n_clicks_1 == 0:
+        line1 = {
+            'name': 'Line 1',
+            'pos_sub': pos_sub_0,
+            'sex': sex_0,
+            'rank_main': rank_main_0,
+            'rank_sub': rank_sub_0,
+            'rel_main': rel_main_0,
+            'rel_sub': rel_sub_0
+        }
 
-    if n_clicks >= 0 or n_clicks_1 >= 0:
+    start = years[0]
+    end = years[1]
+    full_period = end - start
+    modulo = full_period % periods
+    number_of_periods = math.floor(full_period / periods)
 
-        # If user has selected to use same POS tag selection for all lines
-        if '1' in inherit_pos:
-            pos_sub_0 = data_parser.include_ditto_tags_to_pos_list(pos_sub_0)
-            pos_sub_1, pos_sub_2, pos_sub_3 = pos_sub_0, pos_sub_0, pos_sub_0
-        else:
-            pos_sub_1 = data_parser.include_ditto_tags_to_pos_list(pos_sub_1)
-            pos_sub_2 = data_parser.include_ditto_tags_to_pos_list(pos_sub_2)
-            pos_sub_3 = data_parser.include_ditto_tags_to_pos_list(pos_sub_3)
+    if modulo == 0:
+        bins = pd.interval_range(start=start, end=end, periods=number_of_periods, closed='left')
+    else:
+        end = end - modulo
+        starts = np.arange(start, end, periods).tolist()
+
+        tuples = [(start, start+periods) for start in starts]
+        tuples.append(tuple([end, end+modulo]))
+
+        bins = pd.IntervalIndex.from_tuples(tuples, closed='left')
+    
+    original_labels = list(bins.astype(str))
+    new_labels = ['{} - {}'.format(b.strip('[)').split(', ')[0], int(b.strip('[)').split(', ')[1])-1) for b in list(bins.astype(str))]
+    last = new_labels[-1].split(' ')
+    new_labels[-1] = ' '.join([last[0], last[1], str(int(last[2])+1)])
+    label_dict = dict(zip(original_labels, new_labels))
+
+    df = data_parser.df.copy()
+    
+    # Assign each row to a period
+    df['Year'] = df['Year'].astype('int')
+    df['YearGroup'] = pd.cut(df['Year'], bins=bins,include_lowest=True, labels=new_labels, precision=0)
+    df['YearGroup'] = df['YearGroup'].astype("str")
+    df = df.replace(label_dict)
+
+    # Group the data to get count of each POS tag in the data
+    # df = poscount_groupby(df)
+    df = parallelize_dataframe(df, initial_poscount_groupby)
+
+    fig = go.Figure()
+    lines_df = pd.DataFrame()
+
+    line_dict = {
+        '1': line1,
+        '2': line2,
+        '3': line3,
+        '4': line4,
+        '5': line5,
+        '6': line6,
+        '7': line7,
+        '8': line8,
+        '9': line9,
+        '10': line10
+    }
+
+    visibility.sort()
+    for line in visibility:
+        helper_dict = {
+            'Tags': line_dict[line]['pos_sub'],
+            'SenderSex': line_dict[line]['sex'],
+            'SenderRank': list(flatten([data_parser.rank_categories[line_dict[line]['rank_main']][rank_sub] for rank_sub in line_dict[line]['rank_sub']])),
+            'RelCode': list(flatten([data_parser.relationship_categories[line_dict[line]['rel_main']][rel_sub] for rel_sub in line_dict[line]['rel_sub']]))
+        }
+        # mask 1
+        mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
+        temp = df[mask].copy()
         
-        # If user has selected to use same attribute selection for all lines
-        if '1' in inherit_attributes:
-            sex_1, sex_2, sex_3 = sex_0, sex_0, sex_0
-            rank_main_1, rank_main_2, rank_main_3 = rank_main_0, rank_main_0, rank_main_0
-            rank_sub_1, rank_sub_2, rank_sub_3 = rank_sub_0, rank_sub_0, rank_sub_0
-            rel_main_1, rel_main_2, rel_main_3 = rel_main_0, rel_main_0, rel_main_0
-            rel_sub_1, rel_sub_2, rel_sub_3 = rel_sub_0, rel_sub_0, rel_sub_0
+        # Grouping by desired attributes may lead to loss of some periods
+        # Here we add mock data for those periods so the graph is shown correctly
+        for p in new_labels:
+            if p not in list(temp['YearGroup'].unique()):
+                temp = temp.append(
+                    {
+                        'YearGroup': p,
+                        'ID': 'Not found',
+                        'Sender': 'Not found',
+                        'SenderSex': 'Not found',
+                        'SenderRank': 'Not found',
+                        'RelCode': 'Not found',
+                        'Tags': 'Not found',
+                        'WordCount': 0,
+                        'PosCount': 0
+                    }, ignore_index=True
+                )
 
-        start = years[0]
-        end = years[1]
-        full_period = end - start
-        modulo = full_period % periods
-        number_of_periods = math.floor(full_period / periods)
+        word_counts = parallelize_dataframe(temp, wordcount_groupby)
+        pos_counts = parallelize_dataframe(temp, poscount_groupby)
 
-        if modulo == 0:
-            bins = pd.interval_range(start=start, end=end, periods=number_of_periods, closed='left')
-        else:
-            end = end - modulo
-            starts = np.arange(start, end, periods).tolist()
+        fig.add_scatter(
+            x=new_labels, 
+            y=(pos_counts/word_counts).fillna(0)*100,
+            name=line_dict[line]['name'],
+            showlegend=True,
+            connectgaps=True)
+        # Append to DF for bar chart
+        temp['Line'] = [line_dict[line]['name']] * len(temp.index)
+        lines_df = lines_df.append(temp)
 
-            tuples = [(start, start+periods) for start in starts]
-            tuples.append(tuple([end, end+modulo]))
+    fig.update_layout(
+        title=graph_name,
+        xaxis_title="Period",
+        yaxis_title="%"
+    )
 
-            bins = pd.IntervalIndex.from_tuples(tuples, closed='left')
-        
-        original_labels = list(bins.astype(str))
-        new_labels = ['{} - {}'.format(b.strip('[)').split(', ')[0], int(b.strip('[)').split(', ')[1])-1) for b in list(bins.astype(str))]
-        last = new_labels[-1].split(' ')
-        new_labels[-1] = ' '.join([last[0], last[1], str(int(last[2])+1)])
-        label_dict = dict(zip(original_labels, new_labels))
+    # Figure shows as autoscaled from the beginning, as values are not set
+    # tozero mode forces y axis to start from zero to avoid misleading visualizations
+    fig.update_yaxes(rangemode='tozero')
 
-        df = data_parser.df.copy()
-        
-        # Assign each row to a period
-        df['Year'] = df['Year'].astype('int')
-        df['YearGroup'] = pd.cut(df['Year'], bins=bins,include_lowest=True, labels=new_labels, precision=0)
-        df['YearGroup'] = df['YearGroup'].astype("str")
-        df = df.replace(label_dict)
+    # Different lines having same POS messes up the dataframe index 
+    # which then messes up json converting, creating new index solves this
+    lines_df.reset_index(drop=True, inplace=True)
 
-        # Group the data to get count of each POS tag in the data
-        # df = poscount_groupby(df)
-        df = parallelize_dataframe(df, initial_poscount_groupby)
+    return fig, lines_df.to_json()
 
-        fig = go.Figure()
-        lines_df = pd.DataFrame()
-
-        if '1' in visibility:
-            helper_dict = {
-                'Tags': pos_sub_1,
-                'SenderSex': sex_1,
-                'SenderRank': list(flatten([data_parser.rank_categories[rank_main_1][rank_sub] for rank_sub in rank_sub_1])),
-                'RelCode': list(flatten([data_parser.relationship_categories[rel_main_1][rel_sub] for rel_sub in rel_sub_1]))
-            }
-            # mask 1
-            mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
-            temp = df[mask].copy()
-            
-            # Grouping by desired attributes may lead to loss of some periods
-            # Here we add mock data for those periods so the graph is shown correctly
-            for p in new_labels:
-                if p not in list(temp['YearGroup'].unique()):
-                    temp = temp.append(
-                        {
-                            'YearGroup': p,
-                            'ID': 'Not found',
-                            'Sender': 'Not found',
-                            'SenderSex': 'Not found',
-                            'SenderRank': 'Not found',
-                            'RelCode': 'Not found',
-                            'Tags': 'Not found',
-                            'WordCount': 0,
-                            'PosCount': 0
-                        }, ignore_index=True
-                    )
-
-            word_counts = parallelize_dataframe(temp, wordcount_groupby)
-            pos_counts = parallelize_dataframe(temp, poscount_groupby)
-
-            fig.add_scatter(
-                x=new_labels, 
-                y=(pos_counts/word_counts).fillna(0)*100,
-                name=name_1,
-                showlegend=True,
-                connectgaps=True)
-            # Append to DF for bar chart
-            temp['Line'] = [name_1] * len(temp.index)
-            lines_df = lines_df.append(temp)
-
-        if '2' in visibility:
-            helper_dict = {
-                'Tags': pos_sub_2,
-                'SenderSex': sex_2,
-                'SenderRank': list(flatten([data_parser.rank_categories[rank_main_2][rank_sub] for rank_sub in rank_sub_2])),
-                'RelCode': list(flatten([data_parser.relationship_categories[rel_main_2][rel_sub] for rel_sub in rel_sub_2]))
-            }
-            mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
-            temp = df[mask].copy()
-
-            # Grouping by desired attributes may lead to loss of some periods
-            # Here we add mock data for those periods so the graph is shown correctly
-            for p in new_labels:
-                if p not in list(temp['YearGroup'].unique()):
-                    temp = temp.append(
-                        {
-                            'YearGroup': p,
-                            'ID': 'Not found',
-                            'Sender': 'Not found',
-                            'SenderSex': 'Not found',
-                            'SenderRank': 'Not found',
-                            'RelCode': 'Not found',
-                            'Tags': 'Not found',
-                            'WordCount': 0,
-                            'PosCount': 0
-                        }, ignore_index=True
-                    )
-
-            word_counts = parallelize_dataframe(temp, wordcount_groupby)
-            pos_counts = parallelize_dataframe(temp, poscount_groupby)
-            fig.add_scatter(
-                x=new_labels, 
-                y=(pos_counts/word_counts).fillna(0)*100,
-                name=name_2,
-                showlegend=True,
-                connectgaps=True)
-            # Append to DF for bar chart
-            temp['Line'] = [name_2] * len(temp.index)
-            lines_df = lines_df.append(temp)
-
-        if '3' in visibility:
-            helper_dict = {
-                'Tags': pos_sub_3,
-                'SenderSex': sex_3,
-                'SenderRank': list(flatten([data_parser.rank_categories[rank_main_3][rank_sub] for rank_sub in rank_sub_3])),
-                'RelCode': list(flatten([data_parser.relationship_categories[rel_main_3][rel_sub] for rel_sub in rel_sub_3]))
-            }
-            mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
-            temp = df[mask].copy()
-
-            # Grouping by desired attributes may lead to loss of some periods
-            # Here we add mock data for those periods so the graph is shown correctly
-            for p in new_labels:
-                if p not in list(temp['YearGroup'].unique()):
-                    temp = temp.append(
-                        {
-                            'YearGroup': p,
-                            'ID': 'Not found',
-                            'Sender': 'Not found',
-                            'SenderSex': 'Not found',
-                            'SenderRank': 'Not found',
-                            'RelCode': 'Not found',
-                            'Tags': 'Not found',
-                            'WordCount': 0,
-                            'PosCount': 0
-                        }, ignore_index=True
-                    )
-
-            word_counts = parallelize_dataframe(temp, wordcount_groupby)
-            pos_counts = parallelize_dataframe(temp, poscount_groupby)
-            fig.add_scatter(
-                x=new_labels, 
-                y=(pos_counts/word_counts).fillna(0)*100,
-                name=name_3,
-                showlegend=True,
-                connectgaps=True)
-            # Append to DF for bar chart
-            temp['Line'] = [name_3] * len(temp.index)
-            lines_df = lines_df.append(temp)
-
-        fig.update_layout(
-            title=graph_name,
-            xaxis_title="Period",
-            yaxis_title="%"
-        )
-
-        # Figure shows as autoscaled from the beginning, as values are not set
-        # tozero mode forces y axis to start from zero to avoid misleading visualizations
-        fig.update_yaxes(rangemode='tozero')
-
-        # Different lines having same POS messes up the dataframe index 
-        # which then messes up json converting, creating new index solves this
-        lines_df.reset_index(drop=True, inplace=True)
-
-        return fig, lines_df.to_json()
+    #return go.Figure(), pd.DataFrame(columns=['YearGroup', 'ID', 'Sender', 'SenderSex', 'SenderRank', 'RelCode', 'WordCount', 'Line']).to_json()
 
 
 def line_groupby_id(df):
