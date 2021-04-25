@@ -85,7 +85,15 @@ layout1 = html.Div([
                     html.Div(
                         style={'padding': '20px'},
                         children=[
-                            dcc.Graph(id='line_graph'),
+                            dcc.Loading(
+                                id="pos-loading",
+                                type="circle",
+                                fullscreen = False,
+                                style={'paddingTop': '15px'},
+                                children=[
+                                    dcc.Graph(id='line_graph')
+                                ]
+                            ),
                             'Select time range:', 
                             # Dash Slider component for selecting the time range
                             dcc.RangeSlider(
@@ -348,7 +356,15 @@ layout1 = html.Div([
                         style={'padding': '20px'},
                         children=[
                             html.Div(id='bar_df', style={'display': 'none'}),
-                            dcc.Graph(id='count_bar_chart'),
+                            dcc.Loading(
+                                id="pos-loading",
+                                type="circle",
+                                fullscreen = False,
+                                style={'paddingTop': '15px'},
+                                children=[
+                                    dcc.Graph(id='count_bar_chart')
+                                ]
+                            ),
                             html.Div(id='size_info',
                                      style={'paddingBottom': '20px'}),
                             'Show the number of ',
