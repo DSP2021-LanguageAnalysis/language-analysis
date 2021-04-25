@@ -42,10 +42,10 @@ layout2 = html.Div(
                         - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
                         
                         #### Parametrisation and Filtration
-                        - Select the Model Parameters
+                        - Select the model parameters
                             - Choose the number of topics to be generated
                             - Choose the number of iterations to be completed by the model
-                        - Select **advanced parameters** to view more options (detail given in documentation)
+                        - Select **Advanced parameters** to view more options (detail given in documentation)
                         - Select filtration parameters - Filter corpus by:
                             - POS tagged tokens
                                 - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
@@ -56,17 +56,17 @@ layout2 = html.Div(
                             - "Extreme" distributed tokens
                             - Sex of sender
                             - Rank of sender
-                                - Pre-Made Class Grouping Classifications
+                                - Pre-made groupings of social ranks
                                 - **Fine grained** - Royalty (R) , Nobility (N) , Gentry Upper (GU), Gentry Lower (GL, G), Clergy Upper (CU), Clergy Lower (CL), Professional (P), Merchant (M), Other (O)
                                 - **Regular** - Royalty (R) , Nobility (N) , Gentry (GU, GL, G), Clergy (CU, CL), Professional (P), Merchant (M), Other (O)
                                 - **Tripartite** - Upper (R, N, GU, GL, G, CU), Middle (CL, P, M), Lower (O)
                                 - **Bipartite** - Gentry (R, N, GU, GL, G, CU), Non-Gentry (CL, P, M, O)
-                            - Relationship between sender and reciever
+                            - Relationship between sender and recipient
                             - Time period during which the letter was sent
                             
                         #### Create Model
-                        - Click **train model** to generate results and visualisation
-                            - With default options, algorithm takes approximately 30 seconds to generate results.
+                        - Click **Train model** to generate results and visualisation
+                            - With default options, the algorithm takes approximately 30 seconds to generate results
                             - Changes in parameters will alter this waiting time
                             
                         #### Results
