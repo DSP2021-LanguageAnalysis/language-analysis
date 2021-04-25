@@ -28,9 +28,14 @@ def parallelize_dataframe(df, func, n_cores=4):
     return df
 
 
-def poscount_groupby(df):
+def initial_poscount_groupby(df):
     return df.groupby(['YearGroup', 'ID', 'Sender', 'SenderSex', 'SenderRank', 'RelCode', 'Tags', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
 
+def wordcount_groupby(df):
+    return df.groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
+
+def poscount_groupby(df):
+    return df.groupby(['YearGroup']).sum().reset_index()['PosCount']
 
 # Callback for the slider element
 @app.callback(
@@ -171,7 +176,7 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
 
         # Group the data to get count of each POS tag in the data
         # df = poscount_groupby(df)
-        df = parallelize_dataframe(df, poscount_groupby)
+        df = parallelize_dataframe(df, initial_poscount_groupby)
 
         fig = go.Figure()
         lines_df = pd.DataFrame()
@@ -205,8 +210,8 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
                         }, ignore_index=True
                     )
 
-            word_counts = temp.groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
-            pos_counts = temp.groupby(['YearGroup']).sum().reset_index()['PosCount']
+            word_counts = parallelize_dataframe(temp, wordcount_groupby)
+            pos_counts = parallelize_dataframe(temp, poscount_groupby)
 
             fig.add_scatter(
                 x=new_labels, 
@@ -245,8 +250,8 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
                         }, ignore_index=True
                     )
 
-            word_counts = temp.groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
-            pos_counts = temp.groupby(['YearGroup']).sum().reset_index()['PosCount']
+            word_counts = parallelize_dataframe(temp, wordcount_groupby)
+            pos_counts = parallelize_dataframe(temp, poscount_groupby)
             fig.add_scatter(
                 x=new_labels, 
                 y=(pos_counts/word_counts).fillna(0)*100,
@@ -284,8 +289,8 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
                         }, ignore_index=True
                     )
 
-            word_counts = temp.groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
-            pos_counts = temp.groupby(['YearGroup']).sum().reset_index()['PosCount']
+            word_counts = parallelize_dataframe(temp, wordcount_groupby)
+            pos_counts = parallelize_dataframe(temp, poscount_groupby)
             fig.add_scatter(
                 x=new_labels, 
                 y=(pos_counts/word_counts).fillna(0)*100,
@@ -312,6 +317,12 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, name_1, na
         return fig, lines_df.to_json()
 
 
+def line_groupby_id(df):
+    return df.groupby(['ID', 'Line']).min().reset_index()
+
+def line_groupby_sender(df):    
+    return df.groupby(['Sender', 'Line']).min().reset_index()
+
 # TEsting wordcount bar chart
 @app.callback(
     Output('count_bar_chart', 'figure'), 
@@ -335,13 +346,15 @@ def display_wordcount_chart(json, what_count, group_by_what):
 
         if what_count == 'words':
             y = 'WordCount'
-            lines_df = lines_df.groupby(['ID', 'Line']).min().reset_index().groupby(final_groupby).sum().reset_index()
+            lines_df = parallelize_dataframe(lines_df, line_groupby_id)
         elif what_count == 'letters':
             y = 'LetterCount'
-            lines_df = lines_df.groupby(['ID', 'Line']).min().reset_index().groupby(final_groupby).sum().reset_index()
+            lines_df = parallelize_dataframe(lines_df, line_groupby_id)
         elif what_count == 'people':
             y = 'PeopleCount'
-            lines_df = lines_df.groupby(['Sender', 'Line']).min().reset_index().groupby(final_groupby).sum().reset_index()
+            lines_df = parallelize_dataframe(lines_df, line_groupby_sender)
+        
+        lines_df = lines_df.groupby(final_groupby).sum().reset_index()
         
         selection_info = f"Number of non-unique words: {words}, number of letters: {letters}, number of senders: {people}"
 
