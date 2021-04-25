@@ -231,6 +231,7 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, inherit_at
                 x=new_labels, 
                 y=(pos_counts/word_counts).fillna(0)*100,
                 name=name_1,
+                showlegend=True,
                 connectgaps=True)
             # Append to DF for bar chart
             temp['Line'] = [name_1] * len(temp.index)
@@ -270,6 +271,7 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, inherit_at
                 x=new_labels, 
                 y=(pos_counts/word_counts).fillna(0)*100,
                 name=name_2,
+                showlegend=True,
                 connectgaps=True)
             # Append to DF for bar chart
             temp['Line'] = [name_2] * len(temp.index)
@@ -309,6 +311,7 @@ def display_line_graph(n_clicks, n_clicks_1, graph_name, inherit_pos, inherit_at
                 x=new_labels, 
                 y=(pos_counts/word_counts).fillna(0)*100,
                 name=name_3,
+                showlegend=True,
                 connectgaps=True)
             # Append to DF for bar chart
             temp['Line'] = [name_3] * len(temp.index)
