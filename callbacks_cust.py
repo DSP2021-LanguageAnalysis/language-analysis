@@ -48,6 +48,7 @@ for i in range (0,4):
 
         if data is not None:
             return data_parser.list_to_dash_option_dict(list(data_parser.get_pos_categories(data).keys()))
+        return data_parser.list_to_dash_option_dict(list(data_parser.pos_categories.keys()))
 
 @app.callback(
     Output('pos_tm_main', 'options'),
@@ -56,3 +57,4 @@ def include_pos_groups_topicmodel(data):
 
     if data is not None:
         return data_parser.list_to_dash_option_dict(list(data_parser.get_pos_categories(data).keys()))
+    return data_parser.list_to_dash_option_dict(list(data_parser.pos_categories.keys()))
