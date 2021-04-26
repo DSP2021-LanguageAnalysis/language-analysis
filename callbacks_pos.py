@@ -211,8 +211,7 @@ def display_line_graph(
         10: line10
     }
 
-    print(visibility)
-
+    # Visibility list is sorted to have them in the natural order user is expecting regardless of the choosing order
     visibility.sort()
     for line in visibility:
         
