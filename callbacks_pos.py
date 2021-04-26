@@ -164,23 +164,22 @@ def display_line_graph(
     end = years[1]
     full_period = end - start
     modulo = full_period % periods
-    number_of_periods = math.floor(full_period / periods)
 
     if modulo == 0:
-        bins = pd.interval_range(start=start, end=end, periods=number_of_periods, closed='left')
+        end_a = end - periods
+        end_b = end_a + periods + 1
     else:
-        end = end - modulo
-        starts = np.arange(start, end, periods).tolist()
+        end_a = end - modulo
+        end_b = end_a + modulo + 1
 
-        tuples = [(start, start+periods) for start in starts]
-        tuples.append(tuple([end, end+modulo]))
+    starts = np.arange(start, end_a, periods).tolist()
+    tuples = [(start, start+periods) for start in starts]
+    tuples.append(tuple([end_a, end_b]))
 
-        bins = pd.IntervalIndex.from_tuples(tuples, closed='left')
+    bins = pd.IntervalIndex.from_tuples(tuples, closed='left')
     
     original_labels = list(bins.astype(str))
     new_labels = ['{} - {}'.format(b.strip('[)').split(', ')[0], int(b.strip('[)').split(', ')[1])-1) for b in list(bins.astype(str))]
-    last = new_labels[-1].split(' ')
-    new_labels[-1] = ' '.join([last[0], last[1], str(int(last[2])+1)])
     label_dict = dict(zip(original_labels, new_labels))
 
     df = data_parser.df.copy()
