@@ -127,6 +127,7 @@ for i in range(1,11):
 @app.callback(
     Output('line_graph', 'figure'), 
     Output('bar_df', 'children'),
+    Output('bar_names', 'children'),
     Input('update_line_button', 'n_clicks'), # Only pressing the button initiates the function
     Input('update_line_button_1', 'n_clicks'), # Only pressing the button initiates the function
     State('line_graph_name', 'value'),
@@ -148,7 +149,7 @@ def display_line_graph(
     pos_sub_0, sex_0, rank_main_0, rank_sub_0, rel_main_0, rel_sub_0, 
     line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, 
     periods, years, visibility, data):
-     
+
     if n_clicks == 0 and n_clicks_1 == 0:
         line1 = {
             'name': 'Line 1',
@@ -285,8 +286,11 @@ def display_line_graph(
     # Different lines having same POS messes up the dataframe index 
     # which then messes up json converting, creating new index solves this
     lines_df.reset_index(drop=True, inplace=True)
+    
+    # Makes a list of the line names in right order to be sent to the bar graph
+    line_names = [[value["name"] for key, value in line_dict.items() if value is not None][i] for i in np.array(visibility)-1]
 
-    return fig, lines_df.to_json()
+    return fig, lines_df.to_json(), line_names
 
     #return go.Figure(), pd.DataFrame(columns=['YearGroup', 'ID', 'Sender', 'SenderSex', 'SenderRank', 'RelCode', 'WordCount', 'Line']).to_json()
 
@@ -297,17 +301,18 @@ def line_groupby_id(df):
 def line_groupby_sender(df):    
     return df.groupby(['Sender', 'Line']).min().reset_index()
 
-# TEsting wordcount bar chart
+# Testing wordcount bar chart
 @app.callback(
     Output('count_bar_chart', 'figure'), 
     Output('size_info', 'children'),
     [Input('bar_df', 'children')],
+    Input('bar_names', 'children'),
     Input('bar_what_count', 'value'),
     Input('bar_groub_by', 'value'))
-def display_wordcount_chart(json, what_count, group_by_what):
+def display_wordcount_chart(json, line_names, what_count, group_by_what):
 
         lines_df = pd.read_json(json)
-
+        
         grouped = lines_df.groupby('ID').min()
         words = grouped['WordCount'].sum()
         letters = len(lines_df['ID'].unique())
@@ -329,7 +334,7 @@ def display_wordcount_chart(json, what_count, group_by_what):
             lines_df = parallelize_dataframe(lines_df, line_groupby_sender)
         
         lines_df = lines_df.groupby(final_groupby).sum().reset_index()
-        
+
         selection_info = f"Number of non-unique words: {words}, number of letters: {letters}, number of senders: {people}"
 
         fig = px.bar(
@@ -342,6 +347,7 @@ def display_wordcount_chart(json, what_count, group_by_what):
             hover_data=[group_by_what],
             color='Line',
             barmode='group',
+            category_orders={'Period':line_names, 'Line': line_names},
             title='Number of {} for each line, grouped by {}'.format(what_count, group_by_what))
         
         fig.update_xaxes(categoryorder='category ascending')
