@@ -41,15 +41,13 @@ class TopicModel:
 
         # Remove words that are only one character.
         docs = [[token for token in doc if len(token.strip()) > 1] for doc in docs]
-
-        ###
-        # Remove user stopwords
-        docs = [[token for token in doc if (not token in userstopwords)] for doc in docs]
-        ###
         
         # Lemmatize the documents.
         lemmatizer = WordNetLemmatizer()
         self.docs = [[lemmatizer.lemmatize(token) for token in doc] for doc in docs]
+
+        # Remove user stopwords
+        self.docs = [[token for token in doc if (not token in userstopwords)] for doc in self.docs]
         
         # Create a dictionary representation of the documents.
         self.dictionary = Dictionary(self.docs)
