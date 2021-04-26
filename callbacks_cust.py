@@ -40,7 +40,7 @@ def view_pos_groups(data):
         return children
 
 
-for i in range (0,4):
+for i in range (0,11):
     @app.callback(
         Output(f'pos_groups_dropdown_{i}_main', 'options'),
         Input('user-browser-store', 'data'))
