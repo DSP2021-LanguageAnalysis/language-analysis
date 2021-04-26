@@ -39,7 +39,7 @@ layout0 = html.Div([
                         - [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
                         - Select attribute that you want to create a custom grouping for with the tabs
                         - Note: There are already some premade groupings for convenience 
-                        - **Pre-Made Class Grouping Classifications**
+                        - **Pre-made groupings of social ranks**
                         
                                 - **Fine grained** - Royalty (R) , Nobility (N) , Gentry Upper (GU), Gentry Lower (GL, G), Clergy Upper (CU), Clergy Lower (CL), Professional (P), Merchant (M), Other (O) 
                                 
@@ -59,8 +59,8 @@ layout0 = html.Div([
                             - Type name for new custom grouping
                             - Write POS tags to be included in your group, separated by the ";" symbol
                             - Example: N;NN;NN1
-                            - Click **Add Group** to save the group for the current app session
-                            - Now the custom group is included as an option in the POS tag filtration options for both the POS analysis and Topic modelling tabs
+                            - Click **Add group** to save the group for the current app user-browser-store
+                            - Now the custom group is included as an option in the POS tag filtration options for both the POS tag analysis and Topic modelling tabs
                         - **Other tab**
                             - Coming soon
                             ''')
@@ -80,7 +80,7 @@ layout0 = html.Div([
                         html.Button('Add group', id='add_pos_group_button', n_clicks = 0),
                         html.Br(),
                         html.Br(), 
-                        html.P('The custom POS groups you have saved for this session', style={'fontWeight':'bold'}),
+                        html.P('The custom POS groups you have saved for this user-browser-store', style={'fontWeight':'bold'}),
                         html.Div(id='cust_pos_groups')])]),
         dcc.Tab(
             label='Other',

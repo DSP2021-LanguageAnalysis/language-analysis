@@ -42,7 +42,7 @@ class TopicModel:
         docs = [[token for token in doc if not token.isnumeric()] for doc in docs]
 
         # Remove words that are only one character.
-        docs = [[token for token in doc if len(token) > 1] for doc in docs]
+        docs = [[token for token in doc if len(token.strip()) > 1] for doc in docs]
 
         ###
         # Remove user stopwords

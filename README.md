@@ -54,13 +54,12 @@ http://ucrel.lancs.ac.uk/claws7tags.html
   - POS-tags
 - User can set custom name for the graph and each line
 #### Bar:
-- Shows number of (**running?**) words in period with each bar corresponding to line in line chart
+- Shows number of words, letters or senders in the data that was selected in the line graph view 
+- The differently-coloured bars correspond to the lines selected in the line graph view
 - Bars can be divided by:
   - Sender's sex
   - Sender's rank
   - Sender's relationship with recipient
-  - Sender (last name?)
-  - Letter ID
 
 ### Topic model
 #### BASIC PARAMETERS
@@ -79,7 +78,7 @@ http://ucrel.lancs.ac.uk/claws7tags.html
 #### Set Seed
 - Option to choose a starting point for the generation of pseudorandom numbers to be used in the algorithm.
 
-#### FILTRATION 
+#### FILTERING
 #### POS tag
 - Option to instruct the algorithm to only consider words of the chosen word type.
 #### Stopwords
@@ -87,7 +86,7 @@ http://ucrel.lancs.ac.uk/claws7tags.html
 #### Filter Below Threshold
 - Option to instruct the algorithm to ignore words appearing in less than the selected number of documents.
 #### Filter Above Threshold
--Option to instruct the algorithm to ignore words appearing in more than the selected proportion of documents. Input is a decimal, between 0.01 and 1. 
+- Option to instruct the algorithm to ignore words appearing in more than the selected proportion of documents. Input is a decimal, between 0.01 and 1. 
 #### Sex
 - Option to instruct the algorithm to only consider letters of individuals from the chosen sex. 
 #### Rank
@@ -99,12 +98,6 @@ http://ucrel.lancs.ac.uk/claws7tags.html
 
 
 ## Theory
-### POS Visualisation
-#### Line:
-
-#### Bar:
-
-
 ### Topic model
 #### Latent Dirichlet Allocation
 Latent dirichlet allocation, or LDA for short, is an algorithm used for topic modelling in natural language processing. Topics are groups of items, in this case tokens, which belong together due to their usage and prominence in the texts. Topics can be utilised to fully explore a corpora in unearthing and classifying the underlying themes present. 
@@ -125,6 +118,5 @@ Low eta means each topic is likely to be composed of only a few dominant words. 
 Ideally, we would like our documents to consist of only a few topics, and the words within those topics to belong to only one or a few of those topics. As such, alpha and eta can be adjusted to suit these purposes.
 
 ### Credits and Licence
-### Backlog
-https://github.com/orgs/DSP2021-LanguageAnalysis/projects/1
+
 
