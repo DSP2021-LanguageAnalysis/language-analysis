@@ -286,7 +286,7 @@ def display_line_graph(
     # Different lines having same POS messes up the dataframe index 
     # which then messes up json converting, creating new index solves this
     lines_df.reset_index(drop=True, inplace=True)
-    
+
     line_names = [[value["name"] for key, value in line_dict.items()][i] for i in np.array(visibility)-1]
 
     return fig, lines_df.to_json(), line_names
