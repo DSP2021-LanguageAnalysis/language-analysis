@@ -83,12 +83,20 @@ layout0 = html.Div([
                         html.P('The custom POS groups you have saved for this user-browser-store', style={'fontWeight':'bold'}),
                         html.Div(id='cust_pos_groups')])]),
         dcc.Tab(
-            label='Other',
+            label='Relationships',
             children=[
                 html.Div(
                     style={'padding': '20px'},
                     children=[
-                        html.H5('You can later add other groups as well.')])])
+                        html.H5('Add a new custom relationship grouping'),
+                        dcc.Input(id="relationship_group_name", type="text", placeholder="Name for new group"),
+                        dcc.Input(id="relationship_group_tags", type="text", placeholder="Tags for new group as ; separated list", style={'width': '100%'}),
+                        html.Br(), 
+                        html.Button('Add group', id='add_relationship_group_button', n_clicks = 0),
+                        html.Br(),
+                        html.Br(), 
+                        html.P('The custom relationship groups you have saved for this session', style={'fontWeight':'bold'}),
+                        html.Div(id='cust_relationship_groups')])])
     ])
 
 ])
