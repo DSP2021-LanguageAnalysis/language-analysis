@@ -199,17 +199,19 @@ def display_line_graph(
     lines_df = pd.DataFrame()
 
     line_dict = {
-        '1': line1,
-        '2': line2,
-        '3': line3,
-        '4': line4,
-        '5': line5,
-        '6': line6,
-        '7': line7,
-        '8': line8,
-        '9': line9,
-        '10': line10
+        1: line1,
+        2: line2,
+        3: line3,
+        4: line4,
+        5: line5,
+        6: line6,
+        7: line7,
+        8: line8,
+        9: line9,
+        10: line10
     }
+
+    print(visibility)
 
     visibility.sort()
     for line in visibility:

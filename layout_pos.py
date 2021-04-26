@@ -193,18 +193,18 @@ layout1 = html.Div([
                                 dcc.Checklist(
                                     id='line_visibility',
                                     options=[
-                                        {'label': ' Line 1', 'value': '1'},
-                                        {'label': ' Line 2', 'value': '2'},
-                                        {'label': ' Line 3', 'value': '3'},
-                                        {'label': ' Line 4', 'value': '4'},
-                                        {'label': ' Line 5', 'value': '5'},
-                                        {'label': ' Line 6', 'value': '6'},
-                                        {'label': ' Line 7', 'value': '7'},
-                                        {'label': ' Line 8', 'value': '8'},
-                                        {'label': ' Line 9', 'value': '9'},
-                                        {'label': ' Line 10', 'value': '10'}
+                                        {'label': ' Line 1', 'value': 1},
+                                        {'label': ' Line 2', 'value': 2},
+                                        {'label': ' Line 3', 'value': 3},
+                                        {'label': ' Line 4', 'value': 4},
+                                        {'label': ' Line 5', 'value': 5},
+                                        {'label': ' Line 6', 'value': 6},
+                                        {'label': ' Line 7', 'value': 7},
+                                        {'label': ' Line 8', 'value': 8},
+                                        {'label': ' Line 9', 'value': 9},
+                                        {'label': ' Line 10', 'value': 10}
                                     ],
-                                    value=['1'],
+                                    value=[1],
                                     labelStyle={'display': 'inline-block', 'margin-right': '10px'}
                             )]),
                             html.Br(),
