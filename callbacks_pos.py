@@ -213,11 +213,29 @@ def display_line_graph(
 
     visibility.sort()
     for line in visibility:
+        
+        if '1' in inherit_pos:
+            pos_sub = pos_sub_0
+        else:
+            pos_sub = line_dict[line]['pos_sub']
+        if '1' in inherit_attributes:
+            sex = sex_0
+            rank_main = rank_main_0
+            rank_sub = rank_sub_0
+            rel_main = rel_main_0
+            rel_sub = rel_sub_0
+        else:
+            sex = line_dict[line]['sex']
+            rank_main = line_dict[line]['rank_main']
+            rank_sub = line_dict[line]['rank_sub']
+            rel_main = line_dict[line]['rel_main']
+            rel_sub = line_dict[line]['rel_sub']
+
         helper_dict = {
-            'Tags': line_dict[line]['pos_sub'],
-            'SenderSex': line_dict[line]['sex'],
-            'SenderRank': list(flatten([data_parser.rank_categories[line_dict[line]['rank_main']][rank_sub] for rank_sub in line_dict[line]['rank_sub']])),
-            'RelCode': list(flatten([data_parser.relationship_categories[line_dict[line]['rel_main']][rel_sub] for rel_sub in line_dict[line]['rel_sub']]))
+            'Tags': pos_sub,
+            'SenderSex': sex,
+            'SenderRank': list(flatten([data_parser.rank_categories[rank_main][sub] for sub in rank_sub])),
+            'RelCode': list(flatten([data_parser.relationship_categories[rel_main][sub] for sub in rel_sub]))
         }
         # mask 1
         mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)
