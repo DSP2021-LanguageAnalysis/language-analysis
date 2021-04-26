@@ -286,8 +286,9 @@ def display_line_graph(
     # Different lines having same POS messes up the dataframe index 
     # which then messes up json converting, creating new index solves this
     lines_df.reset_index(drop=True, inplace=True)
-
-    line_names = [[value["name"] for key, value in line_dict.items()][i] for i in np.array(visibility)-1]
+    
+    # Makes a list of the line names in right order to be sent to the bar graph
+    line_names = [[value["name"] for key, value in line_dict.items() if value is not None][i] for i in np.array(visibility)-1]
 
     return fig, lines_df.to_json(), line_names
 
@@ -300,7 +301,7 @@ def line_groupby_id(df):
 def line_groupby_sender(df):    
     return df.groupby(['Sender', 'Line']).min().reset_index()
 
-# TEsting wordcount bar chart
+# Testing wordcount bar chart
 @app.callback(
     Output('count_bar_chart', 'figure'), 
     Output('size_info', 'children'),
@@ -311,7 +312,7 @@ def line_groupby_sender(df):
 def display_wordcount_chart(json, line_names, what_count, group_by_what):
 
         lines_df = pd.read_json(json)
-
+        
         grouped = lines_df.groupby('ID').min()
         words = grouped['WordCount'].sum()
         letters = len(lines_df['ID'].unique())
