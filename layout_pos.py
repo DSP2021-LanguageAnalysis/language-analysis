@@ -318,7 +318,16 @@ layout1 = html.Div([
                                 fullscreen = False,
                                 style={'paddingTop': '15px'},
                                 children=[
-                                    dcc.Graph(id='count_bar_chart')
+                                    dcc.Graph(id='count_bar_chart',
+                                              config = {
+                                                'toImageButtonOptions': {
+                                                'format': 'svg', # one of png, svg, jpeg, webp
+                                                'filename': 'Bar_chart',
+                                                'height': 750,
+                                                'width': 2000,
+                                                'scale': 1 
+                                                },
+                                              })
                                 ]
                             ),
                             html.Div(id='size_info',
