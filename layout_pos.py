@@ -128,7 +128,7 @@ layout1 = html.Div([
                             
                             ##### Tips
                             - Hover mouse over chart to find more options
-                                - Download plot as a png
+                                - Download plot as a **svg** (**WORKS CURRENTLY ONLY IN CHROME**)
                                 - Zoom
                                     - undo by double clicking graph
                                 - Pan
@@ -157,7 +157,16 @@ layout1 = html.Div([
                                 fullscreen = False,
                                 style={'paddingTop': '15px'},
                                 children=[
-                                    dcc.Graph(id='line_graph')
+                                    dcc.Graph(id='line_graph',
+                                              config = {
+                                                'toImageButtonOptions': {
+                                                'format': 'svg', # one of png, svg, jpeg, webp
+                                                'filename': 'line_graph',
+                                                'height': 750,
+                                                'width': 2000,
+                                                'scale': 1 
+                                                }
+                                              })
                                 ]
                             ),
                             'Select time range:', 
@@ -319,7 +328,16 @@ layout1 = html.Div([
                                 fullscreen = False,
                                 style={'paddingTop': '15px'},
                                 children=[
-                                    dcc.Graph(id='count_bar_chart')
+                                    dcc.Graph(id='count_bar_chart',
+                                              config = {
+                                                'toImageButtonOptions': {
+                                                'format': 'svg', # one of png, svg, jpeg, webp
+                                                'filename': 'Bar_graph',
+                                                'height': 750,
+                                                'width': 2000,
+                                                'scale': 1 
+                                                }
+                                              })
                                 ]
                             ),
                             html.Div(id='size_info',
