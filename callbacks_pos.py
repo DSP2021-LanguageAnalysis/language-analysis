@@ -20,24 +20,6 @@ data_parser = globals.data_parser
 df = data_parser.df
 
 
-def parallelize_dataframe(df, func, n_cores=4):
-    df_split = np.array_split(df, n_cores)
-    pool = Pool(n_cores)
-    df = pd.concat(pool.map(func, df_split))
-    pool.close()
-    pool.join()
-    return df
-
-
-def initial_poscount_groupby(df):
-    return df.groupby(['YearGroup', 'ID', 'Sender', 'SenderSex', 'SenderRank', 'RelCode', 'Tags', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
-
-def wordcount_groupby(df):
-    return df.groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
-
-def poscount_groupby(df):
-    return df.groupby(['YearGroup']).sum().reset_index()['PosCount']
-
 # Callback for the slider element
 @app.callback(
     Output('line_slider_output', 'children'), # Modified string with the years is passed to the Div-element
@@ -124,6 +106,15 @@ for i in range(1,11):
         }
 
 
+def initial_poscount_groupby(df):
+    return df.groupby(['YearGroup', 'ID', 'Sender', 'SenderSex', 'SenderRank', 'RelCode', 'Tags', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
+
+def wordcount_groupby(df):
+    return df.groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
+
+def poscount_groupby(df):
+    return df.groupby(['YearGroup']).sum().reset_index()['PosCount']
+
 @app.callback(
     Output('line_graph', 'figure'), 
     Output('bar_df', 'children'),
@@ -193,7 +184,7 @@ def display_line_graph(
 
     # Group the data to get count of each POS tag in the data
     # df = poscount_groupby(df)
-    df = parallelize_dataframe(df, initial_poscount_groupby)
+    df = initial_poscount_groupby(df)
 
     fig = go.Figure()
     lines_df = pd.DataFrame()
@@ -260,8 +251,8 @@ def display_line_graph(
                     }, ignore_index=True
                 )
 
-        word_counts = parallelize_dataframe(temp, wordcount_groupby)
-        pos_counts = parallelize_dataframe(temp, poscount_groupby)
+        word_counts = wordcount_groupby(temp)
+        pos_counts = poscount_groupby(temp)
 
         fig.add_scatter(
             x=new_labels, 
@@ -296,10 +287,10 @@ def display_line_graph(
 
 
 def line_groupby_id(df):
-    return df.groupby(['ID', 'Line']).min().reset_index()
+    return df.groupby(['ID', 'Line', 'YearGroup']).min().reset_index()
 
 def line_groupby_sender(df):    
-    return df.groupby(['Sender', 'Line']).min().reset_index()
+    return df.groupby(['Sender', 'Line', 'YearGroup']).min().reset_index()
 
 # Testing wordcount bar chart
 @app.callback(
@@ -325,13 +316,13 @@ def display_wordcount_chart(json, line_names, what_count, group_by_what):
 
         if what_count == 'words':
             y = 'WordCount'
-            lines_df = parallelize_dataframe(lines_df, line_groupby_id)
+            lines_df = line_groupby_id(lines_df)
         elif what_count == 'letters':
             y = 'LetterCount'
-            lines_df = parallelize_dataframe(lines_df, line_groupby_id)
+            lines_df = line_groupby_id(lines_df)
         elif what_count == 'people':
             y = 'PeopleCount'
-            lines_df = parallelize_dataframe(lines_df, line_groupby_sender)
+            lines_df = line_groupby_sender(lines_df)
         
         lines_df = lines_df.groupby(final_groupby).sum().reset_index()
 
