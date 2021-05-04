@@ -321,6 +321,7 @@ layout1 = html.Div([
                         style={'padding': '20px'},
                         children=[
                             html.Div(id='bar_df', style={'display': 'none'}),
+                            html.Div(id='bar_names', style={'display': 'none'}),
                             dcc.Loading(
                                 id="pos-loading",
                                 type="circle",
