@@ -58,3 +58,34 @@ def include_pos_groups_topicmodel(data):
     if data is not None:
         return data_parser.list_to_dash_option_dict(list(data_parser.get_pos_categories(data).keys()))
     return data_parser.list_to_dash_option_dict(list(data_parser.pos_categories.keys()))
+
+
+@app.callback(
+    Output('user-browser-store', 'data'),
+    Input('add_relationship_group_button', 'n_clicks'),
+    [State('relationship_group_name', 'value')],
+    [State('relationship_group_tags', 'value')],
+    State('user-browser-store', 'data'))
+def add_relationship_group(n_clicks, name, tags, data):
+    
+    if n_clicks > 0:
+        if data is None:
+            data = dict()
+        tags = tags.split(';')
+        data[name] = tags
+    
+    return data
+
+
+@app.callback(
+    Output('cust_relationship_groups', 'children'),
+    Input('user-browser-store', 'data'))
+def view_pos_groups(data):
+
+    if data is not None:
+        children = []
+        for (n, t) in data.items():
+            children.append(html.P('{}: {}'.format(n, ', '.join(list(t)))))
+        
+        return children
+    
