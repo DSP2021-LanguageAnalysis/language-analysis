@@ -340,6 +340,13 @@ layout1 = html.Div([
                                               })
                                 ]
                             ),
+                            dcc.Loading(html.A(
+                                id='download_plot_pdf',
+                                href='',
+                                children=[html.Button("Download plot as pdf", id='pdf_button')],
+                                target='_blank',
+                                download="bar_graph.pdf"
+                            )),
                             html.Div(id='size_info',
                                      style={'paddingBottom': '20px'}),
                             'Show the number of ',

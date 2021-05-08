@@ -3,14 +3,25 @@ from dash.dependencies import Input, Output, State
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.exceptions import PreventUpdate
+
 import plotly.express as px
 import plotly.graph_objs as go
+from plotly.io import write_image
+
 import pandas as pd
 from pandas.core.common import flatten
 import math
 import numpy as np
 from multiprocessing import  Pool
 import time
+
+import flask
+import base64
+
+import os
+
+if not os.path.exists("plots"):
+    os.mkdir("plots")
 
 from app import app
 import globals
@@ -292,7 +303,7 @@ def line_groupby_id(df):
 def line_groupby_sender(df):    
     return df.groupby(['Sender', 'Line', 'YearGroup']).min().reset_index()
 
-# Testing wordcount bar chart
+# Wordcount bar chart
 @app.callback(
     Output('count_bar_chart', 'figure'), 
     Output('size_info', 'children'),
@@ -346,3 +357,20 @@ def display_wordcount_chart(json, line_names, what_count, group_by_what):
         fig.update_layout()
 
         return fig, selection_info
+
+@app.callback(
+    Output('download_plot_pdf', 'href'),
+    [Input('count_bar_chart', 'figure')])
+def download_pdf_button(figure):
+        fig = go.Figure(figure)
+        fig.write_image("plots/fig1.pdf")
+
+        ftm = "pdf"
+        mimetype="application/pdf"
+        filename="fig1.%s" % ftm
+
+        data = base64.b64encode(open("plots/" + filename, "rb").read()).decode("utf-8")
+        pdf_string = f"data:{mimetype};base64,{data}"
+
+        return pdf_string
+
