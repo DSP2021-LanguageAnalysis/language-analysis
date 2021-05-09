@@ -54,7 +54,7 @@ for i in range (0,11):
         Output(f'pos_groups_dropdown_{i}_sub', 'value'),
         Output(f'pos_groups_dropdown_{i}_sub', 'options'),
         [Input(f'pos_groups_dropdown_{i}_main', 'value')],
-        State('user-browser-store', 'data'))
+        State('user-pos-store', 'data'))
     def line_group_pos_options(mains, data):
 
         values = []
@@ -72,7 +72,7 @@ for i in range (0,11):
         Output(f'line_senderrank_sub_{i}', 'value'),
         Output(f'line_senderrank_sub_{i}', 'options'),
         Input(f'line_senderrank_main_{i}', 'value'),
-        State('user-browser-store', 'data'))
+        State('user-pos-store', 'data'))
     def line_group_rank_options(main, data):
 
         values = []
@@ -88,14 +88,14 @@ for i in range (0,11):
         Output(f'line_relationship_sub_{i}', 'value'),
         Output(f'line_relationship_sub_{i}', 'options'),
         Input(f'line_relationship_main_{i}', 'value'),
-        State('user-browser-store', 'data'))
+        State('user-relationship-store', 'data'))
     def line_group_rel_options(main, data):
 
         values = []
         options = []
-        value = data_parser.relationship_categories[main]
+        value = data_parser.get_rel_categories(data)[main]
         values.extend(value)
-        options.extend(data_parser.dict_to_dash_options_with_hover(data_parser.relationship_categories[main]))
+        options.extend(data_parser.dict_to_dash_options_with_hover(data_parser.get_rel_categories(data)[main]))
         
         return values, options
 
@@ -142,12 +142,13 @@ for i in range(1,11):
     [State('line_period_length', 'value')],
     [State('line_time_slider', 'value')],
     [State('line_visibility', 'value')],
-    State('user-browser-store', 'data'))
+    State('user-pos-store', 'data'),
+    State('user-relationship-store', 'data'))
 def display_line_graph(
     n_clicks, n_clicks_1, graph_name, inherit_pos, inherit_attributes, 
     pos_sub_0, sex_0, rank_main_0, rank_sub_0, rel_main_0, rel_sub_0, 
     line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, 
-    periods, years, visibility, data):
+    periods, years, visibility, custom_pos, custom_rel):
      
     if n_clicks == 0 and n_clicks_1 == 0:
         line1 = {
@@ -235,7 +236,7 @@ def display_line_graph(
             'Tags': pos_sub,
             'SenderSex': sex,
             'SenderRank': list(flatten([data_parser.rank_categories[rank_main][sub] for sub in rank_sub])),
-            'RelCode': list(flatten([data_parser.relationship_categories[rel_main][sub] for sub in rel_sub]))
+            'RelCode': list(flatten([data_parser.get_rel_categories(custom_rel)[rel_main][sub] for sub in rel_sub]))
         }
         # mask 1
         mask = df[['Tags', 'SenderSex', 'SenderRank', 'RelCode']].isin(helper_dict).all(axis=1)

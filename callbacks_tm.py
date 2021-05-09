@@ -63,9 +63,9 @@ def tm_rel_options(main, data):
 
     values = []
     options = []
-    value = list(data_parser.relationship_categories[main].keys())
+    value = list(data_parser.get_rel_categories(data)[main].keys())
     values.extend(value)
-    options.extend(data_parser.dict_to_dash_options_with_hover(data_parser.relationship_categories[main]))
+    options.extend(data_parser.dict_to_dash_options_with_hover(data_parser.get_rel_categories(data)[main]))
         
     return values, options
 
@@ -136,8 +136,9 @@ def get_letters_per_topic(topic_id):
     State('eta', 'value'),
     State('userseed','value'), 
     State('filter-low','value'),
-    State('filter-high','value'), prevent_initial_call=True)
-def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, gender, rank_main, rank_sub, rel_main, rel_sub, years, userstopwords, alpha, eta, userseed, min_doc, max_prop):
+    State('filter-high','value'),
+    State('user-relationship-store', 'data'), prevent_initial_call=True)
+def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, gender, rank_main, rank_sub, rel_main, rel_sub, years, userstopwords, alpha, eta, userseed, min_doc, max_prop, custom_rel):
 
     # Lists all triggered callbacks 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
@@ -156,7 +157,7 @@ def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, g
         ranks = list(flatten([data_parser.rank_categories[rank_main][sub] for sub in rank_sub]))
         data = tm.filter_by_rank(data, ranks)
         # Filtering by selected relationship tags
-        relationships = list(flatten([data_parser.relationship_categories[rel_main][rel_sub] for rel_sub in rel_sub]))
+        relationships = list(flatten([data_parser.get_rel_categories(custom_rel)[rel_main][rel_sub] for rel_sub in rel_sub]))
         data = tm.filter_by_rel(data, relationships)
         # Filtering by gender
         if gender != 'A':
