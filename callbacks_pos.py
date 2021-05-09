@@ -313,6 +313,10 @@ def display_wordcount_chart(json, line_names, what_count, group_by_what):
 
         lines_df['PeopleCount'] = [1] * len(lines_df['WordCount'])
         lines_df['LetterCount'] = [1] * len(lines_df['WordCount'])
+        
+        # Replace the above count in lines that have been created to show empty periods 
+        lines_df.loc[lines_df['ID'] == 'Not found', 'PeopleCount'] = 0
+        lines_df.loc[lines_df['ID'] == 'Not found', 'LetterCount'] = 0
 
         if what_count == 'words':
             y = 'WordCount'
