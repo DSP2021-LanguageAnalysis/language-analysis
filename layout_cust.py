@@ -59,7 +59,7 @@ layout0 = html.Div([
                             - Type name for new custom grouping
                             - Write POS tags to be included in your group, separated by the ";" symbol
                             - Example: N;NN;NN1
-                            - Click **Add group** to save the group for the current app user-browser-store
+                            - Click **Add group** to save the group for the current app session
                             - Now the custom group is included as an option in the POS tag filtration options for both the POS tag analysis and Topic modelling tabs
                         - **Other tab**
                             - Coming soon
@@ -80,7 +80,7 @@ layout0 = html.Div([
                         html.Button('Add group', id='add_pos_group_button', n_clicks = 0),
                         html.Br(),
                         html.Br(), 
-                        html.P('The custom POS groups you have saved for this user-browser-store', style={'fontWeight':'bold'}),
+                        html.P('The custom POS groups you have saved for this session', style={'fontWeight':'bold'}),
                         html.Div(id='cust_pos_groups')])]),
         dcc.Tab(
             label='Relationships',
