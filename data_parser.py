@@ -173,6 +173,16 @@ class DataParser():
         except:
             return self.pos_categories
 
+    def get_rel_categories(self, custom):
+
+        try:
+            all_rel_categories = dict()
+            all_rel_categories.update(self.relationship_categories)
+            all_rel_categories.update(custom)
+            return all_rel_categories
+        except:
+            return self.relationship_categories
+
     def include_ditto_tags_to_pos_list(self, pos_list):
 
         final_list = []
