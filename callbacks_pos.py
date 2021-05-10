@@ -20,24 +20,6 @@ data_parser = globals.data_parser
 df = data_parser.df
 
 
-def parallelize_dataframe(df, func, n_cores=4):
-    df_split = np.array_split(df, n_cores)
-    pool = Pool(n_cores)
-    df = pd.concat(pool.map(func, df_split))
-    pool.close()
-    pool.join()
-    return df
-
-
-def initial_poscount_groupby(df):
-    return df.groupby(['YearGroup', 'ID', 'Sender', 'SenderSex', 'SenderRank', 'RelCode', 'Tags', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
-
-def wordcount_groupby(df):
-    return df.groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
-
-def poscount_groupby(df):
-    return df.groupby(['YearGroup']).sum().reset_index()['PosCount']
-
 # Callback for the slider element
 @app.callback(
     Output('line_slider_output', 'children'), # Modified string with the years is passed to the Div-element
@@ -124,9 +106,19 @@ for i in range(1,11):
         }
 
 
+def initial_poscount_groupby(df):
+    return df.groupby(['YearGroup', 'ID', 'Sender', 'SenderSex', 'SenderRank', 'RelCode', 'Tags', 'WordCount']).size().to_frame(name = 'PosCount').reset_index()
+
+def wordcount_groupby(df):
+    return df.groupby(['ID','YearGroup']).min().reset_index().groupby(['YearGroup']).sum().reset_index()['WordCount']
+
+def poscount_groupby(df):
+    return df.groupby(['YearGroup']).sum().reset_index()['PosCount']
+
 @app.callback(
     Output('line_graph', 'figure'), 
     Output('bar_df', 'children'),
+    Output('bar_names', 'children'),
     Input('update_line_button', 'n_clicks'), # Only pressing the button initiates the function
     Input('update_line_button_1', 'n_clicks'), # Only pressing the button initiates the function
     State('line_graph_name', 'value'),
@@ -149,7 +141,7 @@ def display_line_graph(
     pos_sub_0, sex_0, rank_main_0, rank_sub_0, rel_main_0, rel_sub_0, 
     line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, 
     periods, years, visibility, custom_pos, custom_rel):
-     
+
     if n_clicks == 0 and n_clicks_1 == 0:
         line1 = {
             'name': 'Line 1',
@@ -193,7 +185,7 @@ def display_line_graph(
 
     # Group the data to get count of each POS tag in the data
     # df = poscount_groupby(df)
-    df = parallelize_dataframe(df, initial_poscount_groupby)
+    df = initial_poscount_groupby(df)
 
     fig = go.Figure()
     lines_df = pd.DataFrame()
@@ -260,8 +252,8 @@ def display_line_graph(
                     }, ignore_index=True
                 )
 
-        word_counts = parallelize_dataframe(temp, wordcount_groupby)
-        pos_counts = parallelize_dataframe(temp, poscount_groupby)
+        word_counts = wordcount_groupby(temp)
+        pos_counts = poscount_groupby(temp)
 
         fig.add_scatter(
             x=new_labels, 
@@ -286,29 +278,33 @@ def display_line_graph(
     # Different lines having same POS messes up the dataframe index 
     # which then messes up json converting, creating new index solves this
     lines_df.reset_index(drop=True, inplace=True)
+    
+    # Makes a list of the line names in right order to be sent to the bar graph
+    line_names = [[value["name"] for key, value in line_dict.items() if value is not None][i] for i in np.array(visibility)-1]
 
-    return fig, lines_df.to_json()
+    return fig, lines_df.to_json(), line_names
 
     #return go.Figure(), pd.DataFrame(columns=['YearGroup', 'ID', 'Sender', 'SenderSex', 'SenderRank', 'RelCode', 'WordCount', 'Line']).to_json()
 
 
 def line_groupby_id(df):
-    return df.groupby(['ID', 'Line']).min().reset_index()
+    return df.groupby(['ID', 'Line', 'YearGroup']).min().reset_index()
 
 def line_groupby_sender(df):    
-    return df.groupby(['Sender', 'Line']).min().reset_index()
+    return df.groupby(['Sender', 'Line', 'YearGroup']).min().reset_index()
 
-# TEsting wordcount bar chart
+# Testing wordcount bar chart
 @app.callback(
     Output('count_bar_chart', 'figure'), 
     Output('size_info', 'children'),
     [Input('bar_df', 'children')],
+    Input('bar_names', 'children'),
     Input('bar_what_count', 'value'),
     Input('bar_groub_by', 'value'))
-def display_wordcount_chart(json, what_count, group_by_what):
+def display_wordcount_chart(json, line_names, what_count, group_by_what):
 
         lines_df = pd.read_json(json)
-
+        
         grouped = lines_df.groupby('ID').min()
         words = grouped['WordCount'].sum()
         letters = len(lines_df['ID'].unique())
@@ -318,19 +314,23 @@ def display_wordcount_chart(json, what_count, group_by_what):
 
         lines_df['PeopleCount'] = [1] * len(lines_df['WordCount'])
         lines_df['LetterCount'] = [1] * len(lines_df['WordCount'])
+        
+        # Replace the above count in lines that have been created to show empty periods 
+        lines_df.loc[lines_df['ID'] == 'Not found', 'PeopleCount'] = 0
+        lines_df.loc[lines_df['ID'] == 'Not found', 'LetterCount'] = 0
 
         if what_count == 'words':
             y = 'WordCount'
-            lines_df = parallelize_dataframe(lines_df, line_groupby_id)
+            lines_df = line_groupby_id(lines_df)
         elif what_count == 'letters':
             y = 'LetterCount'
-            lines_df = parallelize_dataframe(lines_df, line_groupby_id)
+            lines_df = line_groupby_id(lines_df)
         elif what_count == 'people':
             y = 'PeopleCount'
-            lines_df = parallelize_dataframe(lines_df, line_groupby_sender)
+            lines_df = line_groupby_sender(lines_df)
         
         lines_df = lines_df.groupby(final_groupby).sum().reset_index()
-        
+
         selection_info = f"Number of non-unique words: {words}, number of letters: {letters}, number of senders: {people}"
 
         fig = px.bar(
@@ -343,6 +343,7 @@ def display_wordcount_chart(json, what_count, group_by_what):
             hover_data=[group_by_what],
             color='Line',
             barmode='group',
+            category_orders={'Period':line_names, 'Line': line_names},
             title='Number of {} for each line, grouped by {}'.format(what_count, group_by_what))
         
         fig.update_xaxes(categoryorder='category ascending')
