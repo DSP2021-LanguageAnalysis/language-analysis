@@ -4,7 +4,7 @@ import glob
 import plotly.express as px
 import string
 from pos_categories import pos_categories, pos_labels, pos_dittos
-from attribute_categories import rank_categories, relationship_categories
+from attribute_categories import rank_categories, relationship_categories, relationship_labels
 
 class DataParser():
     df = None
@@ -30,6 +30,7 @@ class DataParser():
         self.pos_labels = pos_labels
         self.pos_dittos = pos_dittos
         self.relationship_categories = relationship_categories
+        self.relationship_labels = relationship_labels
         return 
         
     # Transforms xml-file into a BeautifulSoup-object
@@ -171,6 +172,16 @@ class DataParser():
             return all_pos_categories
         except:
             return self.pos_categories
+
+    def get_rel_categories(self, custom):
+
+        try:
+            all_rel_categories = dict()
+            all_rel_categories.update(self.relationship_categories)
+            all_rel_categories.update(custom)
+            return all_rel_categories
+        except:
+            return self.relationship_categories
 
     def include_ditto_tags_to_pos_list(self, pos_list):
 
