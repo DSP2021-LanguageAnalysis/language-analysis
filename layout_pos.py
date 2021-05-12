@@ -128,7 +128,7 @@ layout1 = html.Div([
                             
                             ##### Tips
                             - Hover mouse over chart to find more options
-                                - Download plot as a **svg** (**WORKS CURRENTLY ONLY IN CHROME**)
+                                - Download plot as a **SVG** (in chrome or firefox)
                                 - Zoom
                                     - undo by double clicking graph
                                 - Pan
@@ -138,9 +138,19 @@ layout1 = html.Div([
                                     - undo by double clicking graph
                                 - Zoom in
                                 - Zoom out
-                                - **Autoscale**
+                                - Autoscale
                                     - scales the y-axis
                                 - Reset axes
+                            - SVG-format
+                                - can be opened with web browsers
+                            - Some options to save a plot
+                                - Windows: 
+                                    - windows key + Shift + S (slect a portion of the screen to clipboard)
+                                    - windows key + PrtScr or windows key + fn + PrcScr (entire screen as an image; folder "pictures" subfolder "screenshots")
+                                    - PrtScr or fn + PrtScr (to clipboard)
+                                - Mac: 
+                                    - In safari go to File and then Export as a PDF
+                                    - shift + cmd + 5 (screenshot options menu, saves an image as an PNG)
                             ''')
                         ])
                 ]
