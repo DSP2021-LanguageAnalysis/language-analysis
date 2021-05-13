@@ -101,32 +101,41 @@ layout1 = html.Div([
                             #html.H2("User instructions"),
                             #dcc.Link('link to github with more detailed documentation', href='https://github.com/DSP2021-LanguageAnalysis/language-analysis'),
                             dcc.Markdown(''' 
-                            ##### General
-                            - This part of the application is developed to help answer questions about how the proportion of different parts of speech varies over time. 
-                            - You can select sender attributes to narrow down the set of people. You might for instance want to see if there is a difference in the development of pronoun usage between men and women.
-                            - [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
+                            [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
 
-                            ##### Line graph
+                            [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
+
+                            #### The graphs
                             - In line graph view, you can see how the proportion of selected POS tags changes over time.
-
-                            ##### Bar graph
-                            - The bar graph shows metadata for lines drawn in the line graph view.
+                            - You can select sender attributes to narrow down the set of people. You might for instance want to see if there is a difference in the development of pronoun usage between men and women.
+                            - The bar graph shows metadata for lines drawn in the line graph view. With the bar graph, you can for example see the corpus size for the different periods and see how the sender attributes are divided.
+                            - As a user, you can select the time range for the graph and decide, to what size periods it is divided to.
+                            - When the selected time range does not divide evenly to the defined periods, the last period is left shorter.
+                            - The end and start year of a period is explicitly shown on the x-axis. Note that the last period includes the last year as well. I.e. if you select 1700-1800 as the range, and 50 years as the period length, the periods will be 1700-1749 and 1750-1800.
+                            - As a user, you can select to draw up to 10 lines on the graph, each visible line is then described by a bar in the bar graph view.
+                            - As a user you can set a name for the whole graph and for each of the lines. Line names will be shown on the legend.
+                            - As a user, you may choose to apply same POS tag selection and/or same attribute selection for all lines visible, or choose these for all lines separately.
                             
-                            ##### POS tags
-                            - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
+                            #### POS tags
+                            - The POS tagger used for the corpus is CLAWS7. link to description is provided on top of this page.
                             - The ditto tags that are present in the corpus are included when the main tag is selected. 
                             I.e. if user selects to see tag NN1 then ditto tags NN121, NN122, NN131, NN132, NN133 are also included.
                             - Note: The tags NPM2 (plural month noun) and MCGE (genitive cardinal number, neutral for number) have been removed from selection, as they are not featured in this particular corpus. 
                             - Punctuation tags have been excluded from the analysis.
 
-                            ##### Attributes
-                            - Pre-made groupings of social ranks
+                            #### Attributes
+                            - Sex of sender
+                            - Social rank of sender, pre-made groupings available:
                                 - **Fine grained** - Royalty (R) , Nobility (N) , Gentry Upper (GU), Gentry Lower (GL, G), Clergy Upper (CU), Clergy Lower (CL), Professional (P), Merchant (M), Other (O)
                                 - **Regular** - Royalty (R) , Nobility (N) , Gentry (GU, GL, G), Clergy (CU, CL), Professional (P), Merchant (M), Other (O)
                                 - **Tripartite** - Upper (R, N, GU, GL, G, CU), Middle (CL, P, M), Lower (O)
                                 - **Bipartite** - Gentry (R, N, GU, GL, G, CU), Non-Gentry (CL, P, M, O)
+                            - Relationship between sender and recipient, pre-made groupings available:
+                                - **Fine grained** - Nuclear family (FN) , Other family (FO) , Family servant (FS), Close friend (TC), Other acquaintance (T)
+                                - **Bipartite** - Family (FN, FO, FS) , Other (TC, T)
+                            - Custom groupings can be created by navigating to "Add custom groups" page. These groups will then be included under main category "Custom". 
                             
-                            ##### Tips
+                            #### Tips
                             - Hover mouse over chart to find more options
                                 - Download plot as a **SVG** (in chrome or firefox)
                                 - Zoom

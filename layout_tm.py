@@ -33,13 +33,11 @@ layout2 = html.Div(
                 html.Div(
                     style={'padding': '20px'},
                     children=[
-                        html.H2("User instructions"),
                         #dcc.Link('Link to github with more detailed documentation', href='https://github.com/DSP2021-LanguageAnalysis/language-analysis'),
                         dcc.Markdown('''
-                        ##### General
-                        - This part of the application is for exploring the dominant topics in the corpus. 
-                        - [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
-                        - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
+                        [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
+                        
+                        [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
                         
                         #### Parametrisation and Filtration
                         - Select the model parameters
@@ -48,7 +46,6 @@ layout2 = html.Div(
                         - Select **Advanced parameters** to view more options (detail given in documentation)
                         - Select filtration parameters - Filter corpus by:
                             - POS tagged tokens
-                                - [Link to Constituent Likelihood Automatic Word-tagging System (CLAWS7) tagset](http://ucrel.lancs.ac.uk/claws7tags.html)
                                 - The ditto tags that are present in the corpus are included when the main tag is selected. 
                                   I.e. if user selects to see tag NN1 then ditto tags NN121, NN122, NN131, NN132, NN133 are also included.
                                 - Note: The tags NPM2 (plural month noun) and MCGE (genitive cardinal number, neutral for number) have been removed from selection, as they are not featured in this particular corpus.       
