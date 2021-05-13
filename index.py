@@ -11,6 +11,7 @@ from layout_cust import layout0
 from layout_pos import layout1
 from layout_tm import layout2
 from layout_overview import layout3
+from layout_404 import layout404
 import callbacks_pos, callbacks_tm, callbacks_cust
 
 app.layout = html.Div([
@@ -33,7 +34,7 @@ def display_page(pathname):
     elif pathname == '/app/overview':
         return layout3
     else:
-        return '404'
+        return layout404
 
 
 if __name__ == '__main__':
