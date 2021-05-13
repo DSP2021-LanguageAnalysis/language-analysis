@@ -38,10 +38,9 @@ relationship_categories = {
         'Close friend': ['TC'], 
         'Other acquaintance': ['T']
     },
-    'Grouped': {
+    'Bipartite': {
         'Family': ['FN', 'FO', 'FS'], 
-        'Friends': ['TC'], 
-        'Other relationships': ['T']
+        'Other': ['TC', 'T']
     }
 }
 
