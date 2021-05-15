@@ -137,8 +137,9 @@ def get_letters_per_topic(topic_id):
     State('userseed','value'), 
     State('filter-low','value'),
     State('filter-high','value'),
-    State('user-relationship-store', 'data'), prevent_initial_call=True)
-def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, gender, rank_main, rank_sub, rel_main, rel_sub, years, userstopwords, alpha, eta, userseed, min_doc, max_prop, custom_rel):
+    State('user-relationship-store', 'data'), prevent_initial_call=True),
+    State('user-rank-store', 'data'), prevent_initial_call=True)
+def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, gender, rank_main, rank_sub, rel_main, rel_sub, years, userstopwords, alpha, eta, userseed, min_doc, max_prop, custom_rel,custom_rank):
 
     # Lists all triggered callbacks 
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
@@ -154,7 +155,7 @@ def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, g
         # Filtering by selected POS-tags
         data = tm.filter_by_tag(df, tags)
         # Filtering by selected ranks
-        ranks = list(flatten([data_parser.rank_categories[rank_main][sub] for sub in rank_sub]))
+        ranks = list(flatten([data_parser.rank_categories(custom_rank)[rank_main][sub] for sub in rank_sub]))
         data = tm.filter_by_rank(data, ranks)
         # Filtering by selected relationship tags
         relationships = list(flatten([data_parser.get_rel_categories(custom_rel)[rel_main][rel_sub] for rel_sub in rel_sub]))
