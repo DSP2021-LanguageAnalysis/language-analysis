@@ -50,22 +50,17 @@ layout0 = html.Div([
                             - **Fine grained** - Nuclear family (FN) , Other family (FO) , Family servant (FS), Close friend (TC), Other acquaintance (T)
                             - **Bipartite** - Family (FN, FO, FS) , Other (TC, T)       
                         
-                        #### POS tag tab
+                        #### POS tag, relationship, and rank tabs
+                        - Select the tab of the attribute you would like to create a custom group for
                         - Type name for new custom grouping
-                        - Write POS tags to be included in your group, separated by the ";" symbol
-                        - Example: N;NN;NN1
+                        - Write POS, relationship, or rank tags to be included in your group, separated by the ";" symbol
+                        - Example - in the POS tag tab: N;NN;NN1
                         - Click **Add group** to save the group for the current app session
                         - Now the custom group is included as an option in the POS tag filtration options for both the POS tag analysis and Topic modelling tabs
-                        - **Note:** The ditto tags that are present in the corpus are included when the main tag is selected. 
+                        - **Note:** For the POS tags, the ditto tags that are present in the corpus are included when the main tag is selected. 
                         I.e. if user selects to see tag NN1 then ditto tags NN121, NN122, NN131, NN132, NN133 are also included.
                         - **Note:** The tags NPM2 (plural month noun) and MCGE (genitive cardinal number, neutral for number) have been removed from selection, 
                         as they are not featured in this particular corpus
-
-                        #### Relationship tab
-                        - Coming soon
-
-                        #### Rank tab
-                        - Coming soon
                             ''')
                         ])
                 ]
@@ -99,7 +94,23 @@ layout0 = html.Div([
                         html.Br(),
                         html.Br(), 
                         html.P('The custom relationship groups you have saved for this session', style={'fontWeight':'bold'}),
-                        html.Div(id='cust_relationship_groups')])])
+                        html.Div(id='cust_relationship_groups')])]),
+        dcc.Tab(
+            label='Ranks',
+            children=[
+                html.Div(
+                    style={'padding': '20px'},
+                    children=[
+                        html.H5('Add a new custom rank grouping'),
+                        dcc.Input(id="rank_group_name", type="text", placeholder="Name for new group"),
+                        dcc.Input(id="rank_group_tags", type="text", placeholder="Tags for new group as ; separated list", style={'width': '100%'}),
+                        html.Br(), 
+                        html.Button('Add group', id='add_rank_group_button', n_clicks = 0),
+                        html.Br(),
+                        html.Br(), 
+                        html.P('The custom rank groups you have saved for this session', style={'fontWeight':'bold'}),
+                        html.Div(id='cust_rank_groups')])])
+        
     ])
 
 ])
