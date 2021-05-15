@@ -54,7 +54,7 @@ for i in range (0,11):
         Output(f'line_senderrank_sub_{i}', 'value'),
         Output(f'line_senderrank_sub_{i}', 'options'),
         Input(f'line_senderrank_main_{i}', 'value'),
-        State('user-pos-store', 'data'))
+        State('user-rank-store', 'data'))
     def line_group_rank_options(main, data):
 
         values = []
@@ -135,12 +135,13 @@ def poscount_groupby(df):
     [State('line_time_slider', 'value')],
     [State('line_visibility', 'value')],
     State('user-pos-store', 'data'),
-    State('user-relationship-store', 'data'))
+    State('user-relationship-store', 'data'),
+    State('user-rank-store', 'data'))
 def display_line_graph(
     n_clicks, n_clicks_1, graph_name, inherit_pos, inherit_attributes, 
     pos_sub_0, sex_0, rank_main_0, rank_sub_0, rel_main_0, rel_sub_0, 
     line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, 
-    periods, years, visibility, custom_pos, custom_rel):
+    periods, years, visibility, custom_pos, custom_rel, custom_rank):
 
     if n_clicks == 0 and n_clicks_1 == 0:
         line1 = {
@@ -227,7 +228,7 @@ def display_line_graph(
         helper_dict = {
             'Tags': pos_sub,
             'SenderSex': sex,
-            'SenderRank': list(flatten([data_parser.rank_categories[rank_main][sub] for sub in rank_sub])),
+            'SenderRank': list(flatten([data_parser.rank_categories(custom_rank)[rank_main][sub] for sub in rank_sub])),
             'RelCode': list(flatten([data_parser.get_rel_categories(custom_rel)[rel_main][sub] for sub in rel_sub]))
         }
         # mask 1
