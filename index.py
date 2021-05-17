@@ -17,6 +17,7 @@ import callbacks_pos, callbacks_tm, callbacks_cust
 app.layout = html.Div([
     dcc.Store(id='user-pos-store', storage_type='local'),
     dcc.Store(id='user-relationship-store', storage_type='local'),
+    dcc.Store(id='user-rank-store', storage_type='local'),
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content')
 ])

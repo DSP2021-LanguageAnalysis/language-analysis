@@ -182,6 +182,16 @@ class DataParser():
             return all_rel_categories
         except:
             return self.relationship_categories
+    
+    def get_rank_categories(self, custom):
+
+        try:
+            all_rank_categories = dict()
+            all_rank_categories.update(self.rank_categories)
+            all_rank_categories.update(custom)
+            return all_rank_categories
+        except:
+            return self.rank_categories
 
     def include_ditto_tags_to_pos_list(self, pos_list):
 
