@@ -42,14 +42,14 @@ def tm_pos_options(mains, data):
     Output('rank-sub', 'value'),
     Output('rank-sub', 'options'),
     Input('rank-main', 'value'),
-    State('user-pos-store', 'data'))
+    State('user-rank-store', 'data'))
 def tm_rank_options(main, data):
 
     values = []
     options = []
-    value = list(data_parser.rank_categories[main].keys())
+    value = list(data_parser.get_rank_categories(data)[main].keys())
     values.extend(value)
-    options.extend(data_parser.dict_to_dash_options_with_hover(data_parser.rank_categories[main]))
+    options.extend(data_parser.dict_to_dash_options_with_hover(data_parser.get_rank_categories(data)[main]))
         
     return values, options
 
@@ -137,7 +137,7 @@ def get_letters_per_topic(topic_id):
     State('userseed','value'), 
     State('filter-low','value'),
     State('filter-high','value'),
-    State('user-relationship-store', 'data'), prevent_initial_call=True),
+    State('user-relationship-store', 'data'),
     State('user-rank-store', 'data'), prevent_initial_call=True)
 def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, gender, rank_main, rank_sub, rel_main, rel_sub, years, userstopwords, alpha, eta, userseed, min_doc, max_prop, custom_rel,custom_rank):
 
@@ -155,7 +155,7 @@ def model_params(clicks, alpha_boolean, eta_boolean, topics, iterations, tags, g
         # Filtering by selected POS-tags
         data = tm.filter_by_tag(df, tags)
         # Filtering by selected ranks
-        ranks = list(flatten([data_parser.rank_categories(custom_rank)[rank_main][sub] for sub in rank_sub]))
+        ranks = list(flatten([data_parser.get_rank_categories(custom_rank)[rank_main][sub] for sub in rank_sub]))
         data = tm.filter_by_rank(data, ranks)
         # Filtering by selected relationship tags
         relationships = list(flatten([data_parser.get_rel_categories(custom_rel)[rel_main][rel_sub] for rel_sub in rel_sub]))

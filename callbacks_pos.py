@@ -59,9 +59,9 @@ for i in range (0,11):
 
         values = []
         options = []
-        value = data_parser.rank_categories[main]
+        value = data_parser.get_rank_categories(data)[main]
         values.extend(value)
-        options.extend(data_parser.dict_to_dash_options_with_hover(data_parser.rank_categories[main]))
+        options.extend(data_parser.dict_to_dash_options_with_hover(data_parser.get_rank_categories(data)[main]))
         
         return values, options
 
@@ -228,7 +228,7 @@ def display_line_graph(
         helper_dict = {
             'Tags': pos_sub,
             'SenderSex': sex,
-            'SenderRank': list(flatten([data_parser.rank_categories(custom_rank)[rank_main][sub] for sub in rank_sub])),
+            'SenderRank': list(flatten([data_parser.get_rank_categories(custom_rank)[rank_main][sub] for sub in rank_sub])),
             'RelCode': list(flatten([data_parser.get_rel_categories(custom_rel)[rel_main][sub] for sub in rel_sub]))
         }
         # mask 1

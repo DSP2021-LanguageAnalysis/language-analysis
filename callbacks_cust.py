@@ -124,8 +124,9 @@ def add_rank_group(n_clicks, name, tags, data):
     if n_clicks > 0:
         if data is None:
             data = dict()
+            data['Custom'] = {}
         tags = tags.split(';')
-        data[name] = tags
+        data['Custom'][name] = tags
     
     return data
 
@@ -144,7 +145,7 @@ def view_rank_groups(data):
     
 for i in range (0,11):
     @app.callback(
-        Output(f'line_rank_main_{i}', 'options'),
+        Output(f'line_senderrank_main_{i}', 'options'),
         Input('user-rank-store', 'data'))
     def include_rank_groups_line(data):
 
