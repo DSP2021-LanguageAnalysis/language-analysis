@@ -33,7 +33,15 @@ layout0 = html.Div([
                 html.Div(
                     style={'padding': '20px'},
                     children=[
-                        #dcc.Link('link to github with more detailed documentation', href='https://github.com/DSP2021-LanguageAnalysis/language-analysis'),
+                        html.Div(
+                            style={'padding': '15px'},
+                            className='alert alert-dismissible alert-danger',
+                            children=[
+                                html.H5('Note!', className="alert-heading"),
+                                html.P('If you choose to create custom groups, they are saved to your browser\'s local storage and you will be able to use the same groupings on your next session if you do not clear the local storage. \
+                                No personal data is saved nor users are tracked in any way.', className="mb-0")
+                            ]
+                        ),
                         dcc.Markdown(''' 
                         [Link to github with more detailed documentation](https://github.com/DSP2021-LanguageAnalysis/language-analysis)
                         
